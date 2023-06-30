@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "combineext",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CombineCommunity/CombineExt.git",
+      "state" : {
+        "revision" : "d7b896fa9ca8b47fa7bcde6b43ef9b70bf8c1f56",
+        "version" : "1.8.1"
+      }
+    },
+    {
+      "identity" : "goodpersistence",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/GoodRequest/GoodPersistence.git",
+      "state" : {
+        "revision" : "780e03a1e21948b114d7af3bc0cfe0d8aecae4c0",
+        "version" : "1.0.2"
+      }
+    }
+  ],
+  "version" : 2
+}
