@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  NSPredicateExtension.swift
 //  
 //
 //  Created by Matus Klasovity on 27/06/2023.

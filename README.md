@@ -24,15 +24,27 @@ import AppDebugModel
 #endif
 
 #if DEBUG
+    enum ServersCollections {
+
+        static let myAppBackend = ApiServerCollection(
+            name: "My App backend",
+            servers: [
+                Servers.prod,
+                Servers.dev
+            ],
+            defaultSelectedServer: Servers.dev
+        )
+
+        static var allCases: [ApiServerCollection] = [
+            Self.myAppBackend
+        ]
+
+    }
+
     enum Servers {
         
         static let prod = ApiServer(name: "PROD", url: "https://api.production.example")
         static let dev = ApiServer(name: "DEV", url: "https://test.api")
-        
-        static let allCases: [ApiServer] = [
-            Self.prod,
-            Self.dev
-        ]
         
     }
 #endif
@@ -40,11 +52,28 @@ import AppDebugModel
 // didFinishLaunchingWithOptions:
 #if DEBUG
     AppDebugModeProvider.shared.setup(
-        defaultServer: Servers.dev,
-        availableServers: Servers.allCases,
-        onServerChange: { _ in  } // Log out user 
+        serversCollections: ServersCollections.allCases,
+        onServerChange: { 
+            // logout user
+        }
     )
 #endif
+```
+
+## Get selected server
+
+```swift
+#if DEBUG
+import AppDebugModel
+#endif
+
+var baseURL: String {
+    #if DEBUG
+    return AppDebugModeProvider.shared.getSelectedServer(for: ServersCollections.myAppBackend).url
+    #else
+    return "https://api.production.example"
+    #endif
+}
 ```
 
 ## Get selected user
@@ -62,22 +91,6 @@ import AppDebugModel
         }
         .store(in: &cancellables)
 #endif
-```
-
-## Get selected server
-
-```swift
-#if DEBUG
-import AppDebugModel
-#endif
-
-var baseURL: String {
-    #if DEBUG
-    return AppDebugModeProvider.shared.selectedServer.url
-    #else
-    return "https://api.production.example"
-    #endif
-}
 ```
 
 ## Activation in App
