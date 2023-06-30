@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import GoodPersistence
 
 public struct ApiServer: Codable, Equatable, Hashable {
     

@@ -11,24 +11,24 @@ final class ServerPickerViewModel: ObservableObject {
     
     // MARK: - Properties
     
-    @Published var selectedServer = ApiServerProvider.shared.apiServer
+    @Published var selectedServer: ApiServer // = ApiServerProvider.shared.apiServer
     @Published var textContent = ""
     @Published var hasValidationError = false
     
+    // MARK: - Init
+    
+    init(selectedServer: ApiServer) {
+        self.selectedServer = selectedServer
+    }
+    
     // MARK: - Methods
     
-    func saveCustomURL() {
+    func useCustomURL() {
         if NSPredicate.url.evaluate(with: textContent) {
             selectedServer = ApiServer(name: "Custom", url: textContent)
         } else {
             hasValidationError = true
         }
-    }
-    
-    func saveServerSettings() {
-        ApiServerProvider.shared.changeApiServer(server: selectedServer)
-        AppDebugModeProvider.shared.onServerChange?(selectedServer)
-        exit(0)
     }
 
 }
