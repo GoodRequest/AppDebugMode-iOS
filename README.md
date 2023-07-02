@@ -8,7 +8,7 @@ Swift Package ***AppDebugMode*** is a library that allows an iOS application to 
 ```swift
 /// Package.swift
 dependencies: [
-    .package(url: "git@github.com:GoodRequest/AppDebugMode-iOS.git", .upToNextMajor(from: "0.1.0"))
+    .package(url: "git@github.com:GoodRequest/AppDebugMode-iOS.git", .upToNextMajor(from: "1.0.0"))
 ]
 ```
 
