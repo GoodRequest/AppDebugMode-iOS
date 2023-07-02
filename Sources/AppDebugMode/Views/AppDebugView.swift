@@ -18,17 +18,11 @@ struct AppDebugView: View {
     
     // MARK: - Properties
     
-    public let servers: [ApiServer]
-    
-    // MARK: - Init
-    
-    public init(servers: [ApiServer]) {
-        self.servers = servers
-    }
+    let serversCollections: [ApiServerCollection]
 
     // MARK: - Body
 
-    public var body: some View {
+    var body: some View {
         List {
             serverPickerSection()
             userProfilesSection()
@@ -46,7 +40,7 @@ private extension AppDebugView {
     func serverPickerSection() -> some View {
         Section {
             if showServerSettings {
-                ServerPickerView(servers: servers)
+                ServersCollectionsView(viewModel: ServersCollectionsViewModel(serversCollections: serversCollections))
             }
         } header: {
             ExpandableHeaderView(title: "Server settings", isExpanded: $showServerSettings)

@@ -11,21 +11,20 @@ struct ServerPickerView: View {
 
     // MARK: - State
 
-    @ObservedObject private var viewModel = ServerPickerViewModel()
-    
-    let servers: [ApiServer]
+    @ObservedObject var viewModel: ApiServerCollection
 
     // MARK: - Body
 
     var body: some View {
         VStack {
+            configurationParam(apiServer: viewModel.selectedServer)
+            Divider()
             serverPicker()
             Divider()
             serverInputView()
             Divider()
-            configurationParam(apiServer: viewModel.selectedServer)
-            Divider()
-            saveButton()
+                .frame(minHeight: 2)
+                .overlay(Color.blue)
         }
         .onChange(of: viewModel.selectedServer) { _ in
             hideKeyboard()
@@ -56,7 +55,7 @@ private extension ServerPickerView {
             
 
             Picker("Please select a server", selection: $viewModel.selectedServer) {
-                ForEach(servers, id: \.self) { server in
+                ForEach(viewModel.servers, id: \.self) { server in
                     Text(server.name)
                         .id(server)
                 }
@@ -73,12 +72,11 @@ private extension ServerPickerView {
                 .keyboardType(.URL)
                 .padding()
                 .overlay(
-                       RoundedRectangle(cornerRadius: 8)
-                           .stroke(.gray, lineWidth: 1)
-                   )
+                    RoundedRectangle(cornerRadius: 8).stroke(.gray, lineWidth: 1)
+                )
 
             PrimaryButton(text: "Use Custom URL") {
-                viewModel.saveCustomURL()
+                viewModel.useCustomURL()
             }
 
             Text("NOTE: Add URL in correct fromat, containing domain as well as directory path.")
@@ -104,20 +102,6 @@ private extension ServerPickerView {
         .font(.subheadline)
         .frame(maxWidth: .infinity)
         .fixedSize(horizontal: false, vertical: true)
-        .padding(.vertical, 16)
-    }
-
-    func saveButton() -> some View {
-        VStack {
-            PrimaryButton(text: "Save") {
-                viewModel.saveServerSettings()
-            }
-
-            Text("App will be terminated in the moment you save the changes due to propper change of picked server.")
-                .foregroundColor(.gray)
-                .font(.caption)
-                .frame(maxWidth: .infinity)
-        }
         .padding(.vertical, 16)
     }
 
