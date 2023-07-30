@@ -15,6 +15,7 @@ struct KeychainSettingsView: View {
         VStack {
             PrimaryButton(text: "Clear keychain data", style: .danger) {
                 viewModel.clearKeychain()
+                exit(0)
             }
             Text("The app will be restarted after clearing the keychain.")
                 .font(.caption)
