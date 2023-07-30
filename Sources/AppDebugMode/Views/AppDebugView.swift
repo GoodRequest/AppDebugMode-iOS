@@ -32,6 +32,8 @@ struct AppDebugView: View {
             cacheSettingsSection()
             keychainSettingsSection()
             appDirectorySettingsSection()
+
+            ResetAppView()
         }
         .listStyle(.insetGrouped)
         .dismissKeyboardOnDrag()

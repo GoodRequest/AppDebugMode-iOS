@@ -21,8 +21,6 @@ final class KeychainSettingsViewModel: ObservableObject {
             ] as CFDictionary)
             if status != errSecSuccess && status != errSecItemNotFound {
                 isError = true
-            } else {
-                exit(0)
             }
         }
     }
