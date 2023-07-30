@@ -15,6 +15,7 @@ struct AppDebugView: View {
 
     @State private var showServerSettings = false
     @State private var showUserProfiles = false
+    @State private var showAppDirectorySettings = false
     
     // MARK: - Properties
     
@@ -26,6 +27,7 @@ struct AppDebugView: View {
         List {
             serverPickerSection()
             userProfilesSection()
+            appDirectorySettingsSection()
         }
         .listStyle(.insetGrouped)
         .dismissKeyboardOnDrag()
@@ -54,6 +56,16 @@ private extension AppDebugView {
             }
         } header: {
             ExpandableHeaderView(title: "Testing User profiles", isExpanded: $showUserProfiles)
+        }
+    }
+
+    func appDirectorySettingsSection() -> some View {
+        Section {
+            if showAppDirectorySettings {
+                AppDirectorySettingsView()
+            }
+        } header: {
+            ExpandableHeaderView(title: "App Directory Settings", isExpanded: $showAppDirectorySettings)
         }
     }
 
