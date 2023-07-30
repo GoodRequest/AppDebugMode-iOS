@@ -15,6 +15,7 @@ struct AppDebugView: View {
 
     @State private var showServerSettings = false
     @State private var showUserProfiles = false
+    @State private var showCacheSettings = false
     @State private var showAppDirectorySettings = false
     
     // MARK: - Properties
@@ -27,6 +28,7 @@ struct AppDebugView: View {
         List {
             serverPickerSection()
             userProfilesSection()
+            cacheSettingsSection()
             appDirectorySettingsSection()
         }
         .listStyle(.insetGrouped)
@@ -59,6 +61,16 @@ private extension AppDebugView {
         }
     }
 
+    func cacheSettingsSection() -> some View {
+        Section {
+            if showCacheSettings {
+                CacheSettingsView()
+            }
+        } header: {
+            ExpandableHeaderView(title: "Cache settings", isExpanded: $showCacheSettings)
+        }
+    }
+    
     func appDirectorySettingsSection() -> some View {
         Section {
             if showAppDirectorySettings {
