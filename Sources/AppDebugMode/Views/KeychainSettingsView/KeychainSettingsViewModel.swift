@@ -1,11 +1,12 @@
 //
-//  File.swift
+//  KeychainSettingsViewModel.swift
 //  
 //
 //  Created by Matus Klasovity on 30/07/2023.
 //
 
 import Foundation
+import Combine
 
 final class KeychainSettingsViewModel: ObservableObject {
     
@@ -13,16 +14,36 @@ final class KeychainSettingsViewModel: ObservableObject {
     
     @Published var isError = false
     
+    @Published var keychainValues = Array(CacheProvider.shared.keychainValues)
+    
+    // MARK: - Properties
+
+    private var cancellables = Set<AnyCancellable>()
+    
+    // MARK: - Init
+
+    init() {
+        bindState()
+    }
+    
+    // MARK: - Methods - Public
+
     func clearKeychain() {
-        [kSecClassGenericPassword, kSecClassInternetPassword, kSecClassCertificate, kSecClassKey, kSecClassIdentity].forEach {
-            let status = SecItemDelete([
-                kSecClass: $0,
-                kSecAttrSynchronizable: kSecAttrSynchronizableAny
-            ] as CFDictionary)
-            if status != errSecSuccess && status != errSecItemNotFound {
-                isError = true
-            }
-        }
+        isError = CacheProvider.shared.clearKeychain()
     }
     
 }
+
+// MARK: - Private
+
+private extension KeychainSettingsViewModel {
+
+    func bindState() {
+        CacheProvider.shared.$keychainValues
+            .map { Array($0) }
+            .assign(to: \.keychainValues, on: self)
+            .store(in: &cancellables)
+    }
+
+}
+

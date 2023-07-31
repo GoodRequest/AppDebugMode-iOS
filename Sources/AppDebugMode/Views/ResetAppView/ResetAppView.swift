@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ResetAppView: View {
     
-    @ObservedObject private var cacheViewModel = CacheSettingsViewModel()
+    @ObservedObject private var cacheViewModel = UserDefaultsSettingsViewModel()
     @ObservedObject private var keychainViewModel = KeychainSettingsViewModel()
     @ObservedObject private var appDirectoryViewModel = AppDirectorySettingsViewModel()
     
