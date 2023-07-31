@@ -15,7 +15,7 @@ struct AppDebugView: View {
 
     @State private var showServerSettings = false
     @State private var showUserProfiles = false
-    @State private var showCacheSettings = false
+    @State private var showUserDefaultsSettings = false
     @State private var showKeychainSettings = false
     @State private var showAppDirectorySettings = false
     
@@ -32,7 +32,7 @@ struct AppDebugView: View {
             cacheSettingsSection()
             keychainSettingsSection()
             appDirectorySettingsSection()
-
+            ReloadCacheDataView()
             ResetAppView()
         }
         .listStyle(.insetGrouped)
@@ -67,11 +67,11 @@ private extension AppDebugView {
 
     func cacheSettingsSection() -> some View {
         Section {
-            if showCacheSettings {
-                CacheSettingsView()
+            if showUserDefaultsSettings {
+                UserDefaultsSettingsView()
             }
         } header: {
-            ExpandableHeaderView(title: "Cache settings", isExpanded: $showCacheSettings)
+            ExpandableHeaderView(title: "User defaults settings", isExpanded: $showUserDefaultsSettings)
         }
     }
     

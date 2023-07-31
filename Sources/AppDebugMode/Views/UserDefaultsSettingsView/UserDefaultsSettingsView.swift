@@ -1,5 +1,5 @@
 //
-//  KeychainSettingsView.swift
+//  UserDefaultsSettingsView.swift
 //  
 //
 //  Created by Matus Klasovity on 30/07/2023.
@@ -7,23 +7,23 @@
 
 import SwiftUI
 
-struct KeychainSettingsView: View {
+struct UserDefaultsSettingsView: View {
     
-    @ObservedObject private var viewModel = KeychainSettingsViewModel()
+    @ObservedObject private var viewModel = UserDefaultsSettingsViewModel()
     
     var body: some View {
         Group {
             VStack {
-                PrimaryButton(text: "Clear keychain data", style: .danger) {
-                    viewModel.clearKeychain()
+                PrimaryButton(text: "Clear cache", style: .danger) {
+                    viewModel.clearCache()
                     exit(0)
                 }
-                Text("The app will be restarted after clearing the keychain.")
+                Text("The app will be restarted after clearing the cache.")
                     .font(.caption)
                     .multilineTextAlignment(.leading)
                     .foregroundColor(Color.gray)
             }
-            ForEach(viewModel.keychainValues, id: \.key) { key, value in
+            ForEach(viewModel.userDefaultValues, id: \.key) { key, value in
                 VStack(alignment: .leading) {
                     HStack {
                         Spacer()
@@ -39,9 +39,6 @@ struct KeychainSettingsView: View {
                     Text("\(key) - \(value)")
                 }
             }
-        }
-        .alert(isPresented: $viewModel.isError) {
-            Alert(title: Text("Error"), message: Text("Keychain data could not be cleared."), dismissButton: .default(Text("OK")))
         }
     }
 
