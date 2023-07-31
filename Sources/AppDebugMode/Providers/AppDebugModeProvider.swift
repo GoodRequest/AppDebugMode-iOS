@@ -32,7 +32,7 @@ public final class AppDebugModeProvider {
     public var selectedTestingUserPublisher = TestingUsersProvider.shared.selectedTestingUserPublisher
     
     
-    public func setup(serversCollections: [ApiServerCollection], onServerChange: (() -> Void)? = nil, cacheManager: Any?) {
+    public func setup(serversCollections: [ApiServerCollection], onServerChange: (() -> Void)? = nil, cacheManager: Any? = nil) {
         self.serversCollections = serversCollections
         self.onServerChange = onServerChange
         
