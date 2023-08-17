@@ -1,0 +1,212 @@
+//
+//  CacheProvider.swift
+//  
+//
+//  Created by Matus Klasovity on 31/07/2023.
+//
+
+import Foundation
+import GoodPersistence
+
+final class CacheProvider {
+    
+    // MARK: - Properties - Private
+    
+    private var cacheManager: Any?
+    
+    // MARK: - Properties - Public
+
+    @Published var userDefaultValues: [String : String] = [:]
+    @Published var keychainValues: [String : String] = [:]
+            
+    // MARK: - Structs
+    
+    struct Wrapper<T: Codable>: Codable {
+        
+        let value: T
+
+    }
+    
+    // MARK: - Shared
+    
+    static let shared = CacheProvider()
+    
+    // MARK: - Init
+    
+    private init() {}
+    
+}
+
+// MARK: - Public
+
+extension CacheProvider {
+    
+    func setup(cacheManager: Any) {
+        self.cacheManager = cacheManager
+        let mirror = Mirror(reflecting: cacheManager)
+        
+        mirror.children.forEach { child in
+            let childMirror = Mirror(reflecting: child.value)
+            
+            if String(describing: child.value).contains("UserDefaultValue") {
+                getUserDefaultValue(childMirror: childMirror)
+            } else if String(describing: child.value).contains("KeychainValue") {
+                getKeychainValue(childMirror: childMirror)
+            }
+        }
+        
+        printContent(mirror: mirror)
+    }
+    
+    func reload() {
+        if let cacheManager {
+            userDefaultValues = [:]
+            keychainValues = [:]
+            setup(cacheManager: cacheManager)
+        }
+    }
+
+}
+
+// MARK: - Private - User Defaults
+
+private extension CacheProvider {
+    
+    func getUserDefaultValue(childMirror: Mirror) {
+        guard let key = childMirror.children.first(where: { $0.label == "key" })?.value as? String,
+              let defaultValueChild = childMirror.children.first(where: { $0.label == "defaultValue" })
+        else { return }
+    
+        let type = type(of: defaultValueChild.value)
+        
+        if let decodable = type as? Codable.Type {
+            userDefaultValues[key] = receiveUserDefaultValueFromPropertyList(
+                key: key,
+                valueType: decodable.self,
+                defaultValue: defaultValueChild.value
+            )
+        }
+    }
+    
+    func receiveUserDefaultValueFromPropertyList<T: Codable>(key: String, valueType: T.Type, defaultValue: Any) -> String {
+        if let data = UserDefaults.standard.value(forKey: key) as? T {
+            return String(describing: data)
+        }
+        
+        let defaultValueCodable = defaultValue as! Codable
+        // If the data isn't of the correct type, try to decode it from the Data stored in UserDefaults.
+        guard let data = UserDefaults.standard.object(forKey: key) as? Data else { return formatValue(value: defaultValueCodable) }
+        let value = (try? PropertyListDecoder().decode(Wrapper<T>.self, from: data)) // ?.value ?? defaultValue as? T
+        
+        return formatValue(value: value)
+    }
+
+}
+
+// MARK: - Public - User Defaults
+
+extension CacheProvider {
+
+    func clearUserDefaultValues() {
+        let domain = Bundle.main.bundleIdentifier!
+        UserDefaults.standard.removePersistentDomain(forName: domain)
+        UserDefaults.standard.synchronize()
+    }
+
+}
+
+// MARK: - Private - Keychain Value
+
+private extension CacheProvider {
+    
+    func getKeychainValue(childMirror: Mirror) {
+        guard let key = childMirror.children.first(where: { $0.label == "key" })?.value as? String,
+              let defaultValueChild = childMirror.children.first(where: { $0.label == "defaultValue" })
+        else { return }
+    
+        let type = type(of: defaultValueChild.value)
+        
+        if let decodable = type as? Codable.Type {
+            keychainValues[key] = receiveKeychainValueFromPropertyList(
+                key: key,
+                valueType: decodable.self,
+                defaultValue: defaultValueChild.value,
+                accessibility: childMirror.children.first(where: { $0.label == "accessibility" })?.value as? KeychainItemAccessibility
+            )
+        }
+    }
+    
+    func receiveKeychainValueFromPropertyList<T: Codable>(
+        key: String,
+        valueType: T.Type,
+        defaultValue: Any,
+        accessibility: KeychainItemAccessibility?
+    ) -> String {
+        guard let data = KeychainWrapper.standard.data(
+            forKey: key,
+            withAccessibility: accessibility
+        ) else {
+            let defaultValueCodable = defaultValue as! Codable
+            // Return default value if data cannot be retrieved from Keychain
+            return formatValue(value: defaultValueCodable)
+        }
+
+        // Decode the data and get the value, or return default value if decoding fails
+        let value = (try? PropertyListDecoder().decode(Wrapper<T>.self, from: data))?.value
+        
+        return formatValue(value: value)
+    }
+
+}
+
+// MARK: - Public - Keychain Value
+
+extension CacheProvider {
+    
+    /// Clear all values from Keychain
+    /// - Returns: True if all values were cleared successfully, false otherwise
+    func clearKeychain() -> Bool {
+        var statuses: [OSStatus] = []
+        [kSecClassGenericPassword, kSecClassInternetPassword, kSecClassCertificate, kSecClassKey, kSecClassIdentity].forEach {
+            let status = SecItemDelete([
+                kSecClass: $0,
+                kSecAttrSynchronizable: kSecAttrSynchronizableAny
+            ] as CFDictionary)
+            statuses.append(status)
+        }
+        
+        return !statuses.allSatisfy { $0 != errSecSuccess && $0 != errSecItemNotFound }
+    }
+
+}
+
+// MARK: - Private
+
+extension CacheProvider {
+
+    func formatValue<T: Codable>(value: T) -> String {
+        do {
+            let jsonEncoder = JSONEncoder()
+            
+            let encodedValue = try jsonEncoder.encode(value)
+            let json = try JSONSerialization.jsonObject(with: encodedValue, options: [])
+            let jsonData = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
+            
+            return String(decoding: jsonData, as: UTF8.self)
+        } catch {
+            return String(describing: value)
+        }
+    }
+
+    func printContent(mirror: Mirror, level: Int = 0) {
+        mirror.children.forEach { child in
+            guard child.label != nil else { return }
+         
+            print("\(String(repeating: "   ", count: level)) \(child.label!) - \(child.value) || \(type(of: child.value))")
+            
+            let childMirror = Mirror(reflecting: child.value)
+            printContent(mirror: childMirror, level: level + 1)
+        }
+    }
+
+}
