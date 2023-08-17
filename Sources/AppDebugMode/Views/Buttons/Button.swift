@@ -9,10 +9,36 @@ import SwiftUI
 
 struct PrimaryButton: View {
     
+    enum ButtonStyle {
+        
+        case primary
+        case danger
+        
+        var tint: Color {
+            switch self {
+            case .primary:
+                return .blue
+                
+            case .danger:
+                return .red
+            }
+        }
+        
+    }
+    
     // MARK: - Properties
     
     let text: String
     let action: () -> Void
+    let style: ButtonStyle
+    
+    // MARK: - Init
+    
+    init(text: String, style: ButtonStyle = .primary, action: @escaping () -> Void) {
+        self.text = text
+        self.action = action
+        self.style = style
+    }
     
     // MARK: - Body
     
@@ -26,8 +52,10 @@ struct PrimaryButton: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
+            .tint(style.tint)
         } else {
             Button(text, action: action)
+                .background(style.tint)
         }
     }
     

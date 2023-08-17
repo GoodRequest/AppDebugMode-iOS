@@ -93,6 +93,25 @@ import AppDebugModel
 #endif
 ```
 
+## Cache setup
+> **Warning:** To ensure the proper functioning of the cache manager, you need to utilize the [GoodPersistence](https://github.com/GoodRequest/GoodPersistence) properties in your cache manager.
+
+```swift
+/// AppDelegate.swift
+#if DEBUG
+    AppDebugModeProvider.shared.setup(
+        serversCollections: ServersCollections.allCases,
+        onServerChange: { 
+            // logout user
+        },
+        cacheManager: // optional - provide your own cache manager
+    )
+#endif
+```
+
+<img src="cache-manager.png" alt="Cache manager example" height="600" />
+
+
 ## Activation in App
 In app you can activate debug mode by shaking device or in simulator by `CMD + CTRL + Z`
 
