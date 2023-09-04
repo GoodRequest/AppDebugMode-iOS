@@ -8,7 +8,7 @@ Swift Package ***AppDebugMode*** is a library that allows an iOS application to 
 ```swift
 /// Package.swift
 dependencies: [
-    .package(url: "git@github.com:GoodRequest/AppDebugMode-iOS.git", .upToNextMajor(from: "1.0.0"))
+    .package(url: "git@github.com:GoodRequest/AppDebugMode-iOS.git", .upToNextMajor(from: "1.2.0"))
 ]
 ```
 
@@ -110,6 +110,26 @@ import AppDebugModel
 ```
 
 <img src="cache-manager.png" alt="Cache manager example" height="600" />
+
+## Push notifications
+If you want to use push notifications in debug mode, you need to pass `Messaging.Messaging()` object into `AppDebugModeProvider.shared.setup()` method.
+
+```swift
+// didFinishLaunchingWithOptions
+
+// essential configuration
+FirebaseConfiguration.shared.setLoggerLevel(.min)
+FirebaseApp.configure()
+
+#if DEBUG
+AppDebugModeProvider.shared.setup(
+    serversCollections: C.ServersCollections.allCases,
+    onServerChange: { },
+    cacheManager: dependencyContainer.cacheManager,
+    firebaseMessaging: Messaging.messaging() // Firebase messaging object
+)
+#endif
+```
 
 
 ## Activation in App
