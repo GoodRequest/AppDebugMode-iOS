@@ -13,10 +13,13 @@ extension UIViewController {
 
     open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
-            let appDebugView = UIHostingController(
-                rootView: AppDebugView(serversCollections: AppDebugModeProvider.shared.serversCollections)
-            )
-            present(appDebugView, animated: true)
+            let viewController = AppDebugModeProvider.shared.start()
+
+            if presentedViewController == nil, view.window?.rootViewController?.presentedViewController == nil {
+                present(viewController, animated: true)
+            } else {
+                dismiss(animated: true)
+            }
         }
     }
 
