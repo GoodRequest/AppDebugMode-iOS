@@ -14,6 +14,7 @@ struct AppDebugView: View {
     // MARK: - State
 
     @State private var showServerSettings = false
+    @State private var showPushNotificationsSettings = false
     @State private var showUserProfiles = false
     @State private var showUserDefaultsSettings = false
     @State private var showKeychainSettings = false
@@ -29,6 +30,7 @@ struct AppDebugView: View {
         List {
             serverPickerSection()
             userProfilesSection()
+            pushNotificationsSettings()
             cacheSettingsSection()
             keychainSettingsSection()
             appDirectorySettingsSection()
@@ -65,7 +67,22 @@ private extension AppDebugView {
         }
     }
 
-    func cacheSettingsSection() -> some View {
+    @ViewBuilder
+    func pushNotificationsSettings() -> some View {
+        if let pushNotificationsProvider = AppDebugModeProvider.shared.pushNotificationsProvider {
+            Section {
+                if showPushNotificationsSettings {
+                    PushNotificationsSettingsView(pushNotificationsProvider: pushNotificationsProvider)
+                }
+            } header: {
+                ExpandableHeaderView(title: "Push notifications", isExpanded: $showPushNotificationsSettings)
+            }
+        } else {
+            EmptyView()
+        }
+    }
+
+	func cacheSettingsSection() -> some View {
         Section {
             if showUserDefaultsSettings {
                 UserDefaultsSettingsView()
@@ -94,6 +111,7 @@ private extension AppDebugView {
             ExpandableHeaderView(title: "App Directory Settings", isExpanded: $showAppDirectorySettings)
         }
     }
+
 
     struct ExpandableHeaderView: View {
         let title: String
