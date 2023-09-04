@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 public final class AppDebugModeProvider {
     
@@ -53,6 +54,13 @@ public final class AppDebugModeProvider {
     
     public func getSelectedServer(for serverCollection: ApiServerCollection) -> ApiServer {
         serversCollections.first { $0 == serverCollection }!.selectedServer
+    }
+
+    public func start() -> UIViewController {
+        let view = AppDebugView(serversCollections: AppDebugModeProvider.shared.serversCollections)
+        let hostingViewController = UIHostingController(rootView: view)
+
+        return hostingViewController
     }
     
 }
