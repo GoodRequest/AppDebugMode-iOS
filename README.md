@@ -20,7 +20,7 @@ dependencies: [
 ```swift
 /// AppDelegate.swift
 #if DEBUG
-import AppDebugModel
+import AppDebugMode
 #endif
 
 #if DEBUG
@@ -49,7 +49,7 @@ import AppDebugModel
     }
 #endif
 
-// didFinishLaunchingWithOptions:
+// `didFinishLaunchingWithOptions` (before starting coordinator):
 #if DEBUG
     AppDebugModeProvider.shared.setup(
         serversCollections: ServersCollections.allCases,
@@ -64,7 +64,7 @@ import AppDebugModel
 
 ```swift
 #if DEBUG
-import AppDebugModel
+import AppDebugMode
 #endif
 
 var baseURL: String {
@@ -80,7 +80,7 @@ var baseURL: String {
 
 ```swift
 #if DEBUG
-import AppDebugModel
+import AppDebugMode
 #endif
 
 #if DEBUG
@@ -133,6 +133,7 @@ AppDebugModeProvider.shared.setup(
 
 
 ## Activation in App
-In app you can activate debug mode by shaking device or in simulator by `CMD + CTRL + Z`
+- In app you can activate debug mode by shaking device or in simulator by `CMD + CTRL + Z`
+- To open debug mode with other actions in the app initialize ViewController with `let debugViewController = AppDebugModeProvider.shared.start()`
 
 <img src="simulator-screenshot-1.png" alt="App Activation Example" height="600">
