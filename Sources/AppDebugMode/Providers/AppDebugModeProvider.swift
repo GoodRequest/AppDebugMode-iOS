@@ -24,15 +24,22 @@ public final class AppDebugModeProvider {
     var servers: [ApiServer] = []
     var serversCollections: [ApiServerCollection] = []
     var onServerChange: (() -> Void)?
-    var pushNotificationsProvider: PushNotificationsProvider? /// (any AppDebugFirebaseMessaging)?
+    var pushNotificationsProvider: PushNotificationsProvider?
     
     // MARK: - Methods
     
-    public var selectedTestingUser: TestingUser? {
-        TestingUsersProvider.shared.selectedTestingUser
+    @available(*, deprecated, renamed: "selectedUserProfile")
+    public var selectedTestingUser: UserProfile? {
+        UserProfilesProvider.shared.selectedUserProfile
     }
     
-    public var selectedTestingUserPublisher = TestingUsersProvider.shared.selectedTestingUserPublisher
+    public var selectedUserProfile: UserProfile? {
+        UserProfilesProvider.shared.selectedUserProfile
+    }
+    
+    @available(*, deprecated, renamed: "selectedUserProfilePublisher")
+    public var selectedTestingUserPublisher = UserProfilesProvider.shared.selectedUserProfilePublisher
+    public var selectedUserProfilePublisher = UserProfilesProvider.shared.selectedUserProfilePublisher
     
     public func setup(
         serversCollections: [ApiServerCollection],
@@ -59,6 +66,14 @@ public final class AppDebugModeProvider {
     public func start() -> UIViewController {
         let view = AppDebugView(serversCollections: AppDebugModeProvider.shared.serversCollections)
         let hostingViewController = UIHostingController(rootView: view)
+        // hostingViewController.isModalInPresentation = true
+//        let appearance = UINavigationBarAppearance()
+//        appearance.backgroundColor = .red
+//
+//        hostingViewController.navigationController?.navigationBar.standardAppearance = appearance
+//        hostingViewController.navigationController?.navigationBar.scrollEdgeAppearance = appearance
+//        hostingViewController.navigationController?.navigationBar.compactAppearance = appearance
+//        hostingViewController.navigationController?.navigationBar.compactScrollEdgeAppearance = appearance
 
         return hostingViewController
     }
@@ -74,6 +89,7 @@ private extension AppDebugModeProvider {
         class_addProtocol(type, AppDebugFirebaseMessaging.self)
         
         if let appDebugFirebaseMesaging = firebaseMessaging as? AppDebugFirebaseMessaging {
+            print("🐛", appDebugFirebaseMesaging.fmcToken)
             pushNotificationsProvider = PushNotificationsProvider(
                 token: appDebugFirebaseMesaging.fmcToken,
                 deleteToken: appDebugFirebaseMesaging.deleteToken,
