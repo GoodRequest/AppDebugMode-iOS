@@ -5,7 +5,6 @@
 //  Created by Matus Klasovity on 27/06/2023.
 //
 
-import Foundation
 import Combine
 import SwiftUI
 
@@ -66,14 +65,6 @@ public final class AppDebugModeProvider {
     public func start() -> UIViewController {
         let view = AppDebugView(serversCollections: AppDebugModeProvider.shared.serversCollections)
         let hostingViewController = UIHostingController(rootView: view)
-        // hostingViewController.isModalInPresentation = true
-//        let appearance = UINavigationBarAppearance()
-//        appearance.backgroundColor = .red
-//
-//        hostingViewController.navigationController?.navigationBar.standardAppearance = appearance
-//        hostingViewController.navigationController?.navigationBar.scrollEdgeAppearance = appearance
-//        hostingViewController.navigationController?.navigationBar.compactAppearance = appearance
-//        hostingViewController.navigationController?.navigationBar.compactScrollEdgeAppearance = appearance
 
         return hostingViewController
     }
@@ -89,7 +80,6 @@ private extension AppDebugModeProvider {
         class_addProtocol(type, AppDebugFirebaseMessaging.self)
         
         if let appDebugFirebaseMesaging = firebaseMessaging as? AppDebugFirebaseMessaging {
-            print("🐛", appDebugFirebaseMesaging.fmcToken)
             pushNotificationsProvider = PushNotificationsProvider(
                 token: appDebugFirebaseMesaging.fmcToken,
                 deleteToken: appDebugFirebaseMesaging.deleteToken,
