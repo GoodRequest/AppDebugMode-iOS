@@ -45,6 +45,15 @@
           "revision": "bf82128545d0a78603c764c6c164303e3f61f7fc",
           "version": "1.1.0"
         }
+      },
+      {
+        "package": "swiftui-introspect",
+        "repositoryURL": "https://github.com/siteline/swiftui-introspect",
+        "state": {
+          "branch": null,
+          "revision": "9e1cc02a65b22e09a8251261cccbccce02731fc5",
+          "version": "1.1.1"
+        }
       }
     ]
   },
