@@ -77,6 +77,8 @@ private extension LoginViewController {
     
     func setupLayout() {
         view.backgroundColor = .white
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = Constants.Texts.Home.login
         
         addSubviews()
         setupConstraints()

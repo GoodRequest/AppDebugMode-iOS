@@ -28,8 +28,9 @@ struct Constants {
             
             static let title = "App Debug Mode"
             static let description = "...allows an iOS application to select an API Server and User for the app during runtime"
-            static let login = "Login Mode"
-            static let fetch = "Fetch Mode"
+            static let login = "User Login Mode"
+            static let fetch = "API Server Mode"
+            static let userDefaults = "User Profile Mode"
             
         }
         
@@ -49,9 +50,31 @@ struct Constants {
             
         }
         
+        struct Profile {
+            
+            static let nameTitle = "Full name"
+            static let namePlaceholder = "Enter your full name"
+            static let genderOptions = ["Male", "Female"]
+            
+        }
+        
     }
     
     // MARK: - Servers
+    
+    enum ProdServer {
+        
+        static let name = "CARS"
+        static let url  = "https://myfakeapi.com/api/"
+        
+    }
+    
+    enum DevServer {
+        
+        static let name = "PRODUCTS"
+        static let url = "https://fakestoreapi.com/"
+        
+    }
     
     #if DEBUG
     enum ServersCollections {
@@ -73,8 +96,8 @@ struct Constants {
     
     enum Servers {
 
-        static let prod = ApiServer(name: "CARS", url: "https://myfakeapi.com/api/")
-        static let dev = ApiServer(name: "PRODUCTS", url: "https://fakestoreapi.com/")
+        static let prod = ApiServer(name: ProdServer.name, url: ProdServer.url)
+        static let dev = ApiServer(name: DevServer.name, url: DevServer.url)
         
     }
     #endif

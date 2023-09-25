@@ -43,7 +43,9 @@ final class InputTextFieldView: UIView {
         return label
     }()
     
-    private let textField: UITextField = {
+    // MARK: - Public
+    
+    let textField: UITextField = {
         let textField = UITextField()
         textField.textAlignment = .left
         textField.layer.cornerRadius = 8

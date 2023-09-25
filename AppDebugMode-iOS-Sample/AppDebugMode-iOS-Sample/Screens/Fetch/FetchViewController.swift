@@ -7,9 +7,6 @@
 
 import UIKit
 import Combine
-#if DEBUG
-import AppDebugMode
-#endif
 
 final class FetchViewController: BaseViewController<FetchViewModel> {
     
@@ -93,6 +90,8 @@ private extension FetchViewController {
     
     func setupLayout() {
         view.backgroundColor = .white
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = Constants.Texts.Home.fetch
         
         addSubviews()
         setupConstraints()

@@ -11,6 +11,7 @@ enum HomeStep {
     
     case goToFetch
     case goToLogin
+    case goToSettings
     
 }
 
@@ -62,6 +63,17 @@ final class HomeCoordinator: Coordinator<AppStep> {
             }
             
             navigationController?.pushViewController(loginViewController, animated: true)
+            
+        case .goToSettings:
+            guard let settingsViewController = ProfileCoordinator(
+                di: di,
+                rootViewController: rootNavigationController
+            ).start()
+            else  {
+                return
+            }
+            
+            navigationController?.pushViewController(settingsViewController, animated: true)
         }
     }
 

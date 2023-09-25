@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -20,6 +20,12 @@
 		785AC5352AB2EFB0002C1BC1 /* FetchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785AC5342AB2EFB0002C1BC1 /* FetchViewModel.swift */; };
 		785AC5372AB2F03F002C1BC1 /* FetchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785AC5362AB2F03F002C1BC1 /* FetchViewController.swift */; };
 		785AC53B2AB2F07E002C1BC1 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785AC53A2AB2F07E002C1BC1 /* BaseViewController.swift */; };
+		7874BEF92AC1AFA6007F0234 /* AppDebugMode in Frameworks */ = {isa = PBXBuildFile; productRef = 7874BEF82AC1AFA6007F0234 /* AppDebugMode */; };
+		7874BEFC2AC1B39E007F0234 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7874BEFB2AC1B39E007F0234 /* CacheManager.swift */; };
+		7874BEFE2AC1B3B5007F0234 /* CacheManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7874BEFD2AC1B3B5007F0234 /* CacheManagerType.swift */; };
+		7874BF012AC1B869007F0234 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7874BF002AC1B869007F0234 /* ProfileViewModel.swift */; };
+		7874BF032AC1B902007F0234 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7874BF022AC1B902007F0234 /* ProfileViewController.swift */; };
+		7874BF052AC1BB8E007F0234 /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7874BF042AC1BB8E007F0234 /* ProfileCoordinator.swift */; };
 		78A589F12AB88ADA004141F6 /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A589F02AB88ADA004141F6 /* Endpoint.swift */; };
 		78A589F42AB88BFC004141F6 /* CarResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A589F32AB88BFC004141F6 /* CarResponse.swift */; };
 		78A589F62AB88D38004141F6 /* ProductResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A589F52AB88D38004141F6 /* ProductResponse.swift */; };
@@ -52,6 +58,11 @@
 		785AC5342AB2EFB0002C1BC1 /* FetchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchViewModel.swift; sourceTree = "<group>"; };
 		785AC5362AB2F03F002C1BC1 /* FetchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchViewController.swift; sourceTree = "<group>"; };
 		785AC53A2AB2F07E002C1BC1 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		7874BEFB2AC1B39E007F0234 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
+		7874BEFD2AC1B3B5007F0234 /* CacheManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManagerType.swift; sourceTree = "<group>"; };
+		7874BF002AC1B869007F0234 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		7874BF022AC1B902007F0234 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		7874BF042AC1BB8E007F0234 /* ProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinator.swift; sourceTree = "<group>"; };
 		78A589F02AB88ADA004141F6 /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
 		78A589F32AB88BFC004141F6 /* CarResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarResponse.swift; sourceTree = "<group>"; };
 		78A589F52AB88D38004141F6 /* ProductResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductResponse.swift; sourceTree = "<group>"; };
@@ -74,6 +85,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				78CDA6FB2AB9E6CB00CC1A82 /* GoodDependencies in Frameworks */,
+				7874BEF92AC1AFA6007F0234 /* AppDebugMode in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,6 +142,7 @@
 				78CDA7012ABAD47300CC1A82 /* HomeCoordinator.swift */,
 				78CDA70A2ABAF68500CC1A82 /* LoginCoordinator.swift */,
 				785AC5312AB2EF81002C1BC1 /* FetchCoordinator.swift */,
+				7874BF042AC1BB8E007F0234 /* ProfileCoordinator.swift */,
 			);
 			path = Coordinators;
 			sourceTree = "<group>";
@@ -167,6 +180,7 @@
 				78CDA6FC2ABAD25C00CC1A82 /* Home */,
 				785AC5382AB2F062002C1BC1 /* Fetch */,
 				78CDA7052ABAF39100CC1A82 /*  Login */,
+				7874BEFF2AC1B853007F0234 /* Profile */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -202,9 +216,28 @@
 			isa = PBXGroup;
 			children = (
 				785AC5262AB2EE48002C1BC1 /* DependencyContainer */,
+				7874BEFA2AC1B37A007F0234 /* CacheManager */,
 				785AC5292AB2EE93002C1BC1 /* RequestManager */,
 			);
 			path = Managers;
+			sourceTree = "<group>";
+		};
+		7874BEFA2AC1B37A007F0234 /* CacheManager */ = {
+			isa = PBXGroup;
+			children = (
+				7874BEFB2AC1B39E007F0234 /* CacheManager.swift */,
+				7874BEFD2AC1B3B5007F0234 /* CacheManagerType.swift */,
+			);
+			path = CacheManager;
+			sourceTree = "<group>";
+		};
+		7874BEFF2AC1B853007F0234 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				7874BF002AC1B869007F0234 /* ProfileViewModel.swift */,
+				7874BF022AC1B902007F0234 /* ProfileViewController.swift */,
+			);
+			path = Profile;
 			sourceTree = "<group>";
 		};
 		78A589F22AB88BE3004141F6 /* Models */ = {
@@ -293,6 +326,7 @@
 			name = "AppDebugMode-iOS-Sample";
 			packageProductDependencies = (
 				78CDA6FA2AB9E6CB00CC1A82 /* GoodDependencies */,
+				7874BEF82AC1AFA6007F0234 /* AppDebugMode */,
 			);
 			productName = "AppDebugMode-iOS-Sample";
 			productReference = 785AC5082AB2EBEE002C1BC1 /* AppDebugMode-iOS-Sample.app */;
@@ -323,6 +357,7 @@
 			);
 			mainGroup = 785AC4FF2AB2EBEE002C1BC1;
 			packageReferences = (
+				7874BEF72AC1AFA6007F0234 /* XCLocalSwiftPackageReference ".." */,
 			);
 			productRefGroup = 785AC5092AB2EBEE002C1BC1 /* Products */;
 			projectDirPath = "";
@@ -356,13 +391,16 @@
 				78A589F42AB88BFC004141F6 /* CarResponse.swift in Sources */,
 				78E10E3D2AB9D9BA00934298 /* FetchButton.swift in Sources */,
 				78CDA7002ABAD2DF00CC1A82 /* HomeViewController.swift in Sources */,
+				7874BEFE2AC1B3B5007F0234 /* CacheManagerType.swift in Sources */,
 				78CDA7042ABAD72300CC1A82 /* BasicButton.swift in Sources */,
 				785AC5352AB2EFB0002C1BC1 /* FetchViewModel.swift in Sources */,
 				785AC53B2AB2F07E002C1BC1 /* BaseViewController.swift in Sources */,
 				785AC5232AB2EDDE002C1BC1 /* Coordinator.swift in Sources */,
 				78CDA7092ABAF41500CC1A82 /* LoginViewController.swift in Sources */,
+				7874BEFC2AC1B39E007F0234 /* CacheManager.swift in Sources */,
 				785AC5282AB2EE66002C1BC1 /* DependencyContainer.swift in Sources */,
 				78A589F62AB88D38004141F6 /* ProductResponse.swift in Sources */,
+				7874BF052AC1BB8E007F0234 /* ProfileCoordinator.swift in Sources */,
 				785AC52D2AB2EED8002C1BC1 /* RequestManager.swift in Sources */,
 				785AC5372AB2F03F002C1BC1 /* FetchViewController.swift in Sources */,
 				785AC52B2AB2EEA6002C1BC1 /* RequestManagerType.swift in Sources */,
@@ -371,9 +409,11 @@
 				78A589F92AB89421004141F6 /* UIControlExtensions.swift in Sources */,
 				78A589F12AB88ADA004141F6 /* Endpoint.swift in Sources */,
 				785AC50C2AB2EBEE002C1BC1 /* AppDelegate.swift in Sources */,
+				7874BF032AC1B902007F0234 /* ProfileViewController.swift in Sources */,
 				78CDA7022ABAD47300CC1A82 /* HomeCoordinator.swift in Sources */,
 				78CDA7072ABAF3AD00CC1A82 /* LoginViewModel.swift in Sources */,
 				784AB0D92ABB15E9001801FC /* InputTextFieldView.swift in Sources */,
+				7874BF012AC1B869007F0234 /* ProfileViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -545,6 +585,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FFZN8CA2AB;
+				EXCLUDED_SOURCE_FILE_NAMES = "AppDebugMode*";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "AppDebugMode-iOS-Sample/Application/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -590,7 +631,18 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		7874BEF72AC1AFA6007F0234 /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		7874BEF82AC1AFA6007F0234 /* AppDebugMode */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppDebugMode;
+		};
 		78CDA6FA2AB9E6CB00CC1A82 /* GoodDependencies */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = GoodDependencies;

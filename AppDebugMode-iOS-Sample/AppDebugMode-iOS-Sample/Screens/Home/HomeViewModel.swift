@@ -33,4 +33,8 @@ extension HomeViewModel {
         coordinator.navigate(to: .home(.goToLogin))
     }
     
+    func goToSettings() {
+        coordinator.navigate(to: .home(.goToSettings))
+    }
+    
 }

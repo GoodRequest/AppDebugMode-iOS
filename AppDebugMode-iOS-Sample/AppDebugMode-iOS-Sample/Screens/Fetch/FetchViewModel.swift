@@ -48,7 +48,7 @@ final class FetchViewModel {
         #if DEBUG
         return AppDebugModeProvider.shared.getSelectedServer(for: Constants.ServersCollections.sampleBackend).name
         #else
-        return Constants.Servers.prod.name
+        return Constants.ProdServer.name
         #endif
     }
     
@@ -56,7 +56,7 @@ final class FetchViewModel {
         #if DEBUG
         return AppDebugModeProvider.shared.getSelectedServer(for: Constants.ServersCollections.sampleBackend).url
         #else
-        return Constants.Servers.prod.url
+        return Constants.ProdServer.url
         #endif
     }
     
@@ -80,7 +80,11 @@ final class FetchViewModel {
 extension FetchViewModel {
     
     func fetchResponse() {
+        #if DEBUG
         selectedServerName == Constants.Servers.dev.name ? fetchProduct() : fetchCar()
+        #else
+        selectedServerName == Constants.DevServer.name ? fetchProduct() : fetchCar()
+        #endif
     }
     
     func fetchCar() {

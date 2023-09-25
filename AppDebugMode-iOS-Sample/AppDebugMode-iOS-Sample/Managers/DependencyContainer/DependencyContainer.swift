@@ -13,8 +13,15 @@ protocol WithRequestManager: AnyObject {
 
 }
 
-final class DependencyContainer: WithRequestManager {
+protocol WithCacheManager: AnyObject {
+    
+    var cacheManager: CacheManagerType { get }
+    
+}
+
+final class DependencyContainer: WithRequestManager, WithCacheManager {
 
     lazy var requestManager: RequestManagerType = RequestManager(baseServer: .base)
+    lazy var cacheManager: CacheManagerType = CacheManager()
 
 }
