@@ -14,7 +14,6 @@ final class HomeViewController: BaseViewController<HomeViewModel> {
     private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.alignment = .center
         stackView.axis = .vertical
         stackView.spacing = 8
         
@@ -41,6 +40,13 @@ final class HomeViewController: BaseViewController<HomeViewModel> {
     private let loginModeButton: BasicButton = {
         let button = BasicButton()
         button.setTitle(Constants.Texts.Home.login, for: .normal)
+        
+        return button
+    }()
+    
+    private let userDefaultsModeButton: BasicButton = {
+        let button = BasicButton()
+        button.setTitle(Constants.Texts.Home.userDefaults, for: .normal)
         
         return button
     }()
@@ -73,6 +79,10 @@ extension HomeViewController {
         loginModeButton.publisher(for: .touchUpInside)
             .sink { viewModel.goToLogin() }
             .store(in: &cancellables)
+        
+        userDefaultsModeButton.publisher(for: .touchUpInside)
+            .sink { viewModel.goToSettings()}
+            .store(in: &cancellables)
     }
     
 }
@@ -92,7 +102,7 @@ private extension HomeViewController {
     
     func addSubviews() {
         [descriptionLabel, stackView].forEach { view.addSubview($0) }
-        [loginModeButton, fetchModeButton].forEach { stackView.addArrangedSubview($0) }
+        [loginModeButton, fetchModeButton, userDefaultsModeButton].forEach { stackView.addArrangedSubview($0) }
     }
     
     func setupConstraints() {

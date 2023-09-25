@@ -23,7 +23,7 @@ final class RequestManager: RequestManagerType {
             #if DEBUG
             return AppDebugModeProvider.shared.getSelectedServer(for: Constants.ServersCollections.sampleBackend).url
             #else
-            return Constants.Servers.prod
+            return Constants.ProdServer.url
             #endif
         }
         

@@ -20,15 +20,6 @@
         }
       },
       {
-        "package": "AppDebugMode",
-        "repositoryURL": "git@github.com:GoodRequest/AppDebugMode-iOS.git",
-        "state": {
-          "branch": null,
-          "revision": "b3fb28f6fe5a5347435dc5c25ca68914eaffe367",
-          "version": "1.2.0"
-        }
-      },
-      {
         "package": "CombineExt",
         "repositoryURL": "https://github.com/CombineCommunity/CombineExt.git",
         "state": {

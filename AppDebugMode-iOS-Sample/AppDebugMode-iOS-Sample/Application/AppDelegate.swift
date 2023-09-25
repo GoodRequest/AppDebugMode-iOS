@@ -14,6 +14,7 @@ import AppDebugMode
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    private var dependencyContainer = DependencyContainer()
 
     func application(
         _ application: UIApplication,
@@ -22,10 +23,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow()
         
         #if DEBUG
-        AppDebugModeProvider.shared.setup(serversCollections: Constants.ServersCollections.allClases)
+        AppDebugModeProvider.shared.setup(
+            serversCollections: Constants.ServersCollections.allClases,
+            onServerChange: { debugPrint("Server has been changed") },
+            cacheManager: dependencyContainer.cacheManager
+        )
         #endif
         
-        AppCoordinator(window: window, di: DependencyContainer()).start()
+        AppCoordinator(window: window, di: dependencyContainer).start()
         return true
     }
 

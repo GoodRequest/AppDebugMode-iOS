@@ -12,16 +12,14 @@ let package = Package(
         ),
     ],
    dependencies: [
-       .package(url: "https://github.com/GoodRequest/GoodNetworking.git", .upToNextMajor(from: "1.0.2")),
-       .package(url: "git@github.com:GoodRequest/AppDebugMode-iOS.git", .upToNextMajor(from: "1.1.0"))
+       .package(url: "https://github.com/GoodRequest/GoodNetworking.git", .upToNextMajor(from: "1.0.2"))
     ],
     targets: [
         .target(
             name: "GoodDependenciesTarget",
             dependencies: [
                 .product(name: "GoodNetworking", package: "GoodNetworking"),
-                .product(name: "Mockable", package: "GoodNetworking"),
-                .product(name: "AppDebugMode", package: "AppDebugMode-iOS")
+                .product(name: "Mockable", package: "GoodNetworking")
             ],
             path: ""
         )
