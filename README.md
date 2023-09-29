@@ -2,6 +2,9 @@
 
 Swift Package ***AppDebugMode*** is a library that allows an iOS application to select an API Server and User for the app during runtime. This can be helpful during development and testing phases of the application. With ***AppDebugMode***, developers and testers can easily switch between development, staging, and production environments without recompiling the application. Additionally, it allows developers and testers to select different users test different scenarios in the app.
 
+![App Debug Mode](https://github.com/GoodRequest/AppDebugMode-iOS/assets/78155066/3ea95aa3-87d3-4d81-ad9a-5bdf1981789f)
+
+
 ## Instalation
 
 ### 1. Add Swift Package
