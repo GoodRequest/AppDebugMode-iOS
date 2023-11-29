@@ -8,7 +8,7 @@
 import UIKit
 
 class BasicButton: UIButton {
-    
+
     // MARK: - Constants
     
     private enum C {
@@ -17,21 +17,6 @@ class BasicButton: UIButton {
         static let edgeInset = 8.0
         
     }
-    
-    // MARK: - Constants
-    
-    private let buttonConfiguration: UIButton.Configuration = {
-        var configuration = UIButton.Configuration.plain()
-        configuration.contentInsets = NSDirectionalEdgeInsets(
-            top: 0,
-            leading: C.edgeInset,
-            bottom: 0,
-            trailing: C.edgeInset
-        )
-        configuration.baseForegroundColor = .white
-        
-        return configuration
-    }()
     
     // MARK: - Initializer
     
@@ -63,7 +48,6 @@ private extension BasicButton {
         setTitleColor(.white, for: .normal)
         backgroundColor = .black
         layer.cornerRadius = 8
-        configuration = buttonConfiguration
     }
-    
+
 }
