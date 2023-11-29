@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D73FB592B17B2E200865E4C /* AppDebugMode in Frameworks */ = {isa = PBXBuildFile; productRef = 5D73FB582B17B2E200865E4C /* AppDebugMode */; };
+		5DEB2AC02B17B00C0074E12A /* AppDebugMode in Frameworks */ = {isa = PBXBuildFile; productRef = 5DEB2ABF2B17B00C0074E12A /* AppDebugMode */; };
 		784AB0D92ABB15E9001801FC /* InputTextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784AB0D82ABB15E9001801FC /* InputTextFieldView.swift */; };
 		785AC50C2AB2EBEE002C1BC1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785AC50B2AB2EBEE002C1BC1 /* AppDelegate.swift */; };
 		785AC5172AB2EBF0002C1BC1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 785AC5162AB2EBF0002C1BC1 /* Assets.xcassets */; };
@@ -43,6 +45,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D73FB5A2B17B30400865E4C /* AppDebugMode-iOS */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "AppDebugMode-iOS"; path = ..; sourceTree = "<group>"; };
 		784AB0D82ABB15E9001801FC /* InputTextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextFieldView.swift; sourceTree = "<group>"; };
 		785AC5082AB2EBEE002C1BC1 /* AppDebugMode-iOS-Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AppDebugMode-iOS-Sample.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		785AC50B2AB2EBEE002C1BC1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -84,6 +87,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DEB2AC02B17B00C0074E12A /* AppDebugMode in Frameworks */,
+				5D73FB592B17B2E200865E4C /* AppDebugMode in Frameworks */,
 				78CDA6FB2AB9E6CB00CC1A82 /* GoodDependencies in Frameworks */,
 				7874BEF92AC1AFA6007F0234 /* AppDebugMode in Frameworks */,
 			);
@@ -260,6 +265,7 @@
 		78C5E12E2AB9E655000666B4 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				5D73FB5A2B17B30400865E4C /* AppDebugMode-iOS */,
 				78C5E12F2AB9E655000666B4 /* GoodDependencies */,
 			);
 			name = Packages;
@@ -327,6 +333,8 @@
 			packageProductDependencies = (
 				78CDA6FA2AB9E6CB00CC1A82 /* GoodDependencies */,
 				7874BEF82AC1AFA6007F0234 /* AppDebugMode */,
+				5DEB2ABF2B17B00C0074E12A /* AppDebugMode */,
+				5D73FB582B17B2E200865E4C /* AppDebugMode */,
 			);
 			productName = "AppDebugMode-iOS-Sample";
 			productReference = 785AC5082AB2EBEE002C1BC1 /* AppDebugMode-iOS-Sample.app */;
@@ -357,7 +365,7 @@
 			);
 			mainGroup = 785AC4FF2AB2EBEE002C1BC1;
 			packageReferences = (
-				7874BEF72AC1AFA6007F0234 /* XCLocalSwiftPackageReference ".." */,
+				5DEB2ABE2B17B00C0074E12A /* XCLocalSwiftPackageReference ".." */,
 			);
 			productRefGroup = 785AC5092AB2EBEE002C1BC1 /* Products */;
 			projectDirPath = "";
@@ -482,7 +490,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_KEY_NSMainNibFile = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -537,7 +545,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_KEY_NSMainNibFile = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -563,7 +571,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -594,7 +602,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -632,13 +640,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		7874BEF72AC1AFA6007F0234 /* XCLocalSwiftPackageReference ".." */ = {
+		5DEB2ABE2B17B00C0074E12A /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ..;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		5D73FB582B17B2E200865E4C /* AppDebugMode */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppDebugMode;
+		};
+		5DEB2ABF2B17B00C0074E12A /* AppDebugMode */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppDebugMode;
+		};
 		7874BEF82AC1AFA6007F0234 /* AppDebugMode */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AppDebugMode;
