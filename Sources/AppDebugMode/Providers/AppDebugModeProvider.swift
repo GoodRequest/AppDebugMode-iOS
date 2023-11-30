@@ -5,7 +5,6 @@
 //  Created by Matus Klasovity on 27/06/2023.
 //
 
-import Foundation
 import Combine
 import SwiftUI
 
@@ -24,15 +23,22 @@ public final class AppDebugModeProvider {
     var servers: [ApiServer] = []
     var serversCollections: [ApiServerCollection] = []
     var onServerChange: (() -> Void)?
-    var pushNotificationsProvider: PushNotificationsProvider? /// (any AppDebugFirebaseMessaging)?
+    var pushNotificationsProvider: PushNotificationsProvider?
     
     // MARK: - Methods
     
-    public var selectedTestingUser: TestingUser? {
-        TestingUsersProvider.shared.selectedTestingUser
+    @available(*, deprecated, renamed: "selectedUserProfile")
+    public var selectedTestingUser: UserProfile? {
+        UserProfilesProvider.shared.selectedUserProfile
     }
     
-    public var selectedTestingUserPublisher = TestingUsersProvider.shared.selectedTestingUserPublisher
+    public var selectedUserProfile: UserProfile? {
+        UserProfilesProvider.shared.selectedUserProfile
+    }
+    
+    @available(*, deprecated, renamed: "selectedUserProfilePublisher")
+    public var selectedTestingUserPublisher = UserProfilesProvider.shared.selectedUserProfilePublisher
+    public var selectedUserProfilePublisher = UserProfilesProvider.shared.selectedUserProfilePublisher
     
     public func setup(
         serversCollections: [ApiServerCollection],

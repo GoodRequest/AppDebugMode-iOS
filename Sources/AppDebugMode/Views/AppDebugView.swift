@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  AppDebugView.swift
 //  
 //
 //  Created by Matus Klasovity on 26/06/2023.
@@ -7,38 +7,95 @@
 
 import SwiftUI
 
-// MARK: - App Debug View
-
 struct AppDebugView: View {
-
-    // MARK: - State
-
-    @State private var showServerSettings = false
-    @State private var showPushNotificationsSettings = false
-    @State private var showUserProfiles = false
-    @State private var showUserDefaultsSettings = false
-    @State private var showKeychainSettings = false
-    @State private var showAppDirectorySettings = false
+    
+    @Environment(\.presentationMode) var presentationMode
     
     // MARK: - Properties
     
-    let serversCollections: [ApiServerCollection]
+    private var screens: [Screen]
+    
+    struct Screen {
+        
+        let title: String
+        let image: Image
+        let destination: AnyView
+        
+    }
+    
+    // MARK: - Init
+    
+    init(serversCollections: [ApiServerCollection]) {
+        self.screens = [
+            Screen(
+                title: "Server settings",
+                image: Image(systemName: "server.rack"),
+                destination: AnyView(ServersCollectionsView(
+                    viewModel: ServersCollectionsViewModel(
+                        serversCollections: serversCollections
+                    )
+                ))
+            ),
+            Screen(
+                title: "User profiles",
+                image: Image(systemName: "person.2"),
+                destination: AnyView(UserProfilesPickerView())
+            )
+        ]
+        
+        if let pushNotificationsProvider = AppDebugModeProvider.shared.pushNotificationsProvider {
+            self.screens.append(Screen(
+                title: "Push notifications",
+                image: Image(systemName: "bell.badge"),
+                destination: AnyView(PushNotificationsSettingsView(pushNotificationsProvider: pushNotificationsProvider))
+            ))
+        }
+        
+        self.screens.append(contentsOf: [
+            Screen(
+                title: "User defaults",
+                image: Image(systemName: "externaldrive"),
+                destination: AnyView(UserDefaultsSettingsView())
+            ),
+            Screen(
+                title: "Keychain settings",
+                image: Image(systemName: "key"),
+                destination: AnyView(KeychainSettingsView())
+            ),
+            Screen(
+                title: "App directory",
+                image: Image(systemName: "folder"),
+                destination: AnyView(AppDirectorySettingsView())
+            )
+        ])
+    }
+    
 
     // MARK: - Body
 
     var body: some View {
-        List {
-            serverPickerSection()
-            userProfilesSection()
-            pushNotificationsSettings()
-            cacheSettingsSection()
-            keychainSettingsSection()
-            appDirectorySettingsSection()
-            ReloadCacheDataView()
-            ResetAppView()
+        NavigationView {
+            appDebugViewList()
+                .navigationTitle("App Debug Mode")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    closeNavigationBarItem()
+                }
         }
-        .listStyle(.insetGrouped)
-        .dismissKeyboardOnDrag()
+        .navigationViewStyle(.stack)
+        .accentColor(AppDebugColors.primary)
+        .onAppear {
+            let appearanceProxy = UINavigationBar.appearance(whenContainedInInstancesOf: [UIHostingController<AppDebugView>.self])
+            appearanceProxy.tintColor = UIColor(AppDebugColors.primary)
+            let standardAppearance = UINavigationBarAppearance()
+            standardAppearance.backgroundEffect = UIBlurEffect(style: .dark)
+            standardAppearance.titleTextAttributes = [
+                .foregroundColor: UIColor.white
+            ]
+            
+            appearanceProxy.scrollEdgeAppearance = standardAppearance
+            appearanceProxy.standardAppearance = standardAppearance
+        }
     }
 
 }
@@ -46,89 +103,72 @@ struct AppDebugView: View {
 // MARK: - Components
 
 private extension AppDebugView {
-
-    func serverPickerSection() -> some View {
-        Section {
-            if showServerSettings {
-                ServersCollectionsView(viewModel: ServersCollectionsViewModel(serversCollections: serversCollections))
-            }
-        } header: {
-            ExpandableHeaderView(title: "Server settings", isExpanded: $showServerSettings)
+    
+    // MARK: - List
+    
+    func appDebugViewList() -> some View {
+        List {
+            settingsSection()
+            dangerZoneSection()
         }
-    }
-
-    func userProfilesSection() -> some View {
-        Section {
-            if showUserProfiles {
-                TestingUserPickerView()
-            }
-        } header: {
-            ExpandableHeaderView(title: "Testing User profiles", isExpanded: $showUserProfiles)
-        }
-    }
-
-    @ViewBuilder
-    func pushNotificationsSettings() -> some View {
-        if let pushNotificationsProvider = AppDebugModeProvider.shared.pushNotificationsProvider {
-            Section {
-                if showPushNotificationsSettings {
-                    PushNotificationsSettingsView(pushNotificationsProvider: pushNotificationsProvider)
-                }
-            } header: {
-                ExpandableHeaderView(title: "Push notifications", isExpanded: $showPushNotificationsSettings)
-            }
-        } else {
-            EmptyView()
-        }
-    }
-
-	func cacheSettingsSection() -> some View {
-        Section {
-            if showUserDefaultsSettings {
-                UserDefaultsSettingsView()
-            }
-        } header: {
-            ExpandableHeaderView(title: "User defaults settings", isExpanded: $showUserDefaultsSettings)
-        }
+        .listStyle(.insetGrouped)
+        .listBackgroundColor(AppDebugColors.backgroundPrimary, for: .insetGrouped)
     }
     
-    func keychainSettingsSection() -> some View {
-        Section {
-            if showKeychainSettings {
-                KeychainSettingsView()
-            }
-        } header: {
-            ExpandableHeaderView(title: "Keychain settings", isExpanded: $showKeychainSettings)
-        }
-    }
-    
-    func appDirectorySettingsSection() -> some View {
-        Section {
-            if showAppDirectorySettings {
-                AppDirectorySettingsView()
-            }
-        } header: {
-            ExpandableHeaderView(title: "App Directory Settings", isExpanded: $showAppDirectorySettings)
-        }
-    }
-
-
-    struct ExpandableHeaderView: View {
-        let title: String
-        @Binding var isExpanded: Bool
-
-        var body: some View {
+    func navigationLink(screen: Screen) -> some View {
+        NavigationLink {
+            screen.destination
+        } label: {
             HStack {
-                Text(title)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                screen.image
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(AppDebugColors.primary)
+                    .frame(width: 16, height: 16)
+                Text(screen.title)
+            }
+        }
+    }
+    
+    // MARK: - Sections
+    
+    func settingsSection() -> some View {
+        Section {
+            ForEach(screens, id: \.title) { screen in
+                navigationLink(screen: screen)
+                    .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
+                    .listRowBackground(AppDebugColors.backgroundSecondary)
+                    .foregroundColor(AppDebugColors.textPrimary)
+            }
+        } header: {
+            Text("Settings")
+                .foregroundColor(AppDebugColors.textSecondary)
+        }
+    }
+    
+    func dangerZoneSection() -> some View {
+        Section {
+            ResetAppView()
+                .listRowBackground(AppDebugColors.backgroundSecondary)
+        } header: {
+            Text("Danger zone")
+                .foregroundColor(AppDebugColors.textSecondary)
+        }
+    }
+    
+    // MARK: - Navigation Bar Items
+    
+    @ToolbarContentBuilder
+    func closeNavigationBarItem() -> some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            if #available(iOS 15, *) {
                 Button {
-                    withAnimation {
-                        isExpanded.toggle()
-                    }
+                    presentationMode.wrappedValue.dismiss()
                 } label: {
-                    Image(systemName: "chevron.up")
-                        .rotationEffect(.degrees(isExpanded ? 0 : 180))
+                    Text("Close")
                 }
+            } else {
+                EmptyView()
             }
         }
     }
