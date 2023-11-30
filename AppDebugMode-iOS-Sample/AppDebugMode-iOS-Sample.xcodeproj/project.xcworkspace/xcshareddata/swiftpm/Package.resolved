@@ -1,0 +1,52 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Alamofire",
+        "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
+        "state": {
+          "branch": null,
+          "revision": "b2fa556e4e48cbf06cf8c63def138c98f4b811fa",
+          "version": "5.8.0"
+        }
+      },
+      {
+        "package": "AlamofireImage",
+        "repositoryURL": "https://github.com/Alamofire/AlamofireImage.git",
+        "state": {
+          "branch": null,
+          "revision": "1eaf3b6c6882bed10f6e7b119665599dd2329aa1",
+          "version": "4.3.0"
+        }
+      },
+      {
+        "package": "CombineExt",
+        "repositoryURL": "https://github.com/CombineCommunity/CombineExt.git",
+        "state": {
+          "branch": null,
+          "revision": "d7b896fa9ca8b47fa7bcde6b43ef9b70bf8c1f56",
+          "version": "1.8.1"
+        }
+      },
+      {
+        "package": "GoodNetworking",
+        "repositoryURL": "https://github.com/GoodRequest/GoodNetworking.git",
+        "state": {
+          "branch": null,
+          "revision": "5e991a0fb6e968249f33b1650739fd31ede51dda",
+          "version": "1.1.0"
+        }
+      },
+      {
+        "package": "GoodPersistence",
+        "repositoryURL": "https://github.com/GoodRequest/GoodPersistence.git",
+        "state": {
+          "branch": null,
+          "revision": "bf82128545d0a78603c764c6c164303e3f61f7fc",
+          "version": "1.1.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

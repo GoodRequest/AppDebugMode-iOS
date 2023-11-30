@@ -70,7 +70,7 @@ public final class AppDebugModeProvider {
 private extension AppDebugModeProvider {
     
     func setupFirebaseMessaging(firebaseMessaging: AnyObject) {
-        let type = type(of: firebaseMessaging)
+        let type: AnyObject.Type = type(of: firebaseMessaging)
         class_addProtocol(type, AppDebugFirebaseMessaging.self)
         
         if let appDebugFirebaseMesaging = firebaseMessaging as? AppDebugFirebaseMessaging {
