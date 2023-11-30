@@ -107,7 +107,7 @@ private extension CacheProvider {
 
 extension CacheProvider {
 
-    func clearUserDefaultValues() {
+    func clearUserDefaultsValues() {
         let domain = Bundle.main.bundleIdentifier!
         UserDefaults.standard.removePersistentDomain(forName: domain)
         UserDefaults.standard.synchronize()
@@ -201,22 +201,10 @@ private extension CacheProvider {
     func printCacheManagerMirror(_ mirror: Mirror) {
         let separators = Array(repeating: "-", count: 15).joined()
         print("\(separators) 🪞Cache Manager Mirror \(separators)\n")
-        printContent(mirror: mirror)
-        print("\(separators) end of Cache Manager Mirror \(separators)\n")
-    }
-
-    func printContent(mirror: Mirror, level: Int = 0) {
         mirror.children.forEach { child in
-            guard let label = child.label, !label.isEmpty else { return }
-            print("\(String(repeating: "   ", count: level)) \(child.label!): \(type(of: child.value)) = \(child.value)")
-
-            let childMirror = Mirror(reflecting: child.value)
-
-            /// To avoid creating a loop. Mirroring `lazy` always have `children`
-            if !String(describing: child.label ?? "").contains("lazy") {
-                printContent(mirror: childMirror, level: level + 1)
-            }
+            print("Key \(String(describing: child.label)) with value type: \(type(of: child.value))")
         }
+        print("\(separators) end of Cache Manager Mirror \(separators)\n")
     }
 
 }
