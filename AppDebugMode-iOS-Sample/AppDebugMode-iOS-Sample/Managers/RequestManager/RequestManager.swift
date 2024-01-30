@@ -28,22 +28,21 @@ final class RequestManager: RequestManagerType {
         }
         
     }
+    
+    private let session: NetworkSession
 
-    
-    private let session: GRSession<Endpoint, ApiServer>
-    
     init(baseServer: ApiServer) {
-        session = GRSession(baseURL: baseServer, configuration: .default)
+        session = NetworkSession(baseUrl: baseServer.rawValue, configuration: .init(urlSessionConfiguration: .default, interceptor: nil, serverTrustManager: nil, eventMonitors: [LoggingEventMonitor(logger: PrintLogger())]))
     }
     
     func fetchCars(id: Int) -> AnyPublisher<CarResponse, AFError> {
-        return session.request(endpoint: .cars(id))
+        return session.request(endpoint: Endpoint.cars(id))
             .goodify()
             .eraseToAnyPublisher()
     }
     
     func fetchProducts(id: Int) -> AnyPublisher<ProductResponse, AFError> {
-        return session.request(endpoint: .products(id))
+        return session.request(endpoint: Endpoint.products(id))
             .goodify()
             .eraseToAnyPublisher()
     }

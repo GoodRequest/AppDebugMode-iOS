@@ -9,8 +9,8 @@ import Foundation
 import GoodNetworking
 import Alamofire
 
-enum Endpoint: GREndpointManager {
-    
+enum Endpoint: GoodNetworking.Endpoint {
+
     case cars(Int)
     case products(Int)
     
@@ -32,7 +32,7 @@ enum Endpoint: GREndpointManager {
     
     var encoding: ParameterEncoding { JSONEncoding.default }
     
-    func asURL(baseURL: String) throws -> URL {
+    func url(on baseURL: String) throws -> URL {
         var url = try baseURL.asURL()
         url.appendPathComponent(path)
         return url
