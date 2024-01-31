@@ -39,8 +39,9 @@ struct ConsoleLogsView: View {
                 let isCollapsed = collapsedIds.contains(log.id)
                 VStack(spacing: 0.0) {
                     ScrollView(.horizontal) {
-                        HStack(spacing: 0.0) {
+                        HStack(alignment: .top, spacing: 0.0) {
                             Image(systemName: collapsedIds.contains(log.id) ? "chevron.right" : "chevron.down")
+                                .foregroundColor(AppDebugColors.primary)
 
                             Text(log.message)
                                 .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
@@ -68,35 +69,18 @@ struct ConsoleLogsView: View {
                             .padding(.leading)
                     }
                 }
+                .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
+                .listRowBackground(AppDebugColors.backgroundSecondary)
+                .foregroundColor(AppDebugColors.textPrimary)
             }
             .listStyle(.plain)
+            .listBackgroundColor(AppDebugColors.backgroundSecondary, for: .insetGrouped)
         }
         .sheet(isPresented: $showDetail, content: {
-            VStack {
-                HStack {
-                    Button(action: {
-                        UIPasteboard.general.setValue(editedString, forPasteboardType: "public.plain-text")
-                    }, label: {
-                        Text("Copy")
-                    })
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                    Button(action: {
-                        withAnimation {
-                            self.showDetail = false
-                        }
-                    }, label: {
-                        Image(systemName: "xmark")
-                    })
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-
-                }
-                .padding()
-
-                TextEditor(text: $editedString)
-                    .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-            }
+            ConsoleLogDetailView(
+                editedString: $editedString,
+                showDetail: $showDetail
+            )
         })
         .navigationTitle("Logs")
         .toolbar {
@@ -105,6 +89,8 @@ struct ConsoleLogsView: View {
             }
         }
     }
+
+
 }
 
 struct ConsoleLogsView_Previews: PreviewProvider {
