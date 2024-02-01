@@ -66,6 +66,11 @@ struct AppDebugView: View {
                 title: "App directory",
                 image: Image(systemName: "folder"),
                 destination: AnyView(AppDirectorySettingsView())
+            ),
+            Screen(
+                title: "Logs",
+                image: Image(systemName: "list.bullet.rectangle"),
+                destination: AnyView(ConsoleLogsView())
             )
         ])
     }
