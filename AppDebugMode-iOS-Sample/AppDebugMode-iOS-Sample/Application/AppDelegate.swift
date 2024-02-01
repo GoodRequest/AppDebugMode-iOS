@@ -28,6 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             onServerChange: { debugPrint("Server has been changed") },
             cacheManager: dependencyContainer.cacheManager
         )
+        StandardOutputService.shared.openConsolePipe()
         #endif
         
         AppCoordinator(window: window, di: dependencyContainer).start()

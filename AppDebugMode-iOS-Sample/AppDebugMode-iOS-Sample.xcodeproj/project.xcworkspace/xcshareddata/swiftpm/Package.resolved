@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
         "state": {
           "branch": null,
-          "revision": "b2fa556e4e48cbf06cf8c63def138c98f4b811fa",
-          "version": "5.8.0"
+          "revision": "3dc6a42c7727c49bf26508e29b0a0b35f9c7e1ad",
+          "version": "5.8.1"
         }
       },
       {
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/GoodRequest/GoodNetworking.git",
         "state": {
           "branch": null,
-          "revision": "5e991a0fb6e968249f33b1650739fd31ede51dda",
-          "version": "1.1.0"
+          "revision": "f213de6bc208a0a2f2e3cff4e6e26f62a42113de",
+          "version": "2.0.2"
         }
       },
       {
@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/siteline/swiftui-introspect",
         "state": {
           "branch": null,
-          "revision": "9e1cc02a65b22e09a8251261cccbccce02731fc5",
-          "version": "1.1.1"
+          "revision": "18e965f867e37a558ad13c12d330dbe047099180",
+          "version": "1.1.2"
         }
       }
     ]
