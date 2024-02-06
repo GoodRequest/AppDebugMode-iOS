@@ -12,7 +12,7 @@ final class UserDefaultsSettingsViewModel: ObservableObject {
     
     // MARK: - State
     
-    @Published var userDefaultValues = Array(CacheProvider.shared.userDefaultValues)
+    @Published var userDefaultValues = Array(CacheProvider.shared.userDefaultValues).sorted(by: { $0.key < $1.key })
     
     // MARK: - Properties
 
@@ -42,7 +42,7 @@ private extension UserDefaultsSettingsViewModel {
 
     func bindState() {
         CacheProvider.shared.$userDefaultValues
-            .map { Array($0) }
+            .map { Array($0).sorted(by: { $0.key < $1.key }) }
             .assign(to: \.userDefaultValues, on: self)
             .store(in: &cancellables)
     }
