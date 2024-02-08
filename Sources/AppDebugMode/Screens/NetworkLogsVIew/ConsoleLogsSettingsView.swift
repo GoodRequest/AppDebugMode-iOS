@@ -17,30 +17,46 @@ struct ConsoleLogsSettingsView: View {
         self.standardOutputService = standardOutputService
         self.redirectLogs = standardOutputService.shouldRedirectLogsToAppDebugView
         _showSettings = showSettings
+        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
     }
 
     var body: some View {
         NavigationView {
-            List {
-                Toggle(isOn: $redirectLogs, label: {
-                    Text("Redirect Logs To App Debug View")
-                })
-                .onChange(of: redirectLogs) {
-                    standardOutputService.shouldRedirectLogsToAppDebugView = $0
-                }
-            }
-            .navigationTitle("Settings")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        withAnimation {
-                            showSettings.toggle()
-                        }
-                    }, label: {
-                        Image(systemName: "xmark")
+            ZStack(alignment: .bottom){
+                List {
+                    Toggle(isOn: $redirectLogs, label: {
+                        Text("Redirect Logs To App Debug View")
+                            .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
+                            .listRowBackground(AppDebugColors.backgroundSecondary)
+                            .foregroundColor(AppDebugColors.textPrimary)
                     })
+                    .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
+                    .listRowBackground(AppDebugColors.backgroundSecondary)
+                    .foregroundColor(AppDebugColors.textPrimary)
                 }
+                .listStyle(.plain)
+                .listBackgroundColor(AppDebugColors.backgroundSecondary, for: .insetGrouped)
+                .navigationTitle("Settings")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: {
+                            withAnimation {
+                                showSettings.toggle()
+                            }
+                        }, label: {
+                            Image(systemName: "xmark")
+                        })
+                    }
+                }
+
+                ButtonFilled(text: "Save Log Settings") {
+                    standardOutputService.shouldRedirectLogsToAppDebugView = redirectLogs
+                    exit(0)
+                }
+                .padding()
             }
+            .frame(maxHeight: .infinity, alignment: .bottom)
         }
     }
 
