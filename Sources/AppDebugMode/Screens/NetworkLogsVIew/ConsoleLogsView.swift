@@ -12,6 +12,7 @@ struct ConsoleLogsView: View {
     @ObservedObject private var standardOutputService: StandardOutputService
     @State var collapsedIds: Set<UInt64> = []
     @State var showDetail = false
+    @State var showSettings = false
     @State var editedString = ""
 
     var dateFormatter: DateFormatter {
@@ -35,55 +36,88 @@ struct ConsoleLogsView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            List(standardOutputService.capturedOutput) { log in
-                let isCollapsed = collapsedIds.contains(log.id)
-                VStack(spacing: 0.0) {
-                    ScrollView(.horizontal) {
-                        HStack(alignment: .top, spacing: 0.0) {
-                            Image(systemName: collapsedIds.contains(log.id) ? "chevron.right" : "chevron.down")
-                                .foregroundColor(AppDebugColors.primary)
+            if standardOutputService.shouldRedirectLogsToAppDebugView {
+                if !standardOutputService.capturedOutput.isEmpty {
+                    List(standardOutputService.capturedOutput) { log in
+                        let isCollapsed = collapsedIds.contains(log.id)
+                        VStack(spacing: 0.0) {
+                            ScrollView(.horizontal) {
+                                HStack(alignment: .top, spacing: 0.0) {
+                                    Image(systemName: collapsedIds.contains(log.id) ? "chevron.right" : "chevron.down")
+                                        .foregroundColor(AppDebugColors.primary)
 
-                            Text(log.message)
-                                .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
-                                .lineLimit(isCollapsed ? 1 : nil)
-                                .lineSpacing(4.0)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .onTapGesture {
-                                    toggleLog(with: log.id)
+                                    Text(log.message)
+                                        .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
+                                        .lineLimit(isCollapsed ? 1 : nil)
+                                        .lineSpacing(4.0)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .onTapGesture {
+                                            toggleLog(with: log.id)
+                                        }
+                                        .onLongPressGesture(minimumDuration: 0.5) {
+                                            editedString = log.message
+                                            withAnimation {
+                                                showDetail = true
+                                            }
+                                        }
                                 }
-                                .onLongPressGesture(minimumDuration: 0.5) {
-                                    editedString = log.message
-                                    withAnimation {
-                                        showDetail = true
-                                    }
-                                }
+                            }
+                            .frame(minWidth: proxy.size.width)
+
+                            if !isCollapsed {
+                                Text("\(dateFormatter.string(from: log.date))")
+                                    .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
+                                    .foregroundColor(.gray)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.leading)
+                            }
                         }
+                        .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
+                        .listRowBackground(AppDebugColors.backgroundSecondary)
+                        .foregroundColor(AppDebugColors.textPrimary)
                     }
-                    .frame(minWidth: proxy.size.width)
-
-                    if !isCollapsed {
-                        Text("\(dateFormatter.string(from: log.date))")
-                            .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
-                            .foregroundColor(.gray)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.leading)
-                    }
+                    .listStyle(.plain)
+                    .listBackgroundColor(AppDebugColors.backgroundSecondary, for: .insetGrouped)
+                } else {
+                    Text("No logs captured yet")
+                        .foregroundColor(.white)
+                        .bold()
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                        .padding()
                 }
-                .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
-                .listRowBackground(AppDebugColors.backgroundSecondary)
-                .foregroundColor(AppDebugColors.textPrimary)
+            } else {
+                Text("Logs need to be redirected into app debug mode through settings")
+                    .foregroundColor(.white)
+                    .bold()
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    .padding()
             }
-            .listStyle(.plain)
-            .listBackgroundColor(AppDebugColors.backgroundSecondary, for: .insetGrouped)
         }
+        .background(AppDebugColors.backgroundSecondary.ignoresSafeArea())
         .sheet(isPresented: $showDetail, content: {
             ConsoleLogDetailView(
                 editedString: $editedString,
                 showDetail: $showDetail
             )
         })
+        .sheet(isPresented: $showSettings, content: {
+            ConsoleLogsSettingsView(
+                standardOutputService: standardOutputService,
+                showSettings: $showSettings
+            )
+        })
         .navigationTitle("Logs")
         .toolbar {
+            Button(action: {
+                withAnimation {
+                    showSettings = true
+                }
+            }, label: {
+                Image(systemName: "gear")
+            })
+
             Button("Clear") {
                 standardOutputService.clearLogs()
             }
