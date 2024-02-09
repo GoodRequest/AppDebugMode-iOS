@@ -46,13 +46,17 @@ struct ConsoleLogsSettingsView: View {
                             }
                         }, label: {
                             Text("Reset")
+                                .foregroundColor(AppDebugColors.primary)
                         })
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {
                             withAnimation {
                                 showSettings.toggle()
                             }
                         }, label: {
                             Image(systemName: "xmark")
+                                .foregroundColor(AppDebugColors.primary)
                         })
                     }
                 }
