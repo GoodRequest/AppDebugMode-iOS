@@ -30,7 +30,7 @@ public class StandardOutputService: ObservableObject {
     private var pipe = Pipe()
     private var count = 0
 
-    @UserDefaultValue("shouldRedirectLogsToAppDebugView", defaultValue: DebuggerService.debuggerConnected())
+    @UserDefaultValue("shouldRedirectLogsToAppDebugView", defaultValue: !DebuggerService.debuggerConnected())
     public var shouldRedirectLogsToAppDebugView: Bool
 
     public func redirectLogsToAppDebugView () {
