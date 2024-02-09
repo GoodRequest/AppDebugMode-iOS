@@ -43,7 +43,7 @@ struct ConsoleLogsView: View {
                         VStack(spacing: 0.0) {
                             ScrollView(.horizontal) {
                                 HStack(alignment: .top, spacing: 0.0) {
-                                    Image(systemName: collapsedIds.contains(log.id) ? "chevron.right" : "chevron.down")
+                                    Image(systemName: isCollapsed ? "chevron.right" : "chevron.down")
                                         .foregroundColor(AppDebugColors.primary)
 
                                     Text(log.message)

@@ -42,6 +42,13 @@ struct ConsoleLogsSettingsView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {
                             withAnimation {
+                                self.redirectLogs = DebuggerService.debuggerConnected()
+                            }
+                        }, label: {
+                            Text("Reset")
+                        })
+                        Button(action: {
+                            withAnimation {
                                 showSettings.toggle()
                             }
                         }, label: {
