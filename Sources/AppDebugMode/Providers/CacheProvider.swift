@@ -54,8 +54,6 @@ extension CacheProvider {
                 getKeychainValue(childMirror: childMirror)
             }
         }
-
-        printCacheManagerMirror(mirror)
     }
 
     func reload() {
@@ -196,15 +194,6 @@ private extension CacheProvider {
         } catch {
             return String(describing: value)
         }
-    }
-
-    func printCacheManagerMirror(_ mirror: Mirror) {
-        let separators = Array(repeating: "-", count: 15).joined()
-        print("\(separators) 🪞Cache Manager Mirror \(separators)\n")
-        mirror.children.forEach { child in
-            print("Key \(String(describing: child.label)) with value type: \(type(of: child.value))")
-        }
-        print("\(separators) end of Cache Manager Mirror \(separators)\n")
     }
 
 }
