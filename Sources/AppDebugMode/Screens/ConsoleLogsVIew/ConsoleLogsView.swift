@@ -116,11 +116,13 @@ struct ConsoleLogsView: View {
                 }
             }, label: {
                 Image(systemName: "gear")
+                    .foregroundColor(AppDebugColors.primary)
             })
 
             Button("Clear") {
                 standardOutputService.clearLogs()
             }
+            .foregroundColor(AppDebugColors.primary)
         }
     }
 
