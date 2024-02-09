@@ -11,12 +11,11 @@ import Combine
 final class KeychainSettingsViewModel: ObservableObject {
     
     // MARK: - State
-    
-    // @Published var isError = false
+
     @Published var alert: Alert?
     
-    @Published var keychainValues = Array(CacheProvider.shared.keychainValues)
-    
+    @Published var keychainValues = Array(CacheProvider.shared.keychainValues).sorted(by: { $0.key < $1.key })
+
     // MARK: - Enums
     
     enum Alert: Identifiable {
@@ -63,7 +62,7 @@ private extension KeychainSettingsViewModel {
 
     func bindState() {
         CacheProvider.shared.$keychainValues
-            .map { Array($0) }
+            .map { Array($0).sorted(by: { $0.key < $1.key }) }
             .assign(to: \.keychainValues, on: self)
             .store(in: &cancellables)
     }
