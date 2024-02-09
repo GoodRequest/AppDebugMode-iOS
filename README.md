@@ -134,7 +134,20 @@ AppDebugModeProvider.shared.setup(
 #endif
 ```
 
+## Console logs redirection
+If you want to redirect logs call this snippet of code in appdelegate or a different prefered spot in if it's turned on in the app debug mode settings and if you are in a DEBUG configuration
+```swift
+// didFinishLaunchingWithOptions
 
+#if DEBUG
+
+if StandardOutputService.shared.shouldRedirectLogsToAppDebugView {
+    StandardOutputService.shared.redirectLogsToAppDebugView()
+}
+
+#endif
+```
+   
 ## Activation in App
 - In app you can activate debug mode by shaking device or in simulator by `CMD + CTRL + Z`
 - To open debug mode with other actions in the app initialize ViewController with `let debugViewController = AppDebugModeProvider.shared.start()`

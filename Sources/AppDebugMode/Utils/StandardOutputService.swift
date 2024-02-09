@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import GoodPersistence
 
 public class StandardOutputService: ObservableObject {
 
@@ -29,7 +30,10 @@ public class StandardOutputService: ObservableObject {
     private var pipe = Pipe()
     private var count = 0
 
-    public func openConsolePipe () {
+    @UserDefaultValue("shouldRedirectLogsToAppDebugView", defaultValue: !DebuggerService.debuggerConnected())
+    public var shouldRedirectLogsToAppDebugView: Bool
+
+    public func redirectLogsToAppDebugView () {
         setvbuf(stdout, nil, _IONBF, 0)
         dup2(pipe.fileHandleForWriting.fileDescriptor,
             STDOUT_FILENO)
@@ -49,6 +53,25 @@ public class StandardOutputService: ObservableObject {
 
     public func clearLogs() {
         capturedOutput.removeAll()
+    }
+
+}
+
+public class DebuggerService {
+
+    static func debuggerConnected() -> Bool {
+        var processInfo = kinfo_proc()
+        var processInfoSize = MemoryLayout.stride(ofValue: processInfo)
+
+        var processIdentifiers: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid()]
+
+        let error = sysctl(&processIdentifiers, UInt32(processIdentifiers.count), &processInfo, &processInfoSize, nil, 0)
+        guard error == 0 else {
+            assertionFailure("sysctl failed")
+            return false
+        }
+
+        return (processInfo.kp_proc.p_flag & P_TRACED) != 0
     }
 
 }
