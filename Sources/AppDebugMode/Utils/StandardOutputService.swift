@@ -8,11 +8,11 @@
 import SwiftUI
 import GoodPersistence
 
-final class StandardOutputService: ObservableObject {
+public final class StandardOutputService: ObservableObject {
 
     // MARK: - Singleton
 
-    static var shared = StandardOutputService()
+    public static var shared = StandardOutputService()
 
     // MARK: - Log
 
@@ -38,11 +38,11 @@ final class StandardOutputService: ObservableObject {
     private var count = 0
 
     @UserDefaultValue("shouldRedirectLogsToAppDebugMode", defaultValue: !DebuggerService.debuggerConnected())
-    var shouldRedirectLogsToAppDebugMode: Bool
+    public var shouldRedirectLogsToAppDebugMode: Bool
 
     // MARK: - Helper functions
 
-    func redirectLogsToAppDebugMode () {
+    public func redirectLogsToAppDebugMode () {
         guard !didRedirectLogs else { return } // redirect only once
         didRedirectLogs = true
 

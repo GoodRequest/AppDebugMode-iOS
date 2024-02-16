@@ -30,8 +30,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
 
 
-        if StandardOutputService.shared.shouldRedirectLogsToAppDebugView {
-            StandardOutputService.shared.redirectLogsToAppDebugView()
+        if StandardOutputService.shared.shouldRedirectLogsToAppDebugMode {
+            StandardOutputService.shared.redirectLogsToAppDebugMode()
         }
         #endif
         
