@@ -15,7 +15,7 @@ struct ConsoleLogsSettingsView: View {
 
     init(standardOutputService: StandardOutputService, showSettings: Binding<Bool>) {
         self.standardOutputService = standardOutputService
-        self.redirectLogs = standardOutputService.shouldRedirectLogsToAppDebugView
+        self.redirectLogs = standardOutputService.shouldRedirectLogsToAppDebugMode
         _showSettings = showSettings
         UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
     }
@@ -62,7 +62,7 @@ struct ConsoleLogsSettingsView: View {
                 }
 
                 ButtonFilled(text: "Save Log Settings") {
-                    standardOutputService.shouldRedirectLogsToAppDebugView = redirectLogs
+                    standardOutputService.shouldRedirectLogsToAppDebugMode = redirectLogs
                     exit(0)
                 }
                 .padding()

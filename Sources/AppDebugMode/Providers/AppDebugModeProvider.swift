@@ -10,23 +10,23 @@ import SwiftUI
 
 public final class AppDebugModeProvider {
     
-    // MARK: - Shared
-    
+    // MARK: - Singleton
+
     public static let shared = AppDebugModeProvider()
     
-    // MARK: - Init
-    
+    // MARK: - Initialization
+
     private init() {}
     
-    // MARK: - Properties
-    
-    var servers: [ApiServer] = []
-    var serversCollections: [ApiServerCollection] = []
-    var onServerChange: (() -> Void)?
-    var pushNotificationsProvider: PushNotificationsProvider?
-    
-    // MARK: - Methods
-    
+    // MARK: - Internal - Variables
+
+    internal var servers: [ApiServer] = []
+    internal var serversCollections: [ApiServerCollection] = []
+    internal var onServerChange: (() -> Void)?
+    internal var pushNotificationsProvider: PushNotificationsProvider?
+
+    // MARK: - Public - Variables
+
     @available(*, deprecated, renamed: "selectedUserProfile")
     public var selectedTestingUser: UserProfile? {
         UserProfilesProvider.shared.selectedUserProfile
@@ -39,8 +39,18 @@ public final class AppDebugModeProvider {
     @available(*, deprecated, renamed: "selectedUserProfilePublisher")
     public var selectedTestingUserPublisher = UserProfilesProvider.shared.selectedUserProfilePublisher
     public var selectedUserProfilePublisher = UserProfilesProvider.shared.selectedUserProfilePublisher
-    
-    public func setup(
+
+    public var shouldRedirectLogsToAppDebugMode: Bool {
+        StandardOutputService.shared.shouldRedirectLogsToAppDebugMode
+    }
+
+}
+
+// MARK: - Public - Helper functions
+
+public extension AppDebugModeProvider {
+
+    func setup(
         serversCollections: [ApiServerCollection],
         onServerChange: (() -> Void)? = nil,
         cacheManager: Any? = nil,
@@ -48,7 +58,7 @@ public final class AppDebugModeProvider {
     ) {
         self.serversCollections = serversCollections
         self.onServerChange = onServerChange
-        
+
         if let cacheManager {
             CacheProvider.shared.setup(cacheManager: cacheManager)
         }
@@ -56,22 +66,26 @@ public final class AppDebugModeProvider {
         if let firebaseMessaging {
             setupFirebaseMessaging(firebaseMessaging: firebaseMessaging)
         }
+
+        if StandardOutputService.shared.shouldRedirectLogsToAppDebugMode {
+            StandardOutputService.shared.redirectLogsToAppDebugMode()
+        }
     }
-    
-    public func getSelectedServer(for serverCollection: ApiServerCollection) -> ApiServer {
+
+    func getSelectedServer(for serverCollection: ApiServerCollection) -> ApiServer {
         serversCollections.first { $0 == serverCollection }!.selectedServer
     }
 
-    public func start() -> UIViewController {
+    func start() -> UIViewController {
         let view = AppDebugView(serversCollections: AppDebugModeProvider.shared.serversCollections)
         let hostingViewController = UIHostingController(rootView: view)
 
         return hostingViewController
     }
-    
+
 }
 
-// MARK: - Private
+// MARK: - Private - Helper functions
 
 private extension AppDebugModeProvider {
     
