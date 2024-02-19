@@ -48,18 +48,38 @@ final class StandardOutputService: ObservableObject {
 
         setvbuf(stdout, nil, _IONBF, 0) // set output as unbuffered
         dup2(pipe.fileHandleForWriting.fileDescriptor, STDOUT_FILENO)
-
         pipe.fileHandleForReading.readabilityHandler = { [weak self] handle in
             let data = handle.availableData
-            let str = String(data: data, encoding: .utf8) ?? "<\(data.count) bytes of non-UTF-8 data>\n"
+            let readString = String(data: data, encoding: .utf8) ?? "<\(data.count) bytes of non-UTF-8 data>\n"
 
-            DispatchQueue.main.async {
-                let log = Log(message: str)
-                guard !log.message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-                    return
-                }
-                self?.capturedOutput.append(log)
+            self?.redirectLog(readString)
+        }
+
+        //OSLog/Console logs are written to stderr
+        dup2(pipe.fileHandleForWriting.fileDescriptor, STDERR_FILENO)
+        pipe.fileHandleForReading.readabilityHandler = { [weak self] handle in
+            let data = handle.availableData
+            var readString = String(data: data, encoding: .utf8) ?? "<\(data.count) bytes of non-UTF-8 data>\n"
+
+            // Trim OSLog metadata prefix
+            if let regex = try? NSRegularExpression(pattern: #"^(\nOSLOG-.*?\t)"#, options: [.anchorsMatchLines]),
+               let match = regex.firstMatch(in: readString, options: [], range: NSRange(location: 0, length: readString.utf16.count)),
+               let range = Range(match.range, in: readString) {
+                readString = readString.replacingCharacters(in: range, with: "")
+
             }
+
+            self?.redirectLog(readString)
+        }
+    }
+
+    func redirectLog(_ string: String) {
+        DispatchQueue.main.async { [weak self] in
+            let log = Log(message: string)
+            guard !log.message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                return
+            }
+            self?.capturedOutput.append(log)
         }
     }
 
