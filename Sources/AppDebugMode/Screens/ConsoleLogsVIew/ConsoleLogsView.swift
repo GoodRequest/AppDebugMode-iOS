@@ -10,7 +10,7 @@ import SwiftUI
 struct ConsoleLogsView: View {
 
     @ObservedObject private var standardOutputService: StandardOutputService
-    @State var collapsedIds: Set<UInt64> = []
+    @State var unwrappedIds: Set<UInt64> = []
     @State var showDetail = false
     @State var showSettings = false
     @State var editedString = ""
@@ -27,10 +27,10 @@ struct ConsoleLogsView: View {
     }
 
     private func toggleLog(with id: UInt64) {
-        if collapsedIds.contains(id) {
-            collapsedIds.remove(id)
+        if unwrappedIds.contains(id) {
+            unwrappedIds.remove(id)
         } else {
-            collapsedIds.insert(id)
+            unwrappedIds.insert(id)
         }
     }
 
@@ -90,15 +90,15 @@ struct ConsoleLogsView: View {
     private func consoleLogsList(_ proxy: GeometryProxy) -> some View {
         ScrollViewReader { scrollProxy in
             List(standardOutputService.capturedOutput) { log in
-                let isCollapsed = collapsedIds.contains(log.id)
+                let isUnwrapped = unwrappedIds.contains(log.id)
                 VStack(spacing: 0.0) {
                     consoleLogMessage(
                         log: log,
                         proxy: proxy,
-                        isCollapsed: isCollapsed
+                        isUnwrapped: isUnwrapped
                     )
 
-                    if !isCollapsed {
+                    if isUnwrapped {
                         Text("\(dateFormatter.string(from: log.date))")
                             .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
                             .foregroundColor(.gray)
@@ -122,16 +122,16 @@ struct ConsoleLogsView: View {
     private func consoleLogMessage(
         log: StandardOutputService.Log,
         proxy: GeometryProxy,
-        isCollapsed: Bool
+        isUnwrapped: Bool
     ) -> some View {
         ScrollView(.horizontal) {
             HStack(alignment: .top, spacing: 0.0) {
-                Image(systemName: isCollapsed ? "chevron.right" : "chevron.down")
+                Image(systemName: isUnwrapped ? "chevron.right" : "chevron.down")
                     .foregroundColor(AppDebugColors.primary)
 
                 Text(log.message)
                     .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
-                    .lineLimit(isCollapsed ? 1 : nil)
+                    .lineLimit(isUnwrapped ? nil : 1)
                     .lineSpacing(4.0)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .onTapGesture {
