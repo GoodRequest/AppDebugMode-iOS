@@ -47,27 +47,33 @@ final class StandardOutputService: ObservableObject {
         didRedirectLogs = true
 
         setvbuf(stdout, nil, _IONBF, 0) // set output as unbuffered
+        // Because all the standard print() logs are stread through STDOOUT
         dup2(pipe.fileHandleForWriting.fileDescriptor, STDOUT_FILENO)
         pipe.fileHandleForReading.readabilityHandler = { [weak self] handle in
             let data = handle.availableData
-            let str = String(data: data, encoding: .utf8) ?? "<\(data.count) bytes of non-UTF-8 data>\n"
+            let readString = String(data: data, encoding: .utf8) ?? "<\(data.count) bytes of non-UTF-8 data>\n"
 
-            self?.redirectLog(str)
+            self?.redirectLog(readString)
         }
 
+        // Because all the OSLog logs are stread through STDErr
         dup2(pipe.fileHandleForWriting.fileDescriptor, STDERR_FILENO)
         pipe.fileHandleForReading.readabilityHandler = { [weak self] handle in
             let data = handle.availableData
-            var str = String(data: data, encoding: .utf8) ?? "<\(data.count) bytes of non-UTF-8 data>\n"
+            var readString = String(data: data, encoding: .utf8) ?? "<\(data.count) bytes of non-UTF-8 data>\n"
 
-            let regex = try! NSRegularExpression(pattern: #"^(OSLOG-.*?$)"#, options: [.anchorsMatchLines])
-            if let match = regex.firstMatch(in: str, options: [], range: NSRange(location: 0, length: str.utf16.count)) {
+            // #"^(\nOSLOG-.*?\t)"# Because every OSLog entry starts with newline continues with "OSLog- ..."
+            // and ends with /t on the second line
+            // Finding first match because the rest of the string should stay intact.
+            // Only want to trip the OSLog MetaData
+            if let regex = try? NSRegularExpression(pattern: #"^(\nOSLOG-.*?\t)"#, options: [.anchorsMatchLines]),
+               let match = regex.firstMatch(in: readString, options: [], range: NSRange(location: 0, length: readString.utf16.count)),
+               let range = Range(match.range, in: readString) {
+                readString = readString.replacingCharacters(in: range, with: "")
 
-                let range = Range(match.range, in: str)!
-                str = str.replacingCharacters(in: range, with: "")
             }
 
-            self?.redirectLog(str)
+            self?.redirectLog(readString)
         }
     }
 
