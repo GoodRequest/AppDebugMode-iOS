@@ -32,7 +32,7 @@ final class RequestManager: RequestManagerType {
     private let session: NetworkSession
 
     init(baseServer: ApiServer) {
-        session = NetworkSession(baseUrl: baseServer.rawValue, configuration: .init(urlSessionConfiguration: .default, interceptor: nil, serverTrustManager: nil, eventMonitors: [LoggingEventMonitor(logger: PrintLogger())]))
+        session = NetworkSession(baseUrl: baseServer.rawValue, configuration: .init(urlSessionConfiguration: .default, interceptor: nil, serverTrustManager: nil, eventMonitors: [LoggingEventMonitor(logger: OSLogLogger())]))
     }
     
     func fetchCars(id: Int) -> AnyPublisher<CarResponse, AFError> {

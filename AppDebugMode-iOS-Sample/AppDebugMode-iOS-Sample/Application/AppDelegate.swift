@@ -29,10 +29,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             cacheManager: dependencyContainer.cacheManager
         )
 
-
-        if StandardOutputService.shared.shouldRedirectLogsToAppDebugView {
-            StandardOutputService.shared.redirectLogsToAppDebugView()
-        }
         #endif
         
         AppCoordinator(window: window, di: dependencyContainer).start()
