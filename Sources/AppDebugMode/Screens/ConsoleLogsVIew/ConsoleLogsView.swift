@@ -56,7 +56,7 @@ struct ConsoleLogsView: View {
                     .padding()
             }
         }
-        .background(AppDebugColors.backgroundSecondary.ignoresSafeArea())
+        .background(AppDebugColors.backgroundPrimary.ignoresSafeArea())
         .sheet(isPresented: $showDetail, content: {
             ConsoleLogDetailView(
                 editedString: $editedString,
@@ -91,28 +91,40 @@ struct ConsoleLogsView: View {
         ScrollViewReader { scrollProxy in
             List(standardOutputService.capturedOutput) { log in
                 let isUnwrapped = unwrappedIds.contains(log.id)
-                VStack(spacing: 0.0) {
-                    consoleLogMessage(
-                        log: log,
-                        proxy: proxy,
-                        isUnwrapped: isUnwrapped
-                    )
+                ZStack {
+                    VStack(spacing: 0.0) {
+                        consoleLogMessage(
+                            log: log,
+                            proxy: proxy,
+                            isUnwrapped: isUnwrapped
+                        )
 
-                    if isUnwrapped {
-                        Text("\(dateFormatter.string(from: log.date))")
-                            .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
-                            .foregroundColor(.gray)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.leading)
+                        if isUnwrapped {
+                            Text("\(dateFormatter.string(from: log.date))")
+                                .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
+                                .foregroundColor(.gray)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.leading)
+                        }
                     }
+                    .id(log.id)
+
+                    Button(action: {
+                        editedString = log.message
+                        withAnimation {
+                            showDetail = true
+                        }
+                    }, label: {
+                        Image(systemName: "ellipsis.circle")
+                    })
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .padding([.top, .trailing], 8)
                 }
-                .id(log.id)
                 .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
                 .listRowBackground(AppDebugColors.backgroundSecondary)
                 .foregroundColor(AppDebugColors.textPrimary)
             }
             .listStyle(.plain)
-            .listBackgroundColor(AppDebugColors.backgroundSecondary, for: .insetGrouped)
             .onAppear {
                 scrollProxy.scrollTo(standardOutputService.capturedOutput.last?.id, anchor: .top)
             }
