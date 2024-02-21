@@ -27,17 +27,10 @@ public final class AppDebugModeProvider {
 
     // MARK: - Public - Variables
 
-    @available(*, deprecated, renamed: "selectedUserProfile")
-    public var selectedTestingUser: UserProfile? {
-        UserProfilesProvider.shared.selectedUserProfile
-    }
-    
     public var selectedUserProfile: UserProfile? {
         UserProfilesProvider.shared.selectedUserProfile
     }
-    
-    @available(*, deprecated, renamed: "selectedUserProfilePublisher")
-    public var selectedTestingUserPublisher = UserProfilesProvider.shared.selectedUserProfilePublisher
+
     public var selectedUserProfilePublisher = UserProfilesProvider.shared.selectedUserProfilePublisher
 
     public var shouldRedirectLogsToAppDebugMode: Bool {
@@ -72,15 +65,15 @@ public extension AppDebugModeProvider {
         }
     }
 
-    func getSelectedServer(for serverCollection: ApiServerCollection) -> ApiServer {
-        serversCollections.first { $0 == serverCollection }!.selectedServer
-    }
-
     func start() -> UIViewController {
-        let view = AppDebugView(serversCollections: AppDebugModeProvider.shared.serversCollections)
+        let view = AppDebugView()
         let hostingViewController = UIHostingController(rootView: view)
 
         return hostingViewController
+    }
+
+    func getSelectedServer(for serverCollection: ApiServerCollection) -> ApiServer {
+        serversCollections.first { $0 == serverCollection }!.selectedServer
     }
 
 }
@@ -103,3 +96,11 @@ private extension AppDebugModeProvider {
     }
 
 }
+
+// MARK: - Public - Global functions
+
+#if canImport(AppDebugModeInterceptable)
+public func setupInterceptor() {
+    print("✅ [AppDebugMode] AppDebugModeInterceptable installed")
+}
+#endif

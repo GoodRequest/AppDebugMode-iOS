@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+#if canImport(AppDebugModeInterceptable)
+import AppDebugModeInterceptable
+#endif
+
 struct AppDebugView: View {
     
     @Environment(\.presentationMode) var presentationMode
@@ -25,14 +29,14 @@ struct AppDebugView: View {
     
     // MARK: - Init
     
-    init(serversCollections: [ApiServerCollection]) {
+    init() {
         self.screens = [
             Screen(
                 title: "Server settings",
                 image: Image(systemName: "server.rack"),
                 destination: AnyView(ServersCollectionsView(
                     viewModel: ServersCollectionsViewModel(
-                        serversCollections: serversCollections
+                        serversCollections: AppDebugModeProvider.shared.serversCollections
                     )
                 ))
             ),
@@ -73,6 +77,16 @@ struct AppDebugView: View {
                 destination: AnyView(ConsoleLogsView())
             )
         ])
+
+        #if canImport(AppDebugModeInterceptable)
+        self.screens.append(
+            Screen(
+                title: "Interceptor settings",
+                image: Image(systemName: "cable.coaxial"),
+                destination: AnyView(AppDebugModeInterceptable.InterceptorSettings())
+            )
+        )
+        #endif
     }
     
 

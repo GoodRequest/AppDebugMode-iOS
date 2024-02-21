@@ -39,7 +39,7 @@ public final class ApiServerCollection: ObservableObject {
     // MARK: - Methods
     
     func useCustomURL() {
-        if NSPredicate.url.evaluate(with: textContent) {
+        if let urlValid = try? URL(string: textContent) {
             selectedServer = ApiServer(name: "Custom", url: textContent)
         } else {
             hasValidationError = true
