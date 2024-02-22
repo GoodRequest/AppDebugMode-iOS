@@ -126,7 +126,7 @@ struct ConsoleLogsView: View {
     ) -> some View {
         ScrollView(.horizontal) {
             HStack(alignment: .top, spacing: 0.0) {
-                Image(systemName: isUnwrapped ? "chevron.right" : "chevron.down")
+                Image(systemName: isUnwrapped ? "chevron.down" : "chevron.right")
                     .foregroundColor(AppDebugColors.primary)
 
                 Text(log.message)
