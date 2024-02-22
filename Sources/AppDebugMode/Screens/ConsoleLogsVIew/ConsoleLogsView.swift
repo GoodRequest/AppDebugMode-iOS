@@ -89,30 +89,36 @@ struct ConsoleLogsView: View {
 
     private func consoleLogsList(_ proxy: GeometryProxy) -> some View {
         ScrollViewReader { scrollProxy in
-            List(standardOutputService.capturedOutput) { log in
-                let isCollapsed = collapsedIds.contains(log.id)
-                VStack(spacing: 0.0) {
-                    consoleLogMessage(
-                        log: log,
-                        proxy: proxy,
-                        isCollapsed: isCollapsed
-                    )
+            List {
+                ForEach(0..<standardOutputService.capturedOutput.count, id: \.self) { index in
+                    let log = standardOutputService.capturedOutput[index]
+                    let isCollapsed = collapsedIds.contains(log.id)
 
-                    if !isCollapsed {
-                        Text("\(dateFormatter.string(from: log.date))")
-                            .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
-                            .foregroundColor(.gray)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.leading)
+                    VStack(spacing: 0.0) {
+                        consoleLogMessage(
+                            log: log,
+                            proxy: proxy,
+                            isCollapsed: isCollapsed,
+                            lineNumber: index + 1
+                        )
+
+                        if isCollapsed {
+                            Text("\(dateFormatter.string(from: log.date))")
+                                .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
+                                .foregroundColor(.gray)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.leading)
+                        }
                     }
+                    .id(log.id)
+                    .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
+                    .listRowBackground(AppDebugColors.backgroundSecondary)
+                    .foregroundColor(AppDebugColors.textPrimary)
                 }
-                .id(log.id)
-                .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
-                .listRowBackground(AppDebugColors.backgroundSecondary)
-                .foregroundColor(AppDebugColors.textPrimary)
             }
             .listStyle(.plain)
-            .listBackgroundColor(AppDebugColors.backgroundSecondary, for: .insetGrouped)
+            .listBackgroundColor(AppDebugColors.backgroundSecondary
+                                 , for: .insetGrouped)
             .onAppear {
                 scrollProxy.scrollTo(standardOutputService.capturedOutput.last?.id, anchor: .top)
             }
@@ -122,16 +128,20 @@ struct ConsoleLogsView: View {
     private func consoleLogMessage(
         log: StandardOutputService.Log,
         proxy: GeometryProxy,
-        isCollapsed: Bool
+        isCollapsed: Bool,
+        lineNumber: Int
     ) -> some View {
         ScrollView(.horizontal) {
             HStack(alignment: .top, spacing: 0.0) {
-                Image(systemName: isCollapsed ? "chevron.right" : "chevron.down")
+                Image(systemName: !isCollapsed ? "chevron.right" : "chevron.down")
                     .foregroundColor(AppDebugColors.primary)
+
+                Text("\(lineNumber):")
+                                .foregroundColor(AppDebugColors.primary)
 
                 Text(log.message)
                     .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
-                    .lineLimit(isCollapsed ? 1 : nil)
+                    .lineLimit(!isCollapsed ? 1 : nil)
                     .lineSpacing(4.0)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .onTapGesture {
