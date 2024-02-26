@@ -14,6 +14,57 @@ final class StandardOutputService: ObservableObject {
 
     static var shared = StandardOutputService()
 
+    static let testService: StandardOutputService = {
+        let service = StandardOutputService()
+        let sampleValues = [
+        """
+        🚀 GET https://myfakeapi.com/api/cars/4
+        🏷 Headers: empty headers
+        ↗️ Start: 2024-02-26 16:41:53 +0000
+        ⌛️ Duration: 0.3984450101852417s
+        ✅ 200
+        ⬇️ Response body:
+        {
+          "Car" : {
+            "availability" : false,
+            "id" : 4,
+            "car" : "Jeep",
+            "car_model" : "Compass",
+            "car_vin" : "4USBT33454L511606",
+            "price" : "$2732.99",
+            "car_color" : "Violet",
+            "car_model_year" : 2012
+          }
+        }
+        """,
+        """
+        🚀 GET https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft
+        🏷 Headers: empty headers
+        ↗️ Start: 2024-02-26 16:41:53 +0000
+        ⌛️ Duration: 0.3984450101852417s
+        ✅ 200
+        ⬇️ Response body:
+        {
+          "Car" : {
+            "availability" : false,
+            "id" : 4,
+            "car" : "Jeep",
+            "car_model" : "Compass",
+            "car_vin" : "4USBT33454L511606",
+            "price" : "$2732.99",
+            "car_color" : "Violet",
+            "car_model_year" : 2012
+          }
+        }
+
+        """
+        ].map {
+            Log(message: $0)
+        }
+        service.capturedOutput = sampleValues
+        return service
+    }()
+
     // MARK: - Log
 
     struct Log: Identifiable {
