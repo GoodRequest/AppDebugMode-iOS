@@ -56,7 +56,7 @@ struct ConsoleLogsView: View {
                     .padding()
             }
         }
-        .background(AppDebugColors.backgroundSecondary.ignoresSafeArea())
+        .background(AppDebugColors.backgroundPrimary.ignoresSafeArea())
         .sheet(isPresented: $showDetail, content: {
             ConsoleLogDetailView(
                 editedString: $editedString,
@@ -72,9 +72,7 @@ struct ConsoleLogsView: View {
         .navigationTitle("Logs")
         .toolbar {
             Button(action: {
-                withAnimation {
-                    showSettings = true
-                }
+                showSettings = true
             }, label: {
                 Image(systemName: "gear")
                     .foregroundColor(AppDebugColors.primary)
@@ -91,28 +89,57 @@ struct ConsoleLogsView: View {
         ScrollViewReader { scrollProxy in
             List(standardOutputService.capturedOutput) { log in
                 let isUnwrapped = unwrappedIds.contains(log.id)
-                VStack(spacing: 0.0) {
-                    consoleLogMessage(
-                        log: log,
-                        proxy: proxy,
-                        isUnwrapped: isUnwrapped
-                    )
+                ZStack(alignment: .topTrailing){
+                    VStack(spacing: 0.0) {
+                        consoleLogMessage(
+                            log: log,
+                            proxy: proxy,
+                            isUnwrapped: isUnwrapped
+                        )
 
-                    if isUnwrapped {
-                        Text("\(dateFormatter.string(from: log.date))")
-                            .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
-                            .foregroundColor(.gray)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.leading)
+                        if isUnwrapped {
+                            Text("\(dateFormatter.string(from: log.date))")
+                                .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
+                                .foregroundColor(.gray)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.leading)
+                        }
                     }
+                    .id(log.id)
+                    .padding([.top], 2.0)
+
+                    Image(systemName: isUnwrapped ? "chevron.down" : "chevron.right")
+                        .imageScale(.small)
+                        .foregroundColor(AppDebugColors.primary)
+                        .padding(2.0)
+                        .background(AppDebugColors.backgroundSecondary.opacity(0.8))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
+
+                    Image(systemName: "ellipsis.circle")
+                        .imageScale(.small)
+                        .padding(2.0)
+                        .background(AppDebugColors.backgroundSecondary.opacity(0.8))
+                        .clipShape(Circle())
+                        .onTapGesture {
+                            editedString = log.message
+                            showDetail = true
+                        }
                 }
-                .id(log.id)
+                .frame(minWidth: proxy.size.width)
                 .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
                 .listRowBackground(AppDebugColors.backgroundSecondary)
                 .foregroundColor(AppDebugColors.textPrimary)
+                .onTapGesture {
+                    toggleLog(with: log.id)
+                }
+                .onLongPressGesture(minimumDuration: 0.5) {
+                    editedString = log.message
+                    showDetail = true
+                }
             }
+            
             .listStyle(.plain)
-            .listBackgroundColor(AppDebugColors.backgroundSecondary, for: .insetGrouped)
             .onAppear {
                 scrollProxy.scrollTo(standardOutputService.capturedOutput.last?.id, anchor: .top)
             }
@@ -125,33 +152,32 @@ struct ConsoleLogsView: View {
         isUnwrapped: Bool
     ) -> some View {
         ScrollView(.horizontal) {
-            HStack(alignment: .top, spacing: 0.0) {
-                Image(systemName: isUnwrapped ? "chevron.down" : "chevron.right")
-                    .foregroundColor(AppDebugColors.primary)
-
-                Text(log.message)
-                    .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
-                    .lineLimit(isUnwrapped ? nil : 1)
-                    .lineSpacing(4.0)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .onTapGesture {
-                        toggleLog(with: log.id)
-                    }
-                    .onLongPressGesture(minimumDuration: 0.5) {
-                        editedString = log.message
-                        withAnimation {
-                            showDetail = true
-                        }
-                    }
-            }
+            Text(log.message)
+                .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
+                .lineLimit(isUnwrapped ? nil : 1)
+                .lineSpacing(4.0)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading)
         }
-        .frame(minWidth: proxy.size.width)
+        .scrollIndicatorsIf16Plus(hidden: true)
     }
 
 }
 
 struct ConsoleLogsView_Previews: PreviewProvider {
     static var previews: some View {
-        ConsoleLogsView(standardOutputService: .shared)
+        ConsoleLogsView(standardOutputService: .testService)
     }
+}
+
+fileprivate extension View {
+
+    func scrollIndicatorsIf16Plus(hidden: Bool) -> some View {
+        if #available(iOS 16.0, *) {
+            return self.scrollIndicators(hidden ? .hidden : .visible)
+        } else {
+            return self
+        }
+    }
+
 }
