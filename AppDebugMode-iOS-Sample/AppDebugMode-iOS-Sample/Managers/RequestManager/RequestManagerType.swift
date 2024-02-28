@@ -13,5 +13,6 @@ protocol RequestManagerType: AnyObject {
     
     func fetchCars(id: Int) -> AnyPublisher<CarResponse, AFError>
     func fetchProducts(id: Int) -> AnyPublisher<ProductResponse, AFError>
-    
+    func fetchLarge() -> AnyPublisher<LargeObjectResponse, AFError>
+
 }

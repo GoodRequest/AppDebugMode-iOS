@@ -32,9 +32,9 @@
         "package": "GoodNetworking",
         "repositoryURL": "https://github.com/GoodRequest/GoodNetworking.git",
         "state": {
-          "branch": null,
-          "revision": "f213de6bc208a0a2f2e3cff4e6e26f62a42113de",
-          "version": "2.0.2"
+          "branch": "feat/messagePublisher",
+          "revision": "422247410c0d65591c0320675cc599ac094bc59a",
+          "version": null
         }
       },
       {

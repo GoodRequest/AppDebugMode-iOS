@@ -43,7 +43,14 @@ final class FetchViewController: BaseViewController<FetchViewModel> {
 
         return button
     }()
-    
+
+    private let fetchLarge: FetchButton = {
+        let button = FetchButton()
+        button.setTitle(Constants.Texts.Fetch.fetchLarge, for: .normal)
+
+        return button
+    }()
+
 }
 
 // MARK: - Lifecycle
@@ -74,11 +81,19 @@ extension FetchViewController {
         viewModel.productResult
             .sink { [weak self] in self?.handle(productResult: $0) }
             .store(in: &cancellables)
+
+        viewModel.largeResult
+            .sink { [weak self] in self?.handle(largeResult: $0) }
+            .store(in: &cancellables)
     }
     
     func bindActions(viewModel: FetchViewModel) {
         fetchButton.publisher(for: .touchUpInside)
             .sink { viewModel.fetchResponse() }
+            .store(in: &cancellables)
+
+        fetchLarge.publisher(for: .touchUpInside)
+            .sink { viewModel.fetchLarge() }
             .store(in: &cancellables)
     }
     
@@ -99,14 +114,16 @@ private extension FetchViewController {
     
     func addSubviews() {
         [responseLabel, serverLabel].forEach { stackView.addArrangedSubview($0) }
-        [stackView, fetchButton].forEach { view.addSubview($0) }
+        [stackView, fetchButton, fetchLarge].forEach { view.addSubview($0) }
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
+            fetchButton.topAnchor.constraint(equalTo: fetchLarge.safeAreaLayoutGuide.bottomAnchor, constant: 20),
             fetchButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.Insets.edgeInset * 2),
             fetchButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
+            fetchLarge.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+
             stackView.bottomAnchor.constraint(lessThanOrEqualTo: fetchButton.topAnchor, constant: -Constants.Insets.edgeInset),
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.Insets.edgeInset),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.Insets.edgeInset),
@@ -153,5 +170,24 @@ private extension FetchViewController {
             fetchButton.isLoading = false
         }
     }
-    
+
+    func handle(largeResult: FetchViewModel.LargeFetchingState) {
+        switch largeResult {
+        case .idle:
+            responseLabel.text = Constants.Texts.Fetch.placeHolder
+        case .loading:
+            fetchLarge.isLoading = true
+
+        case .success(let largeResponse):
+            guard let data = try? JSONEncoder().encode(largeResponse) else { return }
+
+            fetchButton.isLoading = false
+            
+            responseLabel.text = String(data: data, encoding: .utf8)
+        case .error(_):
+            responseLabel.text = nil
+            fetchButton.isLoading = false
+        }
+    }
+
 }

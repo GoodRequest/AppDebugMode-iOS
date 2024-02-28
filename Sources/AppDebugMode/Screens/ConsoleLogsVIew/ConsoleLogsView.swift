@@ -9,11 +9,12 @@ import SwiftUI
 
 struct ConsoleLogsView: View {
 
+    @Environment(\.hostingControllerHolder) var viewControllerHolder
+
     @ObservedObject private var standardOutputService: StandardOutputService
     @State var unwrappedIds: Set<UInt64> = []
-    @State var showDetail = false
+    @State var isLoading = false
     @State var showSettings = false
-    @State var editedString = ""
 
     var dateFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
@@ -36,33 +37,40 @@ struct ConsoleLogsView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            if standardOutputService.shouldRedirectLogsToAppDebugMode {
-                if !standardOutputService.capturedOutput.isEmpty {
-                    consoleLogsList(proxy)
+            ZStack {
+                if standardOutputService.shouldRedirectLogsToAppDebugMode {
+                    if !standardOutputService.capturedOutput.isEmpty {
+                        consoleLogsList(proxy)
+                    } else {
+                        Text("No logs captured yet")
+                            .foregroundColor(.white)
+                            .bold()
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                            .padding()
+                    }
                 } else {
-                    Text("No logs captured yet")
+                    Text("Logs need to be redirected into app debug mode through settings")
                         .foregroundColor(.white)
                         .bold()
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                         .padding()
                 }
-            } else {
-                Text("Logs need to be redirected into app debug mode through settings")
-                    .foregroundColor(.white)
-                    .bold()
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    .padding()
+
+                if isLoading {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .progressViewStyle(CircularProgressViewStyle(tint: AppDebugColors.primary))
+                            .frame(maxWidth: 20, maxHeight: 20, alignment: .center)
+
+                        Color.gray.opacity(0.5)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .ignoresSafeArea()
+                    }
             }
         }
         .background(AppDebugColors.backgroundPrimary.ignoresSafeArea())
-        .sheet(isPresented: $showDetail, content: {
-            ConsoleLogDetailView(
-                editedString: $editedString,
-                showDetail: $showDetail
-            )
-        })
         .sheet(isPresented: $showSettings, content: {
             ConsoleLogsSettingsView(
                 standardOutputService: standardOutputService,
@@ -77,11 +85,13 @@ struct ConsoleLogsView: View {
                 Image(systemName: "gear")
                     .foregroundColor(AppDebugColors.primary)
             })
+            .disabled(isLoading)
 
             Button("Clear") {
                 standardOutputService.clearLogs()
             }
             .foregroundColor(AppDebugColors.primary)
+            .disabled(isLoading)
         }
     }
 
@@ -89,7 +99,9 @@ struct ConsoleLogsView: View {
         ScrollViewReader { scrollProxy in
             List(standardOutputService.capturedOutput) { log in
                 let isUnwrapped = unwrappedIds.contains(log.id)
-                ZStack(alignment: .topTrailing){
+                ZStack(alignment: .topTrailing) {
+
+
                     VStack(spacing: 0.0) {
                         consoleLogMessage(
                             log: log,
@@ -108,6 +120,13 @@ struct ConsoleLogsView: View {
                     .id(log.id)
                     .padding([.top], 2.0)
 
+                    Image(systemName: "ellipsis.circle")
+                        .imageScale(.small)
+                        .padding(2.0)
+                        .background(AppDebugColors.backgroundSecondary.opacity(0.8))
+                        .clipShape(Circle())
+                        .onTapGesture { pushDetail(logMessage: log.message) }
+
                     Image(systemName: isUnwrapped ? "chevron.down" : "chevron.right")
                         .imageScale(.small)
                         .foregroundColor(AppDebugColors.primary)
@@ -115,17 +134,8 @@ struct ConsoleLogsView: View {
                         .background(AppDebugColors.backgroundSecondary.opacity(0.8))
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .frame(maxWidth: .infinity, alignment: .topLeading)
-
-                    Image(systemName: "ellipsis.circle")
-                        .imageScale(.small)
-                        .padding(2.0)
-                        .background(AppDebugColors.backgroundSecondary.opacity(0.8))
-                        .clipShape(Circle())
-                        .onTapGesture {
-                            editedString = log.message
-                            showDetail = true
-                        }
                 }
+                .padding(.horizontal, 8)
                 .frame(minWidth: proxy.size.width)
                 .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
                 .listRowBackground(AppDebugColors.backgroundSecondary)
@@ -133,16 +143,25 @@ struct ConsoleLogsView: View {
                 .onTapGesture {
                     toggleLog(with: log.id)
                 }
-                .onLongPressGesture(minimumDuration: 0.5) {
-                    editedString = log.message
-                    showDetail = true
-                }
+                .onLongPressGesture(minimumDuration: 0.5) { pushDetail(logMessage: log.message)}
             }
-            
             .listStyle(.plain)
             .onAppear {
                 scrollProxy.scrollTo(standardOutputService.capturedOutput.last?.id, anchor: .top)
+                isLoading = false
             }
+        }
+    }
+
+    private func pushDetail(logMessage: String) {
+        withAnimation {
+            isLoading = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            viewControllerHolder?.controller?.navigationController?.pushViewController(
+                MyTextViewViewController(text: logMessage),
+                animated: false
+            )
         }
     }
 
@@ -151,15 +170,14 @@ struct ConsoleLogsView: View {
         proxy: GeometryProxy,
         isUnwrapped: Bool
     ) -> some View {
-        ScrollView(.horizontal) {
-            Text(log.message)
-                .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
-                .lineLimit(isUnwrapped ? nil : 1)
-                .lineSpacing(4.0)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.leading)
-        }
-        .scrollIndicatorsIf16Plus(hidden: true)
+        Text(log.message)
+            .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
+            .truncationMode(.middle)
+            .allowsTightening(true)
+            .lineLimit(isUnwrapped ? 50 : 1)
+            .lineSpacing(4.0)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.leading)
     }
 
 }
@@ -168,16 +186,4 @@ struct ConsoleLogsView_Previews: PreviewProvider {
     static var previews: some View {
         ConsoleLogsView(standardOutputService: .testService)
     }
-}
-
-fileprivate extension View {
-
-    func scrollIndicatorsIf16Plus(hidden: Bool) -> some View {
-        if #available(iOS 16.0, *) {
-            return self.scrollIndicators(hidden ? .hidden : .visible)
-        } else {
-            return self
-        }
-    }
-
 }

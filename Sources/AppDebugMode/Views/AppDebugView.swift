@@ -10,6 +10,7 @@ import SwiftUI
 struct AppDebugView: View {
     
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.hostingControllerHolder) var viewControlleeHolder
     
     // MARK: - Properties
     
@@ -79,28 +80,25 @@ struct AppDebugView: View {
     // MARK: - Body
 
     var body: some View {
-        NavigationView {
-            appDebugViewList()
-                .navigationTitle("App Debug Mode")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    closeNavigationBarItem()
-                }
-        }
-        .navigationViewStyle(.stack)
-        .accentColor(AppDebugColors.primary)
-        .onAppear {
-            let appearanceProxy = UINavigationBar.appearance(whenContainedInInstancesOf: [UIHostingController<AppDebugView>.self])
-            appearanceProxy.tintColor = UIColor(AppDebugColors.primary)
-            let standardAppearance = UINavigationBarAppearance()
-            standardAppearance.backgroundEffect = UIBlurEffect(style: .dark)
-            standardAppearance.titleTextAttributes = [
-                .foregroundColor: UIColor.white
-            ]
-            
-            appearanceProxy.scrollEdgeAppearance = standardAppearance
-            appearanceProxy.standardAppearance = standardAppearance
-        }
+        appDebugViewList()
+            .navigationTitle("App Debug Mode")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                closeNavigationBarItem()
+            }
+            .navigationViewStyle(.stack)
+            .accentColor(AppDebugColors.primary)
+            .onAppear {
+                let appearanceProxy = UINavigationBar.appearance(whenContainedInInstancesOf: [BaseHostingController.self])
+                let standardAppearance = UINavigationBarAppearance()
+                standardAppearance.backgroundEffect = UIBlurEffect(style: .dark)
+                standardAppearance.titleTextAttributes = [
+                    .foregroundColor: UIColor.white
+                ]
+                
+                appearanceProxy.scrollEdgeAppearance = standardAppearance
+                appearanceProxy.standardAppearance = standardAppearance
+            }
     }
 
 }
@@ -120,9 +118,11 @@ private extension AppDebugView {
         .listBackgroundColor(AppDebugColors.backgroundPrimary, for: .insetGrouped)
     }
     
+    @ViewBuilder
     func navigationLink(screen: Screen) -> some View {
-        NavigationLink {
-            screen.destination
+        Button {
+            let viewController = screen.destination.eraseToUIViewController()
+            viewControlleeHolder?.controller?.navigationController?.pushViewController(viewController, animated: false)
         } label: {
             HStack {
                 screen.image
@@ -168,7 +168,7 @@ private extension AppDebugView {
         ToolbarItem(placement: .navigationBarTrailing) {
             if #available(iOS 15, *) {
                 Button {
-                    presentationMode.wrappedValue.dismiss()
+                    viewControlleeHolder?.controller?.navigationController?.dismiss(animated: true)
                 } label: {
                     Text("Close")
                 }

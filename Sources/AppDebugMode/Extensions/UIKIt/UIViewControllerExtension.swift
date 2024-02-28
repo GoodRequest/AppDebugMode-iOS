@@ -16,6 +16,7 @@ extension UIViewController {
             let viewController = AppDebugModeProvider.shared.start()
 
             if presentedViewController == nil, view.window?.rootViewController?.presentedViewController == nil {
+                viewController.modalPresentationStyle = .fullScreen
                 present(viewController, animated: true)
             } else {
                 dismiss(animated: true)

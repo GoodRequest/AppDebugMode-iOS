@@ -28,6 +28,15 @@ final class FetchViewModel {
         
     }
     
+    enum LargeFetchingState {
+
+        case idle
+        case loading
+        case success(LargeObjectResponse)
+        case error(AFError)
+
+    }
+
     enum ProductFetchingState {
         
         case idle
@@ -62,6 +71,7 @@ final class FetchViewModel {
     
     // MARK: - Combine
     
+    var largeResult = CurrentValueSubject<LargeFetchingState, Never>(.idle)
     var carResult = CurrentValueSubject<CarFetchingState, Never>(.idle)
     var productResult = CurrentValueSubject<ProductFetchingState, Never>(.idle)
     private var cancellables = Set<AnyCancellable>()
@@ -87,6 +97,15 @@ extension FetchViewModel {
         #endif
     }
     
+    func fetchLarge() {
+        di.requestManager.fetchLarge()
+            .map { LargeFetchingState.success($0) }
+            .catch { Just(.error($0)) }
+            .prepend(.loading)
+            .sink { [weak self] result in self?.largeResult.send(result) }
+            .store(in: &cancellables)
+    }
+
     func fetchCar() {
         di.requestManager.fetchCars(id: Int.random(in: 1...10))
             .map { CarFetchingState.success($0) }
