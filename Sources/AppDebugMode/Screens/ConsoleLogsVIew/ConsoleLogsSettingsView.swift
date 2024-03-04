@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ConsoleLogsSettingsView: View {
 
+    @AppStorage("numberOfLinesUnwrapped") var numberOfLinesUnwrapped = 50
     @ObservedObject var standardOutputService: StandardOutputService
     @State private var redirectLogs = false
     @Binding var showSettings: Bool
@@ -24,15 +25,30 @@ struct ConsoleLogsSettingsView: View {
         NavigationView {
             ZStack(alignment: .bottom){
                 List {
-                    Toggle(isOn: $redirectLogs, label: {
-                        Text("Redirect Logs To App Debug View")
-                            .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
-                            .listRowBackground(AppDebugColors.backgroundSecondary)
-                            .foregroundColor(AppDebugColors.textPrimary)
-                    })
+                    Group  {
+                        Toggle(isOn: $redirectLogs, label: {
+                            Text("Redirect Logs To App Debug View")
+                                .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
+                                .listRowBackground(AppDebugColors.backgroundSecondary)
+                                .foregroundColor(AppDebugColors.textPrimary)
+                        })
+                        .toggleStyle(SwitchToggleStyle(tint: AppDebugColors.primary))
+
+                        Picker("Number of lines unwrapped", selection: $numberOfLinesUnwrapped) {
+                            ForEach(0..<100) {
+                                Text("\($0) lines")
+                                    .foregroundColor(AppDebugColors.textPrimary)
+
+                            }
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .accentColor(AppDebugColors.primary)
+                    }
                     .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
                     .listRowBackground(AppDebugColors.backgroundSecondary)
                     .foregroundColor(AppDebugColors.textPrimary)
+                    .accentColor(AppDebugColors.primary)
+
                 }
                 .listStyle(.plain)
                 .listBackgroundColor(AppDebugColors.backgroundSecondary, for: .insetGrouped)

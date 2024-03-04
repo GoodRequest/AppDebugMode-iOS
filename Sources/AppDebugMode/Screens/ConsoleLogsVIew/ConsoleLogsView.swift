@@ -10,6 +10,7 @@ import SwiftUI
 struct ConsoleLogsView: View {
 
     @Environment(\.hostingControllerHolder) var viewControllerHolder
+    @AppStorage("numberOfLinesUnwrapped") var numberOfLinesUnwrapped = 50
 
     @ObservedObject private var standardOutputService: StandardOutputService
     @State var unwrappedIds: Set<UInt64> = []
@@ -190,7 +191,7 @@ struct ConsoleLogsView: View {
             .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
             .truncationMode(.middle)
             .allowsTightening(true)
-            .lineLimit(isUnwrapped ? 50 : 1)
+            .lineLimit(isUnwrapped ? numberOfLinesUnwrapped : 1)
             .lineSpacing(4.0)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.leading)
