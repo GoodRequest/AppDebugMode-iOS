@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/GoodRequest/GoodPersistence.git", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.0.0"),
+        .package(url: "https://github.com/dfed/swift-async-queue.git", .upToNextMinor(from: "0.5.1"))
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -25,11 +26,12 @@ let package = Package(
             dependencies: [
                 .product(name: "GoodPersistence", package: "GoodPersistence"),
                 .product(name: "SwiftUIIntrospect", package: "swiftui-introspect"),
+                .product(name: "AsyncQueue", package: "swift-async-queue")
             ],
             path: "Sources/AppDebugMode"
         ),
         .testTarget(
             name: "AppDebugModeTests",
-            dependencies: ["AppDebugMode"]),
+            dependencies: ["AppDebugMode"])
     ]
 )

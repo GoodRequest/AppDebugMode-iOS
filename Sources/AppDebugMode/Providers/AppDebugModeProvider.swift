@@ -96,11 +96,3 @@ private extension AppDebugModeProvider {
     }
 
 }
-
-// MARK: - Public - Global functions
-
-#if canImport(AppDebugModeInterceptable)
-public func setupInterceptor() {
-    print("✅ [AppDebugMode] AppDebugModeInterceptable installed")
-}
-#endif

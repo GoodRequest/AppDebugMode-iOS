@@ -7,10 +7,6 @@
 
 import SwiftUI
 
-#if canImport(AppDebugModeInterceptable)
-import AppDebugModeInterceptable
-#endif
-
 struct AppDebugView: View {
     
     @Environment(\.presentationMode) var presentationMode
@@ -78,12 +74,12 @@ struct AppDebugView: View {
             )
         ])
 
-        #if canImport(AppDebugModeInterceptable)
+        #if canImport(GoodNetworking_Shared)
         self.screens.append(
             Screen(
                 title: "Interceptor settings",
                 image: Image(systemName: "cable.coaxial"),
-                destination: AnyView(AppDebugModeInterceptable.InterceptorSettings())
+                destination: AnyView(InterceptorSettings())
             )
         )
         #endif
