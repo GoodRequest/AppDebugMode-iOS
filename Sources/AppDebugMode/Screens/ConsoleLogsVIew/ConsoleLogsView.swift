@@ -15,6 +15,8 @@ struct ConsoleLogsView: View {
     @State var unwrappedIds: Set<UInt64> = []
     @State var isLoading = false
     @State var showSettings = false
+    @State var didScroll = false
+
 
     var dateFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
@@ -59,15 +61,14 @@ struct ConsoleLogsView: View {
                 }
 
                 if isLoading {
-                        ProgressView()
-                            .progressViewStyle(.circular)
-                            .progressViewStyle(CircularProgressViewStyle(tint: AppDebugColors.primary))
-                            .frame(maxWidth: 20, maxHeight: 20, alignment: .center)
+                    Color.black.opacity(0.6)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .ignoresSafeArea()
 
-                        Color.gray.opacity(0.5)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .ignoresSafeArea()
-                    }
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: AppDebugColors.primary))
+                        .frame(maxWidth: 20, maxHeight: 20, alignment: .center)
+                }
             }
         }
         .background(AppDebugColors.backgroundPrimary.ignoresSafeArea())
@@ -97,58 +98,73 @@ struct ConsoleLogsView: View {
 
     private func consoleLogsList(_ proxy: GeometryProxy) -> some View {
         ScrollViewReader { scrollProxy in
-            List(standardOutputService.capturedOutput) { log in
-                let isUnwrapped = unwrappedIds.contains(log.id)
-                ZStack(alignment: .topTrailing) {
+            ZStack {
+                List(standardOutputService.capturedOutput) { log in
+                    let isUnwrapped = unwrappedIds.contains(log.id)
+                    ZStack(alignment: .topTrailing) {
+                        VStack(spacing: 0.0) {
+                            consoleLogMessage(
+                                log: log,
+                                proxy: proxy,
+                                isUnwrapped: isUnwrapped
+                            )
 
+                            if isUnwrapped {
+                                Text("\(dateFormatter.string(from: log.date))")
+                                    .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
+                                    .foregroundColor(.gray)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.leading)
+                            }
+                        }
+                        .padding([.top], 2.0)
 
-                    VStack(spacing: 0.0) {
-                        consoleLogMessage(
-                            log: log,
-                            proxy: proxy,
-                            isUnwrapped: isUnwrapped
-                        )
+                        Image(systemName: "ellipsis.circle")
+                            .imageScale(.small)
+                            .padding(2.0)
+                            .background(AppDebugColors.backgroundSecondary.opacity(0.8))
+                            .clipShape(Circle())
+                            .onTapGesture { pushDetail(logMessage: log.message) }
 
-                        if isUnwrapped {
-                            Text("\(dateFormatter.string(from: log.date))")
-                                .font(Font(UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)))
-                                .foregroundColor(.gray)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.leading)
+                        Image(systemName: isUnwrapped ? "chevron.down" : "chevron.right")
+                            .imageScale(.small)
+                            .foregroundColor(AppDebugColors.primary)
+                            .padding(2.0)
+                            .background(AppDebugColors.backgroundSecondary.opacity(0.8))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                    }
+                    .padding(.horizontal, 8)
+                    .frame(minWidth: proxy.size.width)
+                    .id(log.id)
+                    .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
+                    .listRowBackground(AppDebugColors.backgroundSecondary)
+                    .foregroundColor(AppDebugColors.textPrimary)
+                    .onTapGesture {
+                        toggleLog(with: log.id)
+                    }
+                    .onLongPressGesture(minimumDuration: 0.5) { pushDetail(logMessage: log.message)}
+                }
+                .listStyle(.plain)
+                .onAppear {
+                    if !didScroll {
+                        scrollProxy.scrollTo(standardOutputService.capturedOutput.last?.id, anchor: .top)
+                        didScroll = true
+                    }
+                    isLoading = false
+                }
+
+                Image(systemName: "arrow.down.circle")
+                    .imageScale(.large)
+                    .foregroundColor(AppDebugColors.primary)
+                    .padding(4.0)
+                    .background(Color.gray.opacity(0.8))
+                    .clipShape(Circle())
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                    .onTapGesture {
+                        withAnimation {scrollProxy.scrollTo(standardOutputService.capturedOutput.last?.id, anchor: .top)
                         }
                     }
-                    .id(log.id)
-                    .padding([.top], 2.0)
-
-                    Image(systemName: "ellipsis.circle")
-                        .imageScale(.small)
-                        .padding(2.0)
-                        .background(AppDebugColors.backgroundSecondary.opacity(0.8))
-                        .clipShape(Circle())
-                        .onTapGesture { pushDetail(logMessage: log.message) }
-
-                    Image(systemName: isUnwrapped ? "chevron.down" : "chevron.right")
-                        .imageScale(.small)
-                        .foregroundColor(AppDebugColors.primary)
-                        .padding(2.0)
-                        .background(AppDebugColors.backgroundSecondary.opacity(0.8))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .frame(maxWidth: .infinity, alignment: .topLeading)
-                }
-                .padding(.horizontal, 8)
-                .frame(minWidth: proxy.size.width)
-                .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
-                .listRowBackground(AppDebugColors.backgroundSecondary)
-                .foregroundColor(AppDebugColors.textPrimary)
-                .onTapGesture {
-                    toggleLog(with: log.id)
-                }
-                .onLongPressGesture(minimumDuration: 0.5) { pushDetail(logMessage: log.message)}
-            }
-            .listStyle(.plain)
-            .onAppear {
-                scrollProxy.scrollTo(standardOutputService.capturedOutput.last?.id, anchor: .top)
-                isLoading = false
             }
         }
     }
@@ -159,7 +175,7 @@ struct ConsoleLogsView: View {
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             viewControllerHolder?.controller?.navigationController?.pushViewController(
-                MyTextViewViewController(text: logMessage),
+                ConsoleLogDetailViewController(text: logMessage),
                 animated: false
             )
         }
@@ -178,6 +194,7 @@ struct ConsoleLogsView: View {
             .lineSpacing(4.0)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.leading)
+            .padding(.trailing, 32)
     }
 
 }

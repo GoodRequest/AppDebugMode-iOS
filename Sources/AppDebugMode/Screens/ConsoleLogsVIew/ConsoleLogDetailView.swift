@@ -1,5 +1,5 @@
 //
-//  ConsoleLogDetailView.swift
+//  ConsoleLogDetailViewController.swift
 //
 //
 //  Created by Matus Klasovity on 31/01/2024.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MyTextViewViewController: UIViewController {
+class ConsoleLogDetailViewController: UIViewController {
     
     // MARK: - Views
     
@@ -70,10 +70,12 @@ class MyTextViewViewController: UIViewController {
 
 // MARK: - Override
 
-extension MyTextViewViewController {
+extension ConsoleLogDetailViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
              
+        navigationController?.navigationBar.configureSolidAppearance()
+
         setupView()
         setupConstraints()
     }
@@ -81,7 +83,7 @@ extension MyTextViewViewController {
 
 // MARK: - Setup View
 
-private extension MyTextViewViewController {
+private extension ConsoleLogDetailViewController {
     
     func setupView() {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: trailingNavigationView)
@@ -116,7 +118,7 @@ private extension MyTextViewViewController {
 
 // MARK: - Actions
 
-private extension MyTextViewViewController {
+private extension ConsoleLogDetailViewController {
     
     @IBAction func copyButtonClicked(_ sender: Any?) {
         UIPasteboard.general.string = textView.text

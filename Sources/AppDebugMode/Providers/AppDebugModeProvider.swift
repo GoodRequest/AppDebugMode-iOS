@@ -81,7 +81,7 @@ public extension AppDebugModeProvider {
             .eraseToUIViewController()
         
         let navigationController = UINavigationController(rootViewController: viewController)
-        
+        navigationController.navigationBar.configureSolidAppearance()
         return navigationController
     }
     

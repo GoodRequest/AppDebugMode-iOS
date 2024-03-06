@@ -181,12 +181,12 @@ private extension FetchViewController {
         case .success(let largeResponse):
             guard let data = try? JSONEncoder().encode(largeResponse) else { return }
 
-            fetchButton.isLoading = false
-            
+            fetchLarge.isLoading = false
+
             responseLabel.text = String(data: data, encoding: .utf8)
         case .error(_):
             responseLabel.text = nil
-            fetchButton.isLoading = false
+            fetchLarge.isLoading = false
         }
     }
 

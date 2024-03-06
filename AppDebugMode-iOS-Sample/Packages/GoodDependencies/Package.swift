@@ -12,7 +12,7 @@ let package = Package(
         ),
     ],
    dependencies: [
-       .package(url: "https://github.com/GoodRequest/GoodNetworking.git", .branch("feat/messagePublisher"))
+       .package(url: "https://github.com/GoodRequest/GoodNetworking.git", .upToNextMajor(from: "2.0.0"))
     ],
     targets: [
         .target(
