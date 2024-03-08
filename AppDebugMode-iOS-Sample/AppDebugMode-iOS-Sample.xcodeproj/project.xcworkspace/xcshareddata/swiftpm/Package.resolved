@@ -47,6 +47,15 @@
         }
       },
       {
+        "package": "swift-async-queue",
+        "repositoryURL": "https://github.com/dfed/swift-async-queue.git",
+        "state": {
+          "branch": null,
+          "revision": "90c0ac3661a4fae9f7b94f45316046805f5b2478",
+          "version": "0.5.2"
+        }
+      },
+      {
         "package": "swiftui-introspect",
         "repositoryURL": "https://github.com/siteline/swiftui-introspect",
         "state": {

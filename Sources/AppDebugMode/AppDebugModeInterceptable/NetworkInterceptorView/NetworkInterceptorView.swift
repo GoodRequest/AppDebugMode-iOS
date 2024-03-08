@@ -4,11 +4,9 @@
 //
 //  Created by Filip Šašala on 21/02/2024.
 //
-#if canImport(GoodNetworking_Shared)
 
 import Alamofire
 import AsyncQueue
-import GoodNetworking_Shared
 import Observation
 import SwiftUI
 
@@ -20,12 +18,12 @@ public actor InterceptionProvider {
     private let interceptionQueue = ActorQueue<InterceptionProvider>()
     private weak var interceptorViewModel: NetworkInterceptorViewModel?
 
-    internal init() {
+    public init() {
         interceptionQueue.adoptExecutionContext(of: self)
     }
 
-    nonisolated public func intercept(requestTo endpoint: Endpoint) async -> Endpoint {
-        guard interceptorEnabled else { return endpoint }
+    nonisolated public func intercept(requestTo request: URLRequest) async -> URLRequest {
+        guard interceptorEnabled else { return request }
 
         return await interceptionQueue.enqueueAndWait { actor in
             guard let interceptorViewModel = actor.interceptorViewModel else { preconditionFailure() }
@@ -35,7 +33,7 @@ public actor InterceptionProvider {
                     try? await Task.sleep(nanoseconds: UInt64(1e9)) // prevent actor reentrancy issues (?)
                     continue
                 }
-                return await interceptorViewModel.startInterception(of: endpoint)
+                return await interceptorViewModel.startInterception(of: request)
             }
         }
     }
@@ -54,8 +52,8 @@ public actor InterceptionProvider {
     enum State: Equatable {
 
         case idle
-        case autocontinue(Endpoint, in: TimeInterval)
-        case editing(Endpoint)
+        case autocontinue(URLRequest, in: TimeInterval)
+        case editing(URLRequest)
 
         static func == (lhs: State, rhs: State) -> Bool {
             switch (lhs, rhs) {
@@ -77,11 +75,11 @@ public actor InterceptionProvider {
 
     var isEditing: Bool {
         get {
-            return if case let .editing(_) = self.state { true } else { false }
+            return if case .editing = self.state { true } else { false }
         }
         set {
-            guard let endpoint else { return }
-            self.state = newValue ? .editing(endpoint) : .autocontinue(endpoint, in: 1)
+            guard let request else { return }
+            self.state = newValue ? .editing(request) : .autocontinue(request, in: 1)
         }
     }
 
@@ -100,8 +98,8 @@ public actor InterceptionProvider {
         }
         set {
             switch state {
-            case .autocontinue(let endpoint, let seconds):
-                self.state = .autocontinue(endpoint, in: newValue)
+            case .autocontinue(let request, let seconds):
+                self.state = .autocontinue(request, in: newValue)
 
             default:
                 break
@@ -109,46 +107,46 @@ public actor InterceptionProvider {
         }
     }
 
-    var endpoint: Endpoint? {
+    var request: URLRequest? {
         switch state {
         case .idle:
             return nil
 
-        case .autocontinue(let endpoint, _):
-            return endpoint
+        case .autocontinue(let request, _):
+            return request
 
-        case .editing(let endpoint):
-            return endpoint
+        case .editing(let request):
+            return request
         }
     }
 
-    public init(endpoint: Endpoint? = nil) {
+    public init(request: URLRequest? = nil) {
         Task {
             await withInterceptionProvider { provider in
                 await provider.bind(viewModel: self)
-                if let endpoint { await provider.intercept(requestTo: endpoint) }
+                if let request { await provider.intercept(requestTo: request) }
             }
         }
     }
 
-    func startInterception(of endpoint: Endpoint) async -> Endpoint {
-        self.state = .autocontinue(endpoint, in: interceptorAutocontinueDelay)
+    func startInterception(of request: URLRequest) async -> URLRequest {
+        self.state = .autocontinue(request, in: interceptorAutocontinueDelay)
 
         while timeLeft > 0 {
             try? await Task.sleep(nanoseconds: UInt64(1e9)) // 1 second
             timeLeft -= 1
         }
 
-        if let updatedEndpoint = self.endpoint {
+        if let updatedRequest = self.request {
             self.state = .idle
-            return updatedEndpoint
+            return updatedRequest
         } else {
             self.state = .idle
-            return endpoint
+            return request
         }
     }
 
-    func updateEndpoint(_ newValue: Endpoint) {
+    func updateRequest(_ newValue: URLRequest) {
         switch self.state {
         case .idle:
             Task { await withInterceptionProvider { provider in await provider.intercept(requestTo: newValue) }}
@@ -177,8 +175,8 @@ public struct NetworkInterceptorView: View {
 
     public var body: some View {
         dynamicIslandView {
-            if let endpoint = viewModel.endpoint {
-                dynamicIslandInterceptingView(endpoint: endpoint)
+            if let request = viewModel.request {
+                dynamicIslandInterceptingView(request: request)
                     .transition(.opacity)
             } else {
                 Text("👀")
@@ -191,22 +189,22 @@ public struct NetworkInterceptorView: View {
         .sheet(
             isPresented: $viewModel.isEditing,
             content: {
-                if let endpoint = viewModel.endpoint {
+                if let request = viewModel.request {
                     NetworkInterceptorEditingFormView(
-                        endpoint: Binding(
-                            get: { MutableEndpoint(endpoint) },
-                            set: { viewModel.updateEndpoint($0) }
+                        request: Binding(
+                            get: { MutableRequest(request) },
+                            set: { viewModel.updateRequest($0.modifiedRequest) }
                         ),
                         isEditing: $viewModel.isEditing
                     )
                 } else {
-                    Text("No endpoint available for intercepting")
+                    Text("No request available for intercepting")
                 }
             }
         )
     }
 
-    func dynamicIslandInterceptingView(endpoint: Endpoint) -> some View {
+    func dynamicIslandInterceptingView(request: URLRequest) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 HStack {
@@ -234,25 +232,25 @@ public struct NetworkInterceptorView: View {
 
             Color.white.frame(height: 1 / UIScreen.main.nativeScale)
 
-            endpointView(endpoint: endpoint)
+            requestView(request: request)
                 .padding(.horizontal)
                 .padding(.vertical, 8)
         }
     }
 
-    func endpointView(endpoint: Endpoint) -> some View {
+    func requestView(request: URLRequest) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             // HTTP Method and path
             Label(
                 title: {
                     Group {
-                        Text("\(endpoint.method.rawValue) ")
-                            .foregroundStyle(endpoint.method.color)
+                        Text("\(request.method?.rawValue ?? "METH") ")
+                            .foregroundStyle(request.method!.color)
                             .bold()
 
                         +
 
-                        Text("\(endpoint.path)")
+                        Text("\(request.url?.pathExtension ?? "PATH")")
                     }
                     .lineLimit(1)
                 },
@@ -262,7 +260,7 @@ public struct NetworkInterceptorView: View {
             // Top 4 headers
             Label(
                 title: {
-                    Text("\(endpoint.headers?.fancyDescription ?? "No headers")")
+                    Text("\(request.headers.fancyDescription ?? "No headers")")
                         .lineLimit(4)
                         .monospaced()
                 },
@@ -329,7 +327,7 @@ public struct NetworkInterceptorView: View {
 @available(iOS 17.0, *)
 struct NetworkInterceptorEditingFormView: View {
 
-    @Binding var endpoint: MutableEndpoint
+    @Binding var request: MutableRequest
     @Binding var isEditing: Bool
 
     @ViewBuilder var body: some View {
@@ -343,24 +341,24 @@ struct NetworkInterceptorEditingFormView: View {
     private var content: some View {
         Form {
             Section("Path") {
-                TextField("Path", text: $endpoint.path)
+                TextField("Path", text: $request.path)
             }
 
             Section("Method") {
                 TextField("Path", text: Binding(
-                    get: { endpoint.method.rawValue },
-                    set: { endpoint.method = HTTPMethod(rawValue: $0) }
+                    get: { request.method.rawValue },
+                    set: { request.method = HTTPMethod(rawValue: $0) }
                 ))
             }
 
             Section("Headers") {
-                let headers = endpoint.headers?.dictionary.sorted(by: { $0.key < $1.key }) ?? []
+                let headers = request.headers?.dictionary.sorted(by: { $0.key < $1.key }) ?? []
                 ForEach(headers, id: \.key) { header in
                     HStack {
                         Text(header.key)
                         TextField("Value", text: Binding(
                             get: { header.value },
-                            set: { newValue in endpoint.headers?.update(name: header.key, value: newValue) }
+                            set: { newValue in request.headers?.update(name: header.key, value: newValue) }
                         ))
                     }
                 }
@@ -378,28 +376,24 @@ struct NetworkInterceptorEditingFormView: View {
 
 // MARK: - Extensions
 
-struct MutableEndpoint: Endpoint {
+struct MutableRequest {
 
-    private let originalEndpoint: Endpoint
+    private let originalrequest: URLRequest
 
-    init(_ endpoint: Endpoint) {
-        self.originalEndpoint = endpoint
-        self.path = endpoint.path
-        self.method = endpoint.method
-        self.headers = endpoint.headers
-        self.encoding = endpoint.encoding
-        self.parameters = endpoint.parameters
+    var modifiedRequest: URLRequest {
+        return try! URLRequest(url: originalrequest.url!, method: self.method, headers: self.headers)
+    }
+
+    init(_ request: URLRequest) {
+        self.originalrequest = request
+        self.path = request.url!.pathExtension
+        self.method = HTTPMethod(rawValue: request.httpMethod!)
+        self.headers = request.headers
     }
 
     var path: String
     var method: HTTPMethod
     var headers: HTTPHeaders?
-    var encoding: ParameterEncoding
-    var parameters: EndpointParameters?
-
-    func url(on baseUrl: String) throws -> URL {
-        return try baseUrl.asURL().appendingPathComponent(path)
-    }
 
 }
 
@@ -437,58 +431,57 @@ extension Alamofire.HTTPHeaders {
 
 }
 
-// MARK: - Previews
-
-@available(iOS 17.0, *)
-struct NetworkInterceptorView_Previews: PreviewProvider {
-
-    static var previews: some View {
-        NetworkInterceptorView(
-            viewModel: NetworkInterceptorViewModel(
-                endpoint: TestEndpoint.test
-            )
-        )
-    }
-
-}
-
-enum TestEndpoint: Endpoint {
-
-    case test
-
-    var path: String {
-        "/users?query=123672839109IUJHNSIDA87ZH"
-    }
-
-    var method: Alamofire.HTTPMethod {
-        .post
-    }
-
-    var headers: Alamofire.HTTPHeaders? {
-        [
-            "Auth": "jajajajajajajjajajajaquery=123672839109IUJHNSIDA87ZH",
-            "X-Custom": "something went wrong",
-            "X-Country": "de_DE",
-            "X-Country-2": "de_DE",
-            "X-Country-3": "de_DE",
-            "X-Country-4": "de_DE",
-            "X-Country-5": "de_DE",
-            "X-Country-6": "de_DE"
-        ]
-    }
-
-    var encoding: Alamofire.ParameterEncoding {
-        JSONEncoding.default
-    }
-
-    var parameters: GoodNetworking_Shared.EndpointParameters? {
-        nil
-    }
-
-    func url(on baseUrl: String) throws -> URL {
-        fatalError()
-    }
-
-
-}
-#endif
+//// MARK: - Previews
+//
+//@available(iOS 17.0, *)
+//struct NetworkInterceptorView_Previews: PreviewProvider {
+//
+//    static var previews: some View {
+//        NetworkInterceptorView(
+//            viewModel: NetworkInterceptorViewModel(
+//                request: Testrequest.test
+//            )
+//        )
+//    }
+//
+//}
+//
+//enum Testrequest: request {
+//
+//    case test
+//
+//    var path: String {
+//        "/users?query=123672839109IUJHNSIDA87ZH"
+//    }
+//
+//    var method: Alamofire.HTTPMethod {
+//        .post
+//    }
+//
+//    var headers: Alamofire.HTTPHeaders? {
+//        [
+//            "Auth": "jajajajajajajjajajajaquery=123672839109IUJHNSIDA87ZH",
+//            "X-Custom": "something went wrong",
+//            "X-Country": "de_DE",
+//            "X-Country-2": "de_DE",
+//            "X-Country-3": "de_DE",
+//            "X-Country-4": "de_DE",
+//            "X-Country-5": "de_DE",
+//            "X-Country-6": "de_DE"
+//        ]
+//    }
+//
+//    var encoding: Alamofire.ParameterEncoding {
+//        JSONEncoding.default
+//    }
+//
+//    var parameters: GoodNetworking_Shared.requestParameters? {
+//        nil
+//    }
+//
+//    func url(on baseUrl: String) throws -> URL {
+//        fatalError()
+//    }
+//
+//
+//}

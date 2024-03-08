@@ -4,7 +4,6 @@
 //
 //  Created by Filip Šašala on 22/02/2024.
 //
-#if canImport(GoodNetworking_Shared)
 
 import UIKit
 
@@ -18,11 +17,11 @@ final class InterceptorWindow: UIWindow {
 
 }
 
-enum InterceptorWindowPresenter {
+public enum InterceptorWindowPresenter {
 
     private static var presentedWindow: InterceptorWindow?
 
-    static func present(_ controller: UIViewController, over rootWindow: UIWindow) {
+    public static func present(_ controller: UIViewController, over rootWindow: UIWindow) {
         let newWindow = InterceptorWindow(frame: rootWindow.frame)
         newWindow.windowLevel = UIWindow.Level(rootWindow.windowLevel.rawValue + 1)
         newWindow.rootViewController = controller
@@ -44,4 +43,3 @@ enum InterceptorWindowPresenter {
     }
 
 }
-#endif

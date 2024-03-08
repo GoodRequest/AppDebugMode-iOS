@@ -60,7 +60,7 @@ extension LoginViewController {
         setupLayout()
         
         #if DEBUG
-        AppDebugModeProvider.shared.selectedTestingUserPublisher
+        AppDebugModeProvider.shared.selectedUserProfilePublisher
             .sink { [weak self] in
                 self?.loginNameTextView.set(text: $0?.name)
                 self?.passwordNameTextView.set(text: $0?.password)

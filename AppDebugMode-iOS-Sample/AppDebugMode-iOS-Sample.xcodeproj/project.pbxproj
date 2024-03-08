@@ -184,7 +184,7 @@
 				785AC5392AB2F06A002C1BC1 /* BaseViewController */,
 				78CDA6FC2ABAD25C00CC1A82 /* Home */,
 				785AC5382AB2F062002C1BC1 /* Fetch */,
-				78CDA7052ABAF39100CC1A82 /*  Login */,
+				78CDA7052ABAF39100CC1A82 /* Login */,
 				7874BEFF2AC1B853007F0234 /* Profile */,
 			);
 			path = Screens;
@@ -287,13 +287,13 @@
 			path = Home;
 			sourceTree = "<group>";
 		};
-		78CDA7052ABAF39100CC1A82 /*  Login */ = {
+		78CDA7052ABAF39100CC1A82 /* Login */ = {
 			isa = PBXGroup;
 			children = (
 				78CDA7062ABAF3AD00CC1A82 /* LoginViewModel.swift */,
 				78CDA7082ABAF41500CC1A82 /* LoginViewController.swift */,
 			);
-			path = " Login";
+			path = Login;
 			sourceTree = "<group>";
 		};
 		78E10E3A2AB9D98600934298 /* Views */ = {

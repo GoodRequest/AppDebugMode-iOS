@@ -5,7 +5,6 @@
 //  Created by Filip Šašala on 26/02/2024.
 //
 
-#if canImport(GoodNetworking_Shared)
 import SwiftUI
 
 // MARK: - View
@@ -35,4 +34,3 @@ public struct InterceptorSettings: View {
 #Preview {
     InterceptorSettings()
 }
-#endif

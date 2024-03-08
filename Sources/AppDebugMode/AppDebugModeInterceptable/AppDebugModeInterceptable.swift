@@ -1,8 +1,6 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
-#if canImport(GoodNetworking_Shared)
-
 import Alamofire
 import SwiftUI
 
@@ -35,4 +33,3 @@ private var _interceptionProvider: InterceptionProvider = { InterceptionProvider
 public func withInterceptionProvider<Result>(execute: (InterceptionProvider) async -> (Result)) async -> Result {
     await execute(_interceptionProvider)
 }
-#endif
