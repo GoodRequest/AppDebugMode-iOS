@@ -32,9 +32,18 @@ final class RequestManager: RequestManagerType {
     private let session: NetworkSession
 
     init(baseServer: ApiServer) {
-        session = NetworkSession(baseUrl: baseServer.rawValue, configuration: .init(urlSessionConfiguration: .default, interceptor: nil, serverTrustManager: nil, eventMonitors: [LoggingEventMonitor(logger: OSLogLogger())]))
+        LoggingEventMonitor.maxVerboseLogSizeBytes = 1000000
+        let monitor = LoggingEventMonitor(logger: nil)
+        StandardOutputService.shared.connectCustomLogStreamPublisher(monitor.subscribeToMessages())
+        session = NetworkSession(baseUrl: baseServer.rawValue, configuration: .init(urlSessionConfiguration: .default, interceptor: nil, serverTrustManager: nil, eventMonitors: [monitor]))
     }
-    
+
+    func fetchLarge() -> AnyPublisher<LargeObjectResponse, AFError> {
+        session.request(endpoint: Endpoint.large, base: "https://codepo8.github.io")
+            .goodify()
+            .eraseToAnyPublisher()
+    }
+
     func fetchCars(id: Int) -> AnyPublisher<CarResponse, AFError> {
         return session.request(endpoint: Endpoint.cars(id))
             .goodify()

@@ -7,22 +7,22 @@
 
 import SwiftUI
 import GoodPersistence
+import Combine
 
-final class StandardOutputService: ObservableObject {
+final public class StandardOutputService: ObservableObject {
 
     // MARK: - Singleton
 
-    static var shared = StandardOutputService()
+    static public var shared = StandardOutputService()
 
     static let testService: StandardOutputService = {
         let service = StandardOutputService()
         let sampleValues = [
         """
-        🚀 GET https://myfakeapi.com/api/cars/4
+        🚀GET| ✅200| https://myfakeapi.com/api/cars/Top
         🏷 Headers: empty headers
         ↗️ Start: 2024-02-26 16:41:53 +0000
         ⌛️ Duration: 0.3984450101852417s
-        ✅ 200
         ⬇️ Response body:
         {
           "Car" : {
@@ -38,11 +38,10 @@ final class StandardOutputService: ObservableObject {
         }
         """,
         """
-        🚀 GET https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft
+        🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft
         🏷 Headers: empty headers
         ↗️ Start: 2024-02-26 16:41:53 +0000
         ⌛️ Duration: 0.3984450101852417s
-        ✅ 200
         ⬇️ Response body:
         {
           "Car" : {
@@ -56,8 +55,32 @@ final class StandardOutputService: ObservableObject {
             "car_model_year" : 2012
           }
         }
-
-        """
+        """,
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/5353afeafaef4faf4f4fa4fgafa4t5y5r65eh5eh5eh5eh5eh5hrfthfthftthfthft",
+        "🚀GET| ✅200| https://myfakeapi.com/api/cars/4/Bottom"
         ].map {
             Log(message: $0)
         }
@@ -82,8 +105,11 @@ final class StandardOutputService: ObservableObject {
 
     // MARK: - Variables
 
-    @Published var capturedOutput: [Log] = []
+     @Published var capturedOutput: [Log] = []
 
+    // MARK: - Private
+
+    private var cancellables: Set<AnyCancellable> = []
     private var didRedirectLogs: Bool = false
     private var pipe = Pipe()
     private var count = 0
@@ -122,6 +148,14 @@ final class StandardOutputService: ObservableObject {
 
             self?.redirectLog(readString)
         }
+    }
+
+    public func connectCustomLogStreamPublisher(_ stream: AnyPublisher<String, Never>) {
+        stream.sink { logMessage in
+            let log = StandardOutputService.Log(message: logMessage)
+            StandardOutputService.shared.capturedOutput.append(log)
+        }
+        .store(in: &cancellables)
     }
 
     func redirectLog(_ string: String) {

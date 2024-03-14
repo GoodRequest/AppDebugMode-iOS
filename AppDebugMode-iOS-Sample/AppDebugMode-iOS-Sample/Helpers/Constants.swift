@@ -36,6 +36,7 @@ struct Constants {
         
         struct Fetch {
             
+            static let fetchLarge = "Fetch Large"
             static let fetch = "Tap to fetch"
             static let placeHolder = "Empty"
             

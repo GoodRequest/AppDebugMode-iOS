@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5D73FB592B17B2E200865E4C /* AppDebugMode in Frameworks */ = {isa = PBXBuildFile; productRef = 5D73FB582B17B2E200865E4C /* AppDebugMode */; };
+		5D8F1E662B8F2EDD00D84DBE /* LargeObjectResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8F1E652B8F2EDD00D84DBE /* LargeObjectResponse.swift */; };
 		5DEB2AC02B17B00C0074E12A /* AppDebugMode in Frameworks */ = {isa = PBXBuildFile; productRef = 5DEB2ABF2B17B00C0074E12A /* AppDebugMode */; };
 		784AB0D92ABB15E9001801FC /* InputTextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784AB0D82ABB15E9001801FC /* InputTextFieldView.swift */; };
 		785AC50C2AB2EBEE002C1BC1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785AC50B2AB2EBEE002C1BC1 /* AppDelegate.swift */; };
@@ -46,6 +47,7 @@
 
 /* Begin PBXFileReference section */
 		5D73FB5A2B17B30400865E4C /* AppDebugMode-iOS */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "AppDebugMode-iOS"; path = ..; sourceTree = "<group>"; };
+		5D8F1E652B8F2EDD00D84DBE /* LargeObjectResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeObjectResponse.swift; sourceTree = "<group>"; };
 		784AB0D82ABB15E9001801FC /* InputTextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextFieldView.swift; sourceTree = "<group>"; };
 		785AC5082AB2EBEE002C1BC1 /* AppDebugMode-iOS-Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AppDebugMode-iOS-Sample.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		785AC50B2AB2EBEE002C1BC1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 			children = (
 				78A589F32AB88BFC004141F6 /* CarResponse.swift */,
 				78A589F52AB88D38004141F6 /* ProductResponse.swift */,
+				5D8F1E652B8F2EDD00D84DBE /* LargeObjectResponse.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -410,6 +413,7 @@
 				78A589F62AB88D38004141F6 /* ProductResponse.swift in Sources */,
 				7874BF052AC1BB8E007F0234 /* ProfileCoordinator.swift in Sources */,
 				785AC52D2AB2EED8002C1BC1 /* RequestManager.swift in Sources */,
+				5D8F1E662B8F2EDD00D84DBE /* LargeObjectResponse.swift in Sources */,
 				785AC5372AB2F03F002C1BC1 /* FetchViewController.swift in Sources */,
 				785AC52B2AB2EEA6002C1BC1 /* RequestManagerType.swift in Sources */,
 				785AC5322AB2EF81002C1BC1 /* FetchCoordinator.swift in Sources */,
@@ -571,7 +575,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -602,7 +606,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

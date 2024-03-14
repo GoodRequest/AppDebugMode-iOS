@@ -77,12 +77,14 @@ public extension AppDebugModeProvider {
     }
 
     func start() -> UIViewController {
-        let view = AppDebugView(serversCollections: AppDebugModeProvider.shared.serversCollections)
-        let hostingViewController = UIHostingController(rootView: view)
-
-        return hostingViewController
+        let viewController = AppDebugView(serversCollections: AppDebugModeProvider.shared.serversCollections)
+            .eraseToUIViewController()
+        
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.navigationBar.configureSolidAppearance()
+        return navigationController
     }
-
+    
 }
 
 // MARK: - Private - Helper functions
