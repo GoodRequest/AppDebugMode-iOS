@@ -7,6 +7,7 @@
 
 import Foundation
 import GoodPersistence
+import KeychainAccess
 
 final class CacheProvider {
     
@@ -128,8 +129,7 @@ private extension CacheProvider {
             keychainValues[key] = receiveKeychainValueFromPropertyList(
                 key: key,
                 valueType: decodable.self,
-                defaultValue: defaultValueChild.value,
-                accessibility: childMirror.children.first(where: { $0.label == "accessibility" })?.value as? KeychainItemAccessibility
+                defaultValue: defaultValueChild.value
             )
         }
     }
@@ -137,21 +137,14 @@ private extension CacheProvider {
     func receiveKeychainValueFromPropertyList<T: Codable>(
         key: String,
         valueType: T.Type,
-        defaultValue: Any,
-        accessibility: KeychainItemAccessibility?
+        defaultValue: Any
     ) -> String {
-        guard let data = KeychainWrapper.standard.data(
-            forKey: key,
-            withAccessibility: accessibility
-        ) else {
+        guard let value = try? Keychain.default.get(key) else {
             let defaultValueCodable = defaultValue as! Codable
             // Return default value if data cannot be retrieved from Keychain
             return formatValue(value: defaultValueCodable)
         }
 
-        // Decode the data and get the value, or return default value if decoding fails
-        let value = (try? PropertyListDecoder().decode(Wrapper<T>.self, from: data))?.value
-        
         return formatValue(value: value)
     }
 
