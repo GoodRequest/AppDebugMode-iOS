@@ -13,7 +13,7 @@ let package = Package(
             targets: ["AppDebugMode"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/GoodRequest/GoodPersistence.git", .upToNextMajor(from: "1.0.0")),
+        .package(url: "https://github.com/GoodRequest/GoodPersistence.git", .upToNextMajor(from: "2.1.0")),
         .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.0.0"),
     ],
     targets: [
@@ -25,7 +25,8 @@ let package = Package(
                 .product(name: "GoodPersistence", package: "GoodPersistence"),
                 .product(name: "SwiftUIIntrospect", package: "swiftui-introspect"),
             ],
-            path: "Sources/AppDebugMode"
+            path: "Sources",
+            resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
         .testTarget(
             name: "AppDebugModeTests",

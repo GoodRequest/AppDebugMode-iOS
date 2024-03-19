@@ -15,7 +15,7 @@ final class CacheManager: CacheManagerType {
     @UserDefaultValue("fullName", defaultValue: nil)
     var fullName: String?
     
-    @UserDefaultValue("gender", defaultValue: 0)
+    @KeychainValue("gender", defaultValue: 0)
     var gender: Int
 
     @UserDefaultValue("favoriteColor", defaultValue: "Red")

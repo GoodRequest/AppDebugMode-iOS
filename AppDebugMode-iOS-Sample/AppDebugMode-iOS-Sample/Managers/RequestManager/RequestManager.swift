@@ -34,7 +34,9 @@ final class RequestManager: RequestManagerType {
     init(baseServer: ApiServer) {
         LoggingEventMonitor.maxVerboseLogSizeBytes = 1000000
         let monitor = LoggingEventMonitor(logger: nil)
+        #if DEBUG
         StandardOutputService.shared.connectCustomLogStreamPublisher(monitor.subscribeToMessages())
+        #endif
         session = NetworkSession(baseUrl: baseServer.rawValue, configuration: .init(urlSessionConfiguration: .default, interceptor: nil, serverTrustManager: nil, eventMonitors: [monitor]))
     }
 
