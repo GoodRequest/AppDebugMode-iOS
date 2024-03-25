@@ -51,7 +51,7 @@ public final class AppDebugModeProvider {
 public extension AppDebugModeProvider {
 
     func setup(
-        serversCollections: [ApiServerCollection],
+        serversCollections: [ApiServerCollection] = [],
         onServerChange: (() -> Void)? = nil,
         cacheManager: Any? = nil,
         firebaseMessaging: AnyObject? = nil

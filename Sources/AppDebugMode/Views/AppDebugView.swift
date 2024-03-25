@@ -27,8 +27,10 @@ struct AppDebugView: View {
     // MARK: - Init
     
     init(serversCollections: [ApiServerCollection]) {
-        self.screens = [
-            Screen(
+        self.screens = []
+
+        if !AppDebugModeProvider.shared.serversCollections.isEmpty {
+            self.screens.append(Screen(
                 title: "Server settings",
                 image: Image(systemName: "server.rack"),
                 destination: AnyView(ServersCollectionsView(
@@ -36,14 +38,15 @@ struct AppDebugView: View {
                         serversCollections: serversCollections
                     )
                 ))
-            ),
-            Screen(
-                title: "User profiles",
-                image: Image(systemName: "person.2"),
-                destination: AnyView(UserProfilesPickerView())
-            )
-        ]
-        
+            ))
+        }
+
+        self.screens.append(Screen(
+            title: "User profiles",
+            image: Image(systemName: "person.2"),
+            destination: AnyView(UserProfilesPickerView())
+        ))
+
         if let pushNotificationsProvider = AppDebugModeProvider.shared.pushNotificationsProvider {
             self.screens.append(Screen(
                 title: "Push notifications",
@@ -51,18 +54,24 @@ struct AppDebugView: View {
                 destination: AnyView(PushNotificationsSettingsView(pushNotificationsProvider: pushNotificationsProvider))
             ))
         }
-        
-        self.screens.append(contentsOf: [
-            Screen(
+
+        if !CacheProvider.shared.userDefaultValues.isEmpty {
+            self.screens.append(Screen(
                 title: "User defaults",
                 image: Image(systemName: "externaldrive"),
                 destination: AnyView(UserDefaultsSettingsView())
-            ),
-            Screen(
+            ))
+        }
+
+        if !CacheProvider.shared.keychainValues.isEmpty {
+            self.screens.append(Screen(
                 title: "Keychain settings",
                 image: Image(systemName: "key"),
                 destination: AnyView(KeychainSettingsView())
-            ),
+            ))
+        }
+
+        self.screens.append(contentsOf: [
             Screen(
                 title: "App directory",
                 image: Image(systemName: "folder"),
