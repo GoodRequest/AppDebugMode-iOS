@@ -7,15 +7,16 @@
 
 import SwiftUI
 
-struct AppDebugView: View {
-    
+struct AppDebugView<CustomControls: View>: View {
+
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.hostingControllerHolder) var viewControlleeHolder
     
     // MARK: - Properties
     
     private var screens: [Screen]
-    @State private var customControls: [CustomControl]
+    let customControls: CustomControls
+    let customControlsViewIsVisible: Bool
 
     struct Screen {
         
@@ -27,7 +28,7 @@ struct AppDebugView: View {
     
     // MARK: - Init
     
-    init(serversCollections: [ApiServerCollection], customControls: () -> [CustomControl]) {
+    init(serversCollections: [ApiServerCollection], customControls: CustomControls, customControlsViewIsVisible: Bool) {
         self.screens = []
 
         if !AppDebugModeProvider.shared.serversCollections.isEmpty {
@@ -85,7 +86,8 @@ struct AppDebugView: View {
             )
         ])
 
-        self.customControls = customControls()
+        self.customControls = customControls
+        self.customControlsViewIsVisible = customControlsViewIsVisible
     }
     
 
@@ -124,7 +126,7 @@ private extension AppDebugView {
     func appDebugViewList() -> some View {
         List {
             settingsSection()
-            if !customControls.isEmpty {
+            if customControlsViewIsVisible {
                 customControlsSection()
             }
             dangerZoneSection()
@@ -168,33 +170,10 @@ private extension AppDebugView {
 
     func customControlsSection() -> some View {
         Section {
-            ForEach(customControls.indices) { index in
-                let controlItem = customControls[index]
-
-                Group {
-                    switch controlItem {
-                    case .button(let text, let action):
-                        ButtonFilled(text: text, action: action)
-
-                    case .toggle(let title, let isOn):
-                        Toggle(
-                            title,
-                            isOn: Binding(
-                                get: { isOn.wrappedValue },
-                                set: { newValue in
-                                    isOn.wrappedValue = newValue
-                                    // Refresh custom controls to capture the updated state
-                                    customControls = AppDebugModeProvider.shared.customControls()
-                                }
-                            )
-                        )
-                        .toggleStyle(.switch)
-                        .foregroundColor(AppDebugColors.textPrimary)
-                    }
-                }
+            customControls
+                .foregroundColor(AppDebugColors.textPrimary)
+                .buttonStyle(ButtonControlStyle())
                 .listRowBackground(AppDebugColors.backgroundSecondary)
-            }
-
         } header: {
             Text("Custom controls")
                 .foregroundColor(AppDebugColors.textSecondary)

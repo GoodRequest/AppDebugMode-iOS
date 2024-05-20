@@ -13,7 +13,7 @@ public final class AppDebugModeProvider {
     // MARK: - Singleton
 
     public static let shared = AppDebugModeProvider()
-    
+
     // MARK: - Initialization
 
     private init() {}
@@ -24,7 +24,10 @@ public final class AppDebugModeProvider {
     internal var serversCollections: [ApiServerCollection] = []
     internal var onServerChange: (() -> Void)?
     internal var pushNotificationsProvider: PushNotificationsProvider?
-    internal var customControls: () -> [CustomControl] = { [] }
+    internal var customControls: any View = EmptyView()
+    internal var customControlsViewIsVisible: Bool {
+        !(customControls is EmptyView)
+    }
 
     // MARK: - Public - Variables
 
@@ -57,14 +60,13 @@ public extension AppDebugModeProvider {
     ///  - onServerChange: The closure to be called when the server is changed.
     ///  - cacheManager: The cache manager to be used in the app debug mode.
     ///  - firebaseMessaging: The Firebase Messaging to be used in the app debug mode.
-    ///  - customControls: The custom controls to be displayed in the app debug mode. Note: the value must be function returning an array of
-    ///  CustomControl to capture the latest state of the controls.
+    ///  - customControls: The custom controls to be displayed in the app debug mode.
     func setup(
         serversCollections: [ApiServerCollection] = [],
         onServerChange: (() -> Void)? = nil,
         cacheManager: Any? = nil,
         firebaseMessaging: AnyObject? = nil,
-        customControls: @escaping () -> [CustomControl] = { [] }
+        @ViewBuilder customControls: () -> some View = { EmptyView() }
     ) {
         self.serversCollections = serversCollections
         self.onServerChange = onServerChange
@@ -80,7 +82,7 @@ public extension AppDebugModeProvider {
         if StandardOutputService.shared.shouldRedirectLogsToAppDebugMode {
             StandardOutputService.shared.redirectLogsToAppDebugMode()
         }
-        self.customControls = customControls
+        self.customControls = customControls()
     }
 
     func getSelectedServer(for serverCollection: ApiServerCollection) -> ApiServer {
@@ -90,7 +92,8 @@ public extension AppDebugModeProvider {
     func start() -> UIViewController {
         let viewController = AppDebugView(
             serversCollections: AppDebugModeProvider.shared.serversCollections,
-            customControls: AppDebugModeProvider.shared.customControls
+            customControls: AnyView( AppDebugModeProvider.shared.customControls),
+            customControlsViewIsVisible: AppDebugModeProvider.shared.customControlsViewIsVisible
         ).eraseToUIViewController()
         
         let navigationController = UINavigationController(rootViewController: viewController)

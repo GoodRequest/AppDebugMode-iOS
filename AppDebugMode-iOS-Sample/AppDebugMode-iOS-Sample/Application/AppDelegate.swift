@@ -16,6 +16,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     private var dependencyContainer = DependencyContainer()
 
+    #if DEBUG
+    var model: CustomControlsModel = CustomControlsModel()
+    #endif
+
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -23,32 +27,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window = UIWindow()
 
-        var isOn = false
-
         #if DEBUG
         AppDebugModeProvider.shared.setup(
             serversCollections: Constants.ServersCollections.allClases,
             onServerChange: { debugPrint("Server has been changed") },
             cacheManager: dependencyContainer.cacheManager,
-            customControls: {
-                [
-                    .button(text: "Print isOn", action: { print("Toggle is on: \(isOn)") }),
-                    .toggle(
-                        title: "Toggle is on",
-                        isOn: Binding(
-                            get: { isOn },
-                            set: { newValue in isOn = newValue }
-                        )
-                    ),
-                    .toggle(
-                        title: "Toggle is on 2",
-                        isOn: Binding(
-                            get: { isOn },
-                            set: { newValue in isOn = newValue }
-                        )
-                    )
-                ]
-            }
+            customControls: { CustomControlsView(model: model) }
         )
         #endif
         
@@ -59,3 +43,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+#if DEBUG
+final class CustomControlsModel: ObservableObject {
+
+    @Published var isOn: Bool = false
+
+}
+
+struct CustomControlsView: View {
+
+    @ObservedObject var model: CustomControlsModel
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Button {
+                print("IsOn: \(model.isOn)")
+            } label: {
+                Text("Print is on: \(model.isOn)")
+            }
+
+            Toggle("Toggle is on", isOn: $model.isOn)
+            Toggle("Toggle is on", isOn: $model.isOn)
+
+            NavigationLink {
+                Text("Hello")
+            } label: {
+                Text("Click me")
+            }
+        }
+    }
+
+}
+#endif
