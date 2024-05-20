@@ -7,15 +7,17 @@
 
 import SwiftUI
 
-struct AppDebugView: View {
-    
+struct AppDebugView<CustomControls: View>: View {
+
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.hostingControllerHolder) var viewControlleeHolder
     
     // MARK: - Properties
     
     private var screens: [Screen]
-    
+    let customControls: CustomControls
+    let customControlsViewIsVisible: Bool
+
     struct Screen {
         
         let title: String
@@ -26,7 +28,7 @@ struct AppDebugView: View {
     
     // MARK: - Init
     
-    init(serversCollections: [ApiServerCollection]) {
+    init(serversCollections: [ApiServerCollection], customControls: CustomControls, customControlsViewIsVisible: Bool) {
         self.screens = []
 
         if !AppDebugModeProvider.shared.serversCollections.isEmpty {
@@ -83,6 +85,9 @@ struct AppDebugView: View {
                 destination: AnyView(ConsoleLogsView())
             )
         ])
+
+        self.customControls = customControls
+        self.customControlsViewIsVisible = customControlsViewIsVisible
     }
     
 
@@ -121,6 +126,9 @@ private extension AppDebugView {
     func appDebugViewList() -> some View {
         List {
             settingsSection()
+            if customControlsViewIsVisible {
+                customControlsSection()
+            }
             dangerZoneSection()
         }
         .listStyle(.insetGrouped)
@@ -159,7 +167,19 @@ private extension AppDebugView {
                 .foregroundColor(AppDebugColors.textSecondary)
         }
     }
-    
+
+    func customControlsSection() -> some View {
+        Section {
+            customControls
+                .foregroundColor(AppDebugColors.textPrimary)
+                .buttonStyle(ButtonControlStyle())
+                .listRowBackground(AppDebugColors.backgroundSecondary)
+        } header: {
+            Text("Custom controls")
+                .foregroundColor(AppDebugColors.textSecondary)
+        }
+    }
+
     func dangerZoneSection() -> some View {
         Section {
             ResetAppView()

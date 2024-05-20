@@ -13,7 +13,7 @@ public final class AppDebugModeProvider {
     // MARK: - Singleton
 
     public static let shared = AppDebugModeProvider()
-    
+
     // MARK: - Initialization
 
     private init() {}
@@ -24,6 +24,10 @@ public final class AppDebugModeProvider {
     internal var serversCollections: [ApiServerCollection] = []
     internal var onServerChange: (() -> Void)?
     internal var pushNotificationsProvider: PushNotificationsProvider?
+    internal var customControls: any View = EmptyView()
+    internal var customControlsViewIsVisible: Bool {
+        !(customControls is EmptyView)
+    }
 
     // MARK: - Public - Variables
 
@@ -50,11 +54,19 @@ public final class AppDebugModeProvider {
 
 public extension AppDebugModeProvider {
 
+    /// Setup the AppDebugModeProvider with the given parameters.
+    /// - Parameters:
+    ///  - serversCollections: The collections of servers to be displayed in the app debug mode.
+    ///  - onServerChange: The closure to be called when the server is changed.
+    ///  - cacheManager: The cache manager to be used in the app debug mode.
+    ///  - firebaseMessaging: The Firebase Messaging to be used in the app debug mode.
+    ///  - customControls: The custom controls to be displayed in the app debug mode.
     func setup(
         serversCollections: [ApiServerCollection] = [],
         onServerChange: (() -> Void)? = nil,
         cacheManager: Any? = nil,
-        firebaseMessaging: AnyObject? = nil
+        firebaseMessaging: AnyObject? = nil,
+        @ViewBuilder customControls: () -> some View = { EmptyView() }
     ) {
         self.serversCollections = serversCollections
         self.onServerChange = onServerChange
@@ -70,6 +82,7 @@ public extension AppDebugModeProvider {
         if StandardOutputService.shared.shouldRedirectLogsToAppDebugMode {
             StandardOutputService.shared.redirectLogsToAppDebugMode()
         }
+        self.customControls = customControls()
     }
 
     func getSelectedServer(for serverCollection: ApiServerCollection) -> ApiServer {
@@ -77,8 +90,11 @@ public extension AppDebugModeProvider {
     }
 
     func start() -> UIViewController {
-        let viewController = AppDebugView(serversCollections: AppDebugModeProvider.shared.serversCollections)
-            .eraseToUIViewController()
+        let viewController = AppDebugView(
+            serversCollections: AppDebugModeProvider.shared.serversCollections,
+            customControls: AnyView( AppDebugModeProvider.shared.customControls),
+            customControlsViewIsVisible: AppDebugModeProvider.shared.customControlsViewIsVisible
+        ).eraseToUIViewController()
         
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.navigationBar.configureSolidAppearance()
