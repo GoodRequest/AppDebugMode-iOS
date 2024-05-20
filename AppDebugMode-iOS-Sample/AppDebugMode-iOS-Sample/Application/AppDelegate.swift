@@ -5,7 +5,7 @@
 //  Created by Lukas Kubaliak on 14/09/2023.
 //
 
-import UIKit
+import SwiftUI
 #if DEBUG
 import AppDebugMode
 #endif
@@ -22,12 +22,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         
         window = UIWindow()
-        
+
+        var isOn = false
+
         #if DEBUG
         AppDebugModeProvider.shared.setup(
             serversCollections: Constants.ServersCollections.allClases,
             onServerChange: { debugPrint("Server has been changed") },
-            cacheManager: dependencyContainer.cacheManager
+            cacheManager: dependencyContainer.cacheManager,
+            customControls: {
+                [
+                    .button(text: "Print isOn", action: { print("Toggle is on: \(isOn)") }),
+                    .toggle(
+                        title: "Toggle is on",
+                        isOn: Binding(
+                            get: { isOn },
+                            set: { newValue in isOn = newValue }
+                        )
+                    ),
+                    .toggle(
+                        title: "Toggle is on 2",
+                        isOn: Binding(
+                            get: { isOn },
+                            set: { newValue in isOn = newValue }
+                        )
+                    )
+                ]
+            }
         )
         #endif
         
