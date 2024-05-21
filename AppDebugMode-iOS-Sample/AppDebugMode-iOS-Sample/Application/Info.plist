@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_LogDog._tcp</string>
+	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Test</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>

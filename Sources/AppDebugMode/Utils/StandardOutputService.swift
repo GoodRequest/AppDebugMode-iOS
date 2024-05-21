@@ -152,6 +152,8 @@ final public class StandardOutputService: ObservableObject {
 
     public func connectCustomLogStreamPublisher(_ stream: AnyPublisher<String, Never>) {
         stream.sink { logMessage in
+            // Send message to 🐶 logDog
+            AppDebugModeProvider.shared.connectionManager.sendToAllPeers(message: logMessage)
             let log = StandardOutputService.Log(message: logMessage)
             StandardOutputService.shared.capturedOutput.append(log)
         }

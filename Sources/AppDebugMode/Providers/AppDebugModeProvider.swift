@@ -20,6 +20,7 @@ public final class AppDebugModeProvider {
     
     // MARK: - Internal - Variables
 
+    internal let connectionManager = ConnectionsManager()
     internal var servers: [ApiServer] = []
     internal var serversCollections: [ApiServerCollection] = []
     internal var onServerChange: (() -> Void)?
@@ -94,8 +95,10 @@ public extension AppDebugModeProvider {
             serversCollections: AppDebugModeProvider.shared.serversCollections,
             customControls: AnyView( AppDebugModeProvider.shared.customControls),
             customControlsViewIsVisible: AppDebugModeProvider.shared.customControlsViewIsVisible
-        ).eraseToUIViewController()
-        
+        )
+        .environmentObject(connectionManager)
+        .eraseToUIViewController()
+
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.navigationBar.configureSolidAppearance()
         return navigationController
