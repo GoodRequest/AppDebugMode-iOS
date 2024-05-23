@@ -26,7 +26,15 @@ class ConsoleLogDetailViewController: UIViewController {
         button.setTitleColor(UIColor(cgColor: AppDebugColors.primary.opacity(0.5).cgColor!), for: .highlighted)
         return button
     }()
-    
+
+    let shareButton: UIButton = {
+        var button = UIButton()
+        button.setTitle("Share", for: .normal)
+        button.setTitleColor(UIColor(cgColor: AppDebugColors.primary.cgColor!), for: .normal)
+        button.setTitleColor(UIColor(cgColor: AppDebugColors.primary.opacity(0.5).cgColor!), for: .highlighted)
+        return button
+    }()
+
     let trailingNavigationView: UIStackView = {
         var stackView = UIStackView()
         stackView.axis = .horizontal
@@ -93,8 +101,9 @@ private extension ConsoleLogDetailViewController {
         
         detectorButton.addTarget(self, action: #selector(detectorButtonClicked), for: .touchUpInside)
         copyButton.addTarget(self, action: #selector(copyButtonClicked), for: .touchUpInside)
-        [detectorButton, copyButton].forEach { trailingNavigationView.addArrangedSubview($0) }
-       
+        shareButton.addTarget(self, action: #selector(shareButtonClicked), for: .touchUpInside)
+        [detectorButton, copyButton, shareButton].forEach { trailingNavigationView.addArrangedSubview($0) }
+
         scrollView.addSubview(textView)
     }
     
@@ -127,5 +136,11 @@ private extension ConsoleLogDetailViewController {
     @IBAction func detectorButtonClicked(_ sender: Any?) {
         textView.dataDetectorTypes = .all
     }
-    
+
+    @IBAction func shareButtonClicked(_ sender: Any?) {
+        let activityViewController = UIActivityViewController(activityItems: [textView.text], applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = view
+        present(activityViewController, animated: true, completion: nil)
+    }
+
 }
