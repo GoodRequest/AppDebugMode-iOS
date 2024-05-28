@@ -4,7 +4,7 @@
 <dict>
 	<key>NSBonjourServices</key>
 	<array>
-		<string>_LogDog._tcp</string>
+		<string>_Debugman._tcp</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Test</string>

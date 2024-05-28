@@ -40,7 +40,11 @@ public final class AppDebugModeProvider {
     public var selectedUserProfile: UserProfile? {
         UserProfilesProvider.shared.selectedUserProfile
     }
-    
+
+    public var proxySettingsProvider: ProxySettingsProvider {
+        ProxySettingsProvider.shared
+    }
+
     @available(*, deprecated, renamed: "selectedUserProfilePublisher")
     public var selectedTestingUserPublisher = UserProfilesProvider.shared.selectedUserProfilePublisher
     public var selectedUserProfilePublisher = UserProfilesProvider.shared.selectedUserProfilePublisher

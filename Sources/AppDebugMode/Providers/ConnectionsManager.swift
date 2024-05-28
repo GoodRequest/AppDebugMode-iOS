@@ -23,7 +23,7 @@ final class ConnectionsManager: NSObject, ObservableObject {
 
         browser = MCNearbyServiceBrowser(
             peer: peer,
-            serviceType: "LogDog"
+            serviceType: "Debugman"
         )
         session = MCSession(
             peer: peer,
