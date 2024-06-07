@@ -156,7 +156,7 @@ If you want to enable app to send logs to Debugman you need to add following to 
     <string>_Debugman._tcp</string>
 </array>
 <key>NSLocalNetworkUsageDescription</key>
-<string>Test</string>
+<string>Proxy and debugger connection when running in DEBUG mode</string>
 ```
 
 To enable proxy for Debugman you need to add AppDebugMode Proxy URL Sessiion Config to your Network session.
