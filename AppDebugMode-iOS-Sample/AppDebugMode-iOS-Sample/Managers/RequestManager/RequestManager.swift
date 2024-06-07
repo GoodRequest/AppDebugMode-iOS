@@ -37,7 +37,21 @@ final class RequestManager: RequestManagerType {
         #if DEBUG
         StandardOutputService.shared.connectCustomLogStreamPublisher(monitor.subscribeToMessages())
         #endif
-        session = NetworkSession(baseUrl: baseServer.rawValue, configuration: .init(urlSessionConfiguration: .default, interceptor: nil, serverTrustManager: nil, eventMonitors: [monitor]))
+
+        #if DEBUG
+        let urlSessionConfig = AppDebugModeProvider.shared.proxySettingsProvider.urlSessionConfiguration
+        #else
+        let urlSessionConfig = URLSessionConfiguration.default
+        #endif
+
+        session = NetworkSession(
+            baseUrl: baseServer.rawValue,
+            configuration: NetworkSessionConfiguration(
+                urlSessionConfiguration: urlSessionConfig,
+                interceptor: nil,
+                eventMonitors: [monitor]
+            )
+        )
     }
 
     func fetchLarge() -> AnyPublisher<LargeObjectResponse, AFError> {

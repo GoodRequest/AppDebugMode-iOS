@@ -11,7 +11,8 @@ struct AppDebugView<CustomControls: View>: View {
 
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.hostingControllerHolder) var viewControlleeHolder
-    
+    @EnvironmentObject var connectionsManager: ConnectionsManager
+
     // MARK: - Properties
     
     private var screens: [Screen]
@@ -83,6 +84,11 @@ struct AppDebugView<CustomControls: View>: View {
                 title: "Logs",
                 image: Image(systemName: "list.bullet.rectangle"),
                 destination: AnyView(ConsoleLogsView())
+            ),
+            Screen(
+                title: "Connections",
+                image: Image(systemName: "network"),
+                destination: AnyView(erasing: ConnectionsSettingsView())
             )
         ])
 
@@ -138,7 +144,7 @@ private extension AppDebugView {
     @ViewBuilder
     func navigationLink(screen: Screen) -> some View {
         Button {
-            let viewController = screen.destination.eraseToUIViewController()
+            let viewController = screen.destination.environmentObject(connectionsManager).eraseToUIViewController()
             viewControlleeHolder?.controller?.navigationController?.pushViewController(viewController, animated: false)
         } label: {
             HStack {

@@ -147,6 +147,35 @@ if StandardOutputService.shared.shouldRedirectLogsToAppDebugView {
 
 #endif
 ```
+
+## Debugman connection
+If you want to enable app to send logs to Debugman you need to add following to your Info.plist file.
+```xml
+<key>NSBonjourServices</key>
+<array>
+    <string>_Debugman._tcp</string>
+</array>
+<key>NSLocalNetworkUsageDescription</key>
+<string>Proxy and debugger connection when running in DEBUG mode</string>
+```
+
+To enable proxy for Debugman you need to add AppDebugMode Proxy URL Sessiion Config to your Network session.
+```swift
+#if DEBUG
+let urlSessionConfig = AppDebugModeProvider.shared.proxySettingsProvider.urlSessionConfiguration
+#else
+let urlSessionConfig = URLSessionConfiguration.default
+#endif
+
+session = NetworkSession(
+    baseUrl: baseServer.rawValue,
+    configuration: NetworkSessionConfiguration(
+        urlSessionConfiguration: urlSessionConfig,
+        interceptor: nil,
+        eventMonitors: [monitor]
+    )
+)
+```
    
 ## Activation in App
 - In app you can activate debug mode by shaking device or in simulator by `CMD + CTRL + Z`
