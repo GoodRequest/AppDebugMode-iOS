@@ -26,7 +26,6 @@ final class PushNotificationsSettingsViewModel: ObservableObject {
     
     init(pushNotificationsProvider: PushNotificationsProvider) {
         self.pushNotificationsProvider = pushNotificationsProvider
-        self.token = pushNotificationsProvider.token
     }
     
 }
@@ -41,11 +40,13 @@ extension PushNotificationsSettingsViewModel {
             isShowingCopiedAlert = true
         }
     }
-    
-    func refreshToken() {
-        Task {
+
+    func refreshToken(shouldRegenerate: Bool) {
+        Task { @MainActor in
             do {
-                try await pushNotificationsProvider.deleteToken()
+                if shouldRegenerate {
+                    try await pushNotificationsProvider.deleteToken()
+                }
                 token = try await pushNotificationsProvider.getToken()
             } catch {
                 self.error = error
