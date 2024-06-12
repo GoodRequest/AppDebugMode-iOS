@@ -15,8 +15,8 @@ dependencies: [
 ]
 ```
 
-### 2. Exclude AppDebugMode package from Release sceheme
-![Exclude AppDubugMode Example](screenshot.png)
+### 2. Exclude AppDebugMode package from Release scheme
+<img src="Screenshots/package-exclude.png" alt="Exclude AppDebugMode package example" height="200" />
 
 
 ## Setup 
@@ -135,7 +135,7 @@ AppDebugModeProvider.shared.setup(
 ```
 
 ## Console logs redirection
-If you want to redirect logs call this snippet of code in appdelegate or a different prefered spot in if it's turned on in the app debug mode settings and if you are in a DEBUG configuration
+If you want to redirect logs call this snippet of code in AppDelegate or a different preferred spot. Keep in mind this must be turned on in the AppDebugMode settings and the app must be running in a DEBUG configuration
 ```swift
 // didFinishLaunchingWithOptions
 
@@ -181,4 +181,4 @@ session = NetworkSession(
 - In app you can activate debug mode by shaking device or in simulator by `CMD + CTRL + Z`
 - To open debug mode with other actions in the app initialize ViewController with `let debugViewController = AppDebugModeProvider.shared.start()`
 
-<img src="simulator-screenshot-1.png" alt="App Activation Example" height="600">
+<img src="Screenshots/app-showcase.gif" alt="App activation showcase" height="30%" width="30%"/>
