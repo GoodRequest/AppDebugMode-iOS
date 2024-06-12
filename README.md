@@ -112,7 +112,7 @@ import AppDebugMode
 #endif
 ```
 
-<img src="cache-manager.png" alt="Cache manager example" height="600" />
+<img src="Screenshots/cache-manager.png" alt="Cache manager example" height="600" />
 
 ## Push notifications
 If you want to use push notifications in debug mode, you need to pass `Messaging.Messaging()` object into `AppDebugModeProvider.shared.setup()` method.
