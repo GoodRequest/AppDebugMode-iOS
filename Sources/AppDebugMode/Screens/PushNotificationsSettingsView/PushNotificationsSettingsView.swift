@@ -20,17 +20,17 @@ struct PushNotificationsSettingsView: View {
             if #available(iOS 15, *) {
                 pushNotificationsSettingsList()
                     .safeAreaInset(edge: .bottom) {
-                        refreshTokenFooterView()
+                        buttonsFooterView()
                     }
             } else {
                 ZStack(alignment: .bottom) {
                     pushNotificationsSettingsList()
-                    refreshTokenFooterView()
+                    buttonsFooterView()
                 }
             }
-            
         }
         .navigationTitle("Push notifications settings")
+        .onAppear { viewModel.refreshToken(shouldRegenerate: false) }
         .copiedAlert(isPresented: $viewModel.isShowingCopiedAlert)
         .alert(isPresented: $viewModel.hasError) {
             Alert(
@@ -80,9 +80,10 @@ private extension PushNotificationsSettingsView {
         }.buttonStyle(.borderless)
     }
 
-    func refreshTokenFooterView() -> some View {
-        ButtonFilled(text: "Refresh token") {
-            viewModel.refreshToken()
+    func buttonsFooterView() -> some View {
+        VStack(spacing: 8) {
+            ButtonFilled(text: "Reload token") { viewModel.refreshToken(shouldRegenerate: false) }
+            ButtonFilled(text: "Generate new token", style: .danger) { viewModel.refreshToken(shouldRegenerate: true) }
         }
         .padding(16)
         .background(Glass().edgesIgnoringSafeArea(.bottom))
