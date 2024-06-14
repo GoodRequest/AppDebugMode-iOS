@@ -1,7 +1,6 @@
 //
 //  ConsoleLogsSettingsView.swift.swift
 //
-//
 //  Created by Andrej Jasso on 08/02/2024.
 //
 
@@ -9,24 +8,33 @@ import SwiftUI
 
 struct ConsoleLogsSettingsView: View {
 
-    @AppStorage("numberOfLinesUnwrapped") var numberOfLinesUnwrapped = 50
-    @ObservedObject var standardOutputService: StandardOutputService
-    @State private var redirectLogs = false
+    // MARK: - State
+
+    @AppStorage("numberOfLinesUnwrapped", store: UserDefaults(suiteName: Constants.suiteName))
+    var numberOfLinesUnwrapped = 50
+
+    @AppStorage("shouldRedirectLogsToAppDebugMode", store: UserDefaults(suiteName: Constants.suiteName))
+    var shouldRedirectLogsToAppDebugMode = !DebuggerService.debuggerConnected()
+
+    // MARK: - Binding
+
     @Binding var showSettings: Bool
 
-    init(standardOutputService: StandardOutputService, showSettings: Binding<Bool>) {
-        self.standardOutputService = standardOutputService
-        self.redirectLogs = standardOutputService.shouldRedirectLogsToAppDebugMode
+    // MARK: - Initializer
+
+    init(showSettings: Binding<Bool>) {
         _showSettings = showSettings
         UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
     }
+
+    // MARK: - Body
 
     var body: some View {
         NavigationView {
             ZStack(alignment: .bottom){
                 List {
                     Group  {
-                        Toggle(isOn: $redirectLogs, label: {
+                        Toggle(isOn: $shouldRedirectLogsToAppDebugMode, label: {
                             Text("Redirect Logs To App Debug View")
                                 .listRowSeparatorColor(AppDebugColors.primary, for: .insetGrouped)
                                 .listRowBackground(AppDebugColors.backgroundSecondary)
@@ -38,7 +46,6 @@ struct ConsoleLogsSettingsView: View {
                             ForEach(0..<100) {
                                 Text("\($0) lines")
                                     .foregroundColor(AppDebugColors.textPrimary)
-
                             }
                         }
                         .pickerStyle(MenuPickerStyle())
@@ -58,7 +65,7 @@ struct ConsoleLogsSettingsView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {
                             withAnimation {
-                                self.redirectLogs = DebuggerService.debuggerConnected()
+                                shouldRedirectLogsToAppDebugMode = DebuggerService.debuggerConnected()
                             }
                         }, label: {
                             Text("Reset")
@@ -76,12 +83,6 @@ struct ConsoleLogsSettingsView: View {
                         })
                     }
                 }
-
-                ButtonFilled(text: "Save Log Settings") {
-                    standardOutputService.shouldRedirectLogsToAppDebugMode = redirectLogs
-                    exit(0)
-                }
-                .padding()
             }
             .frame(maxHeight: .infinity, alignment: .bottom)
         }
@@ -89,8 +90,8 @@ struct ConsoleLogsSettingsView: View {
 
 }
 
-struct ConsoleLogsSettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        ConsoleLogsSettingsView(standardOutputService: .shared, showSettings: .constant(true))
-    }
+#Preview {
+
+    ConsoleLogsSettingsView(showSettings: .constant(true))
+    
 }

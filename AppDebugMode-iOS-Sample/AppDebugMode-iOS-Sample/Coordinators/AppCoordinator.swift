@@ -7,25 +7,24 @@
 
 import UIKit
 
-enum AppStep {
+enum AppStep: Sendable {
 
     case home(HomeStep)
 
 }
 
+@MainActor
 final class AppCoordinator: Coordinator<AppStep> {
     
     private let window: UIWindow?
-    private let di: DependencyContainer
 
-    init(window: UIWindow?, di: DependencyContainer) {
+    init(window: UIWindow?) {
         self.window = window
-        self.di = di
     }
 
     @discardableResult
-    override func start() -> UIViewController? {
-        window?.rootViewController = HomeCoordinator(di: di).start()
+    override func start() async -> UIViewController? {
+        window?.rootViewController = await HomeCoordinator().start()
         window?.makeKeyAndVisible()
 
         return nil

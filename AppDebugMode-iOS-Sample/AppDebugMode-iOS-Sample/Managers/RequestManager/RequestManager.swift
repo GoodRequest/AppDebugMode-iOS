@@ -6,70 +6,55 @@
 //
 
 import Foundation
-import Combine
 import GoodNetworking
-import Alamofire
+@preconcurrency import Alamofire
+import GoodLogger
+
 #if DEBUG
 import AppDebugMode
+import Factory
 #endif
 
-final class RequestManager: RequestManagerType {
-    
-    enum ApiServer: String {
-        
-        case base
-        
-        var rawValue: String {
-            #if DEBUG
-            return AppDebugModeProvider.shared.getSelectedServer(for: Constants.ServersCollections.sampleBackend).url
-            #else
-            return Constants.ProdServer.url
-            #endif
-        }
-        
-    }
-    
-    private let session: NetworkSession
+actor RequestManager: RequestManagerType {
 
-    init(baseServer: ApiServer) {
-        LoggingEventMonitor.maxVerboseLogSizeBytes = 1000000
-        let monitor = LoggingEventMonitor(logger: nil)
-        #if DEBUG
-        StandardOutputService.shared.connectCustomLogStreamPublisher(monitor.subscribeToMessages())
-        #endif
+#if DEBUG
+    @Injected(\.configurableSessionProvider) private var sessionProvider: ConfigurableSessionProvider
+#endif
 
-        #if DEBUG
-        let urlSessionConfig = AppDebugModeProvider.shared.proxySettingsProvider.urlSessionConfiguration
-        #else
-        let urlSessionConfig = URLSessionConfiguration.default
-        #endif
+    private var session: NetworkSession
+
+    init(baseUrlProvider: BaseUrlProviding) {
+
+#if DEBUG
+        session = NetworkSession(
+            baseUrl: baseUrlProvider,
+            configuration: Container.shared.configurableSessionProvider.resolve()
+        )
+#else
+        let monitor = LoggingEventMonitor(logger: OSLogLogger())
 
         session = NetworkSession(
-            baseUrl: baseServer.rawValue,
-            configuration: NetworkSessionConfiguration(
-                urlSessionConfiguration: urlSessionConfig,
-                interceptor: nil,
-                eventMonitors: [monitor]
+            baseUrl: baseUrlProvider,
+            configuration: DefaultSessionProvider(configuration:
+                NetworkSessionConfiguration(
+                    urlSessionConfiguration: .default,
+                    eventMonitors: [monitor]
+                )
             )
         )
+#endif
     }
 
-    func fetchLarge() -> AnyPublisher<LargeObjectResponse, AFError> {
-        session.request(endpoint: Endpoint.large, base: "https://codepo8.github.io")
-            .goodify()
-            .eraseToAnyPublisher()
+    func fetchLargeObject() async throws -> LargeObjectResponse {
+        try await session.request(endpoint: Endpoint.large, baseUrl: "https://codepo8.github.io")
     }
 
-    func fetchCars(id: Int) -> AnyPublisher<CarResponse, AFError> {
-        return session.request(endpoint: Endpoint.cars(id))
-            .goodify()
-            .eraseToAnyPublisher()
+    func fetchCars(id: Int) async throws -> CarResponse {
+        try await session.request(endpoint: Endpoint.cars(id))
     }
-    
-    func fetchProducts(id: Int) -> AnyPublisher<ProductResponse, AFError> {
-        return session.request(endpoint: Endpoint.products(id))
-            .goodify()
-            .eraseToAnyPublisher()
+
+    func fetchProducts(id: Int) async throws -> ProductResponse {
+        try await session.request(endpoint: Endpoint.products(id))
     }
-    
+
 }

@@ -9,12 +9,13 @@ import SwiftUI
 #if DEBUG
 import AppDebugMode
 #endif
+import Factory
 
 @main
+@MainActor
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    private var dependencyContainer = DependencyContainer()
 
     #if DEBUG
     var model: CustomControlsModel = CustomControlsModel()
@@ -28,15 +29,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow()
 
         #if DEBUG
-        AppDebugModeProvider.shared.setup(
-            serversCollections: Constants.ServersCollections.allClases,
-            onServerChange: { debugPrint("Server has been changed") },
-            cacheManager: dependencyContainer.cacheManager,
-            customControls: { CustomControlsView(model: model) }
-        )
+        Task {
+            let providers = [
+                DebugSelectableServerProvider(
+                apiServerPickerConfiguration: .init(
+                    serversCollections: Constants.devServerCollection,
+                    onSelectedServerChange: nil
+                    )
+                ),
+                DebugSelectableServerProvider(
+                apiServerPickerConfiguration: .init(
+                    serversCollections: Constants.testServerCollection,
+                    onSelectedServerChange: nil
+                    )
+                )
+            ]
+
+            await PackageManager.shared.setup(
+                serverProviders: providers,
+                configurableProxySessionProvider: Container.shared.configurableSessionProvider.resolve(),
+                customControls: CustomControlsView(model: model),
+                showDebugSwift: true
+            )
+        }
+
         #endif
-        
-        AppCoordinator(window: window, di: dependencyContainer).start()
+
+        Task {
+            await AppCoordinator(window: window).start()
+        }
         return true
     }
 
