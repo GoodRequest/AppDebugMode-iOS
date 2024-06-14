@@ -9,71 +9,46 @@ import UIKit
 
 enum HomeStep {
     
-    case goToFetch
-    case goToLogin
-    case goToSettings
+    case goToAPIServerMode
+    case goToUserLoginMode
+    case goToUserProfile
     
 }
 
+@MainActor
 final class HomeCoordinator: Coordinator<AppStep> {
 
-    private let di: DependencyContainer
-
-    init(di: DependencyContainer) {
-        self.di = di
+    init() {
         super.init(rootViewController: UINavigationController())
     }
 
-    override func start() -> UIViewController? {
+    override func start() async -> UIViewController? {
         let homeViewModel = HomeViewModel(coordinator: self)
-        let homeViewController = HomeViewController(viewModel: homeViewModel)
+        let homeViewController = await HomeViewController(viewModel: homeViewModel)
 
         navigationController?.viewControllers = [homeViewController]
 
         return rootViewController
     }
 
-    override func navigate(to stepper: AppStep) {
+    override func navigate(to stepper: AppStep) async {
         switch stepper {
         case .home(let homeStep):
-            navigate(to: homeStep)
+            await navigate(to: homeStep)
         }
     }
 
-    func navigate(to step: HomeStep) {
+    func navigate(to step: HomeStep) async {
         switch step {
-        case .goToFetch:
-            guard let fetchViewController = FetchCoordinator(
-                di: di,
-                rootViewController: rootNavigationController
-            ).start()
-            else {
-                return
-            }
-            
-            navigationController?.pushViewController(fetchViewController, animated: true)
-            
-        case .goToLogin:
-            guard let loginViewController = LoginCoordinator(
-                di: di,
-                rootViewController: rootNavigationController
-            ).start()
-            else {
-                return
-            }
-            
-            navigationController?.pushViewController(loginViewController, animated: true)
-            
-        case .goToSettings:
-            guard let settingsViewController = ProfileCoordinator(
-                di: di,
-                rootViewController: rootNavigationController
-            ).start()
-            else  {
-                return
-            }
-            
-            navigationController?.pushViewController(settingsViewController, animated: true)
+        case .goToAPIServerMode:
+            let controller = HostingApiServerModeView(viewModel: .init())
+            navigationController?.pushViewController(controller, animated: true)
+
+        case .goToUserLoginMode:
+            navigationController?.pushViewController(HostingLoginView(), animated: true)
+
+        case .goToUserProfile:
+            navigationController?.pushViewController(HostingProfileViewController(), animated: true)
         }
     }
 

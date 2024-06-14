@@ -9,10 +9,10 @@ import Foundation
 import Alamofire
 import Combine
 
-protocol RequestManagerType: AnyObject {
+protocol RequestManagerType: Sendable {
     
-    func fetchCars(id: Int) -> AnyPublisher<CarResponse, AFError>
-    func fetchProducts(id: Int) -> AnyPublisher<ProductResponse, AFError>
-    func fetchLarge() -> AnyPublisher<LargeObjectResponse, AFError>
+    func fetchCars(id: Int) async throws -> CarResponse
+    func fetchProducts(id: Int) async throws -> ProductResponse
+    func fetchLargeObject() async throws -> LargeObjectResponse
 
 }

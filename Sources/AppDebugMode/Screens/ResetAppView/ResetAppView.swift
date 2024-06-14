@@ -6,15 +6,14 @@
 //
 
 import SwiftUI
+import Factory
 
 struct ResetAppView: View {
-    
-    @ObservedObject private var userDefaultsViewModel = UserDefaultsSettingsViewModel()
-    @ObservedObject private var keychainViewModel = KeychainSettingsViewModel()
+
     @ObservedObject private var appDirectoryViewModel = AppDirectorySettingsViewModel()
     
     @State private var isShowingConfirmationAlert = false
-    
+
     var body: some View {
         VStack {
             ButtonFilled(text: "Remove All App Data", style: .danger) {
@@ -40,8 +39,6 @@ private extension ResetAppView {
             title: Text("Do you really want to erase all app data?"),
             message: Text("This action cannot be undone."),
             primaryButton: .destructive(Text("Yes, erase all data")) {
-                userDefaultsViewModel.clearUserDefaults()
-                keychainViewModel.clearKeychain()
                 appDirectoryViewModel.clearAppFilesDirectory()
                 exit(0)
             },

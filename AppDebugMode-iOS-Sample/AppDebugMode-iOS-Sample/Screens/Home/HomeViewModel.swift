@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 final class HomeViewModel {
 
     // MARK: - Constants
@@ -25,16 +26,16 @@ final class HomeViewModel {
 
 extension HomeViewModel {
     
-    func goToFetch() {
-        coordinator.navigate(to: .home(.goToFetch))
+    func goToUserLoginMode() async {
+        await coordinator.navigate(to: .home(.goToUserLoginMode))
     }
-    
-    func goToLogin() {
-        coordinator.navigate(to: .home(.goToLogin))
+
+    func goToAPIServerMode() async {
+        await coordinator.navigate(to: .home(.goToAPIServerMode))
     }
-    
-    func goToSettings() {
-        coordinator.navigate(to: .home(.goToSettings))
+
+    func goToUserProfileMode() async {
+        await coordinator.navigate(to: .home(.goToUserProfile))
     }
     
 }

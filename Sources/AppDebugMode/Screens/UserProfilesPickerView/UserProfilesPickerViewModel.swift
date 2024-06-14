@@ -8,18 +8,20 @@
 import SwiftUI
 
 final class UserProfilesPickerViewModel: ObservableObject {
-    
+
+    // MARK: - Cached
+
+    @AppStorage("testingUsers", store: UserDefaults(suiteName: Constants.suiteName))
+    private(set) var userProfiles: [UserProfile] = []
+
     // MARK: - Properties
     
     @Published var isFileImporterPresented = false
-    @Published var userProfiles = UserProfilesProvider.shared.userProfiles
-    @Published var selectedUserProfile = UserProfilesProvider.shared.selectedUserProfile
     @Published var hasValidationError = false
     @Published var isShowingCopiedAlert = false
     @Published var hintModalIsPresented = false
     
     // MARK: - Constants
-    
     let jsonExample = """
                 [
                     {
@@ -32,13 +34,10 @@ final class UserProfilesPickerViewModel: ObservableObject {
                     }
                 ]
                 """
-    
+
+    init() {}
+
     // MARK: - Methods
-    
-    func setSelectedUserProfile(userProfile: UserProfile) {
-        selectedUserProfile = userProfile
-        UserProfilesProvider.shared.setSelectedUserProfile(userProfile: userProfile)
-    }
 
     func copyExampleJson() {
         UIPasteboard.general.string = jsonExample
@@ -55,7 +54,6 @@ final class UserProfilesPickerViewModel: ObservableObject {
                 let data = try Data(contentsOf: url)
 
                 userProfiles = try decoder.decode([UserProfile].self, from: data)
-                UserProfilesProvider.shared.setUserProfiles(userProfiles: userProfiles)
             } catch {
                 hasValidationError = true
             }

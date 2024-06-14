@@ -6,18 +6,35 @@
 //
 
 import SwiftUI
+import Factory
+import PulseUI
+import DebugSwift
 
 struct AppDebugView<CustomControls: View>: View {
 
+    // MARK: - Factory
+
+    @Injected(\.packageManager) private var packageManager: PackageManager
+    @Injected(\.profileProvider) private var profileProvider: UserProfilesProvider
+    @Injected(\.apnsProviding) private var apnsProvider: PushNotificationsProvider?
+
+    // MARK: - Environtment
+
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.hostingControllerHolder) var viewControlleeHolder
-    @EnvironmentObject var connectionsManager: ConnectionsManager
+
+    // MARK: - State
+
+    @State private var userDefaultValues: [String : String] = [:]
+    @State private var keychainValues: [String : String] = [:]
 
     // MARK: - Properties
     
-    private var screens: [Screen]
-    let customControls: CustomControls
-    let customControlsViewIsVisible: Bool
+    private var screens: [Screen] = []
+    private var customControls: CustomControls
+    private var customControlsViewIsVisible: Bool
+
+    // MARK: - Structs
 
     struct Screen {
         
@@ -29,50 +46,38 @@ struct AppDebugView<CustomControls: View>: View {
     
     // MARK: - Init
     
-    init(serversCollections: [ApiServerCollection], customControls: CustomControls, customControlsViewIsVisible: Bool) {
-        self.screens = []
+    init(
+        customControls: CustomControls,
+        customControlsViewIsVisible: Bool
+    ) {
+        self.customControls = customControls
+        self.customControlsViewIsVisible = customControlsViewIsVisible
 
-        if !AppDebugModeProvider.shared.serversCollections.isEmpty {
-            self.screens.append(Screen(
-                title: "Server settings",
-                image: Image(systemName: "server.rack"),
-                destination: AnyView(ServersCollectionsView(
-                    viewModel: ServersCollectionsViewModel(
-                        serversCollections: serversCollections
-                    )
-                ))
-            ))
-        }
+        self.screens.append(Screen(
+            title: "Server settings",
+            image: Image(systemName: "server.rack"),
+            destination: AnyView(ServersCollectionsView())
+        ))
 
         self.screens.append(Screen(
             title: "User profiles",
             image: Image(systemName: "person.2"),
-            destination: AnyView(UserProfilesPickerView())
+            destination: AnyView(UserProfilesPickerView(viewModel: .init()))
         ))
 
-        if let pushNotificationsProvider = AppDebugModeProvider.shared.pushNotificationsProvider {
+        if let apnsProvider {
             self.screens.append(Screen(
                 title: "Push notifications",
                 image: Image(systemName: "bell.badge"),
-                destination: AnyView(PushNotificationsSettingsView(pushNotificationsProvider: pushNotificationsProvider))
+                destination: AnyView(PushNotificationsSettingsView(pushNotificationsProvider: apnsProvider))
             ))
         }
 
-        if !CacheProvider.shared.userDefaultValues.isEmpty {
-            self.screens.append(Screen(
-                title: "User defaults",
-                image: Image(systemName: "externaldrive"),
-                destination: AnyView(UserDefaultsSettingsView())
-            ))
-        }
-
-        if !CacheProvider.shared.keychainValues.isEmpty {
-            self.screens.append(Screen(
-                title: "Keychain settings",
-                image: Image(systemName: "key"),
-                destination: AnyView(KeychainSettingsView())
-            ))
-        }
+        self.screens.append(Screen(
+            title: "Pulse Logs",
+            image: Image(systemName: "wave.3.forward"),
+            destination: AnyView(PulseUI.ConsoleView().tint(AppDebugColors.primary))
+        ))
 
         self.screens.append(contentsOf: [
             Screen(
@@ -83,19 +88,19 @@ struct AppDebugView<CustomControls: View>: View {
             Screen(
                 title: "Logs",
                 image: Image(systemName: "list.bullet.rectangle"),
-                destination: AnyView(ConsoleLogsView())
-            ),
+                destination: AnyView(ConsoleLogsListView())
+            )
+        ])
+
+        self.screens.append(
             Screen(
                 title: "Connections",
                 image: Image(systemName: "network"),
                 destination: AnyView(erasing: ConnectionsSettingsView())
             )
-        ])
-
-        self.customControls = customControls
-        self.customControlsViewIsVisible = customControlsViewIsVisible
+        )
     }
-    
+
 
     // MARK: - Body
 
@@ -119,6 +124,7 @@ struct AppDebugView<CustomControls: View>: View {
                 appearanceProxy.scrollEdgeAppearance = standardAppearance
                 appearanceProxy.standardAppearance = standardAppearance
             }
+        
     }
 
 }
@@ -144,7 +150,7 @@ private extension AppDebugView {
     @ViewBuilder
     func navigationLink(screen: Screen) -> some View {
         Button {
-            let viewController = screen.destination.environmentObject(connectionsManager).eraseToUIViewController()
+            let viewController = screen.destination.eraseToUIViewController()
             viewControlleeHolder?.controller?.navigationController?.pushViewController(viewController, animated: false)
         } label: {
             HStack {

@@ -37,7 +37,7 @@ class FetchButton: UIButton {
             isUserInteractionEnabled = !isLoading
         }
     }
-    
+
     override var isHighlighted: Bool {
         didSet {
             guard oldValue != isHighlighted else { return }
@@ -60,7 +60,9 @@ class FetchButton: UIButton {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+
+        configuration = .bordered()
+
         setupLayout()
     }
     
@@ -92,6 +94,12 @@ private extension FetchButton {
         heightAnchor.constraint(equalToConstant: C.height).isActive = true
         titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
         setTitleColor(.black, for: .normal)
+        backgroundColor = .white
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.black.cgColor
+        layer.cornerRadius = C.height / 2
+        layer.cornerCurve = .continuous
+        layer.masksToBounds = true
     }
     
     func startLoading() {

@@ -1,10 +1,11 @@
-// swift-tools-version:5.5
+// swift-tools-version: 6.0
+// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "GoodDependencies",
-    platforms: [.iOS(.v14)],
+    platforms: [.iOS(.v15)],
     products: [
         .library(
             name: "GoodDependencies",
@@ -12,7 +13,7 @@ let package = Package(
         ),
     ],
    dependencies: [
-       .package(url: "https://github.com/GoodRequest/GoodNetworking.git", .upToNextMajor(from: "2.0.0"))
+        .package(url: "https://github.com/GoodRequest/GoodNetworking.git", branch: "feature/api-picker")
     ],
     targets: [
         .target(

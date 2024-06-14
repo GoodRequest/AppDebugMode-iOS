@@ -8,6 +8,7 @@
 import SwiftUI
 import Combine
 
+@MainActor
 final class PushNotificationsSettingsViewModel: ObservableObject {
     
     // MARK: - State
@@ -42,7 +43,7 @@ extension PushNotificationsSettingsViewModel {
     }
 
     func refreshToken(shouldRegenerate: Bool) {
-        Task { @MainActor in
+        Task { 
             do {
                 if shouldRegenerate {
                     try await pushNotificationsProvider.deleteToken()
