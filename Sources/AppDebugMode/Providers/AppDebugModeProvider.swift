@@ -1,15 +1,16 @@
 //
 //  AppDebugModeProvider.swift
-//  
+//
 //
 //  Created by Matus Klasovity on 27/06/2023.
 //
 
 import Combine
 import SwiftUI
+import LifetimeTracker
 
 public final class AppDebugModeProvider {
-    
+
     // MARK: - Singleton
 
     public static let shared = AppDebugModeProvider()
@@ -17,7 +18,7 @@ public final class AppDebugModeProvider {
     // MARK: - Initialization
 
     private init() {}
-    
+
     // MARK: - Internal - Variables
 
     internal let connectionManager = ConnectionsManager()
@@ -36,7 +37,7 @@ public final class AppDebugModeProvider {
     public var selectedTestingUser: UserProfile? {
         UserProfilesProvider.shared.selectedUserProfile
     }
-    
+
     public var selectedUserProfile: UserProfile? {
         UserProfilesProvider.shared.selectedUserProfile
     }
@@ -88,6 +89,17 @@ public extension AppDebugModeProvider {
             StandardOutputService.shared.redirectLogsToAppDebugMode()
         }
         self.customControls = customControls()
+
+        if MemorySettingsManager.shared.enabled {
+            LifetimeTracker.setup(
+                onUpdate: LifetimeTrackerDashboardIntegration(
+                    visibility: MemorySettingsManager.shared.visibility,
+                    style: MemorySettingsManager.shared.style,
+                    textColorForNoIssues: .systemGreen,
+                    textColorForLeakDetected: .systemRed
+                ).refreshUI
+            )
+        }
     }
 
     func getSelectedServer(for serverCollection: ApiServerCollection) -> ApiServer {
@@ -100,24 +112,24 @@ public extension AppDebugModeProvider {
             customControls: AnyView( AppDebugModeProvider.shared.customControls),
             customControlsViewIsVisible: AppDebugModeProvider.shared.customControlsViewIsVisible
         )
-        .environmentObject(connectionManager)
-        .eraseToUIViewController()
+            .environmentObject(connectionManager)
+            .eraseToUIViewController()
 
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.navigationBar.configureSolidAppearance()
         return navigationController
     }
-    
+
 }
 
 // MARK: - Private - Helper functions
 
 private extension AppDebugModeProvider {
-    
+
     func setupFirebaseMessaging(firebaseMessaging: AnyObject) {
         let type: AnyObject.Type = type(of: firebaseMessaging)
         class_addProtocol(type, AppDebugFirebaseMessaging.self)
-        
+
         if let appDebugFirebaseMesaging = firebaseMessaging as? AppDebugFirebaseMessaging {
             pushNotificationsProvider = PushNotificationsProvider(
                 token: appDebugFirebaseMesaging.fmcToken,

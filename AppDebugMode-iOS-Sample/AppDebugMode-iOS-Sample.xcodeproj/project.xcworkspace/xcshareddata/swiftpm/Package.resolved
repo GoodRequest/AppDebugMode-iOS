@@ -56,6 +56,15 @@
         }
       },
       {
+        "package": "LifetimeTracker",
+        "repositoryURL": "https://github.com/krzysztofzablocki/LifetimeTracker.git",
+        "state": {
+          "branch": null,
+          "revision": "fccc98aae719f6615d1f0cfd8f5e60f3888bdf62",
+          "version": "1.8.4"
+        }
+      },
+      {
         "package": "swiftui-introspect",
         "repositoryURL": "https://github.com/siteline/swiftui-introspect",
         "state": {
