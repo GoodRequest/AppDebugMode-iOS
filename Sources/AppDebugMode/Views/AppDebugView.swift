@@ -89,6 +89,11 @@ struct AppDebugView<CustomControls: View>: View {
                 title: "Connections",
                 image: Image(systemName: "network"),
                 destination: AnyView(erasing: ConnectionsSettingsView())
+            ),
+            Screen(
+                title: "Screen lifetime tracker",
+                image: Image(systemName: "memorychip"),
+                destination: AnyView(erasing: MemorySettingsView())
             )
         ])
 

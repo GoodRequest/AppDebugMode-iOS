@@ -7,9 +7,14 @@
 
 import UIKit
 import Combine
+import LifetimeTracker
 
 class BaseViewController<T>: UIViewController {
     
+    class var lifetimeConfiguration: LifetimeConfiguration {
+         return LifetimeConfiguration(maxCount: 1, groupName: "VC")
+     }
+
     let viewModel: T
     var cancellables = Set<AnyCancellable>()
     
@@ -21,6 +26,8 @@ class BaseViewController<T>: UIViewController {
         self.viewModel = viewModel
         
         super.init(nibName: nil, bundle: nil)
+
+        trackLifetime()
     }
     
 }
