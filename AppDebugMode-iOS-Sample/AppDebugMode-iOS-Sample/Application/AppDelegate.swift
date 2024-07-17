@@ -40,7 +40,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-
 }
 
 #if DEBUG
