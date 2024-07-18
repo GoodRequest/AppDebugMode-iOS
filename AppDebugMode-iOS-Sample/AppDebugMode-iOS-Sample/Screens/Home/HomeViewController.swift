@@ -134,38 +134,44 @@ private extension HomeViewController {
 extension HomeViewController: URLSessionDelegate {
     
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        guard let certificateURL = Bundle.main.url(forResource: "cert", withExtension: "cer"),
-              let certificateData = try? Data(contentsOf: certificateURL)
-        else {
-            print("error loading cert file")
-            return
-        }
-        guard let keyURL = Bundle.main.url(forResource: "key", withExtension: "pem"),
-              let keyData = try? Data(contentsOf: keyURL)
-        else {
-            print("error loading key file")
+        let fileManager = FileManager.default
+        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let p12URL = documentsURL.appendingPathComponent("bisAPNS.p12")
+        
+        guard fileManager.fileExists(atPath: p12URL.path) else {
+            print("Error: .p12 file not found in Documents directory.")
+            completionHandler(.cancelAuthenticationChallenge, nil)
             return
         }
         
-        if let certificate = SecCertificateCreateWithData(nil, certificateData as CFData) {
-            var options: [CFString: Any] = [:]
-            options[kSecImportExportPassphrase] = "1234"
+        do {
+            let p12Data = try Data(contentsOf: p12URL)
             
+            let importPasswordOption: NSDictionary = [kSecImportExportPassphrase as NSString: "123456789"]
             var items: CFArray?
-            let securityError = SecPKCS12Import(keyData as CFData, options as CFDictionary, &items)
+            let securityError = SecPKCS12Import(p12Data as NSData, importPasswordOption, &items)
             
-            guard securityError == errSecSuccess,
-                  let array = items as? [[String: Any]],
-                  let identity = array.first?[kSecImportItemIdentity as String] else {
-                print("Error creating SecIdentity")
+            guard securityError == errSecSuccess else {
+                print("Error importing .p12 file: \(securityError)")
                 completionHandler(.cancelAuthenticationChallenge, nil)
                 return
-               }
-               
-            let credential = URLCredential(identity: identity as! SecIdentity, certificates: [certificate], persistence: .forSession)
+            }
+            
+            guard let array = items as? [[String: Any]],
+                  let identity = array.first?[kSecImportItemIdentity as String] else {
+                print("Error extracting identity from .p12 file")
+                completionHandler(.cancelAuthenticationChallenge, nil)
+                return
+            }
+            
+            let credential = URLCredential(identity: identity as! SecIdentity, certificates: nil, persistence: .forSession)
             completionHandler(.useCredential, credential)
+            
+        } catch {
+            print("Error loading .p12 file data: \(error.localizedDescription)")
+            completionHandler(.cancelAuthenticationChallenge, nil)
         }
-        
     }
+
     
 }

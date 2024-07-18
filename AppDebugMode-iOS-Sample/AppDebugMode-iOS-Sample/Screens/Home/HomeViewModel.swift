@@ -41,7 +41,7 @@ extension HomeViewModel {
     func send(from controller: UIViewController) {
         let topic = "sk.azet.Bistro-sk"
         let pushType = "alert"
-        let deviceToken = "80b03e35c3f192f423bd0686f0aa7bde37868b314ae09c2a553cd8c9c96f78898b703bcaa01e28e237bf68dc89d978e15afd7fd876668cdfe0d1409066bc69d5d27708dcf8f5efa499180643b75ce45f"
+        let deviceToken = "8019B785ED25A275FEE6382092F5414450325700B9D8334753F7F5074913F9BECCEB937352058C5A6D8D29FCB0C3DB1139BA6B9B8F63FC095E53CC060868771616447B2AA1B12E681AD6CE9244EE6DBF"
         let payload = [
             "aps": [
                 "alert": [
