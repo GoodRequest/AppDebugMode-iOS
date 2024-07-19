@@ -58,7 +58,7 @@ struct CustomControlsView: View {
             Button {
                 print("IsOn: \(model.isOn)")
             } label: {
-                Text("Print is on: \(model.isOn)")
+                Text("Print is on: \(model.isOn.description)")
             }
 
             Toggle("Toggle is on", isOn: $model.isOn)

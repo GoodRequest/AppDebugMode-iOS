@@ -52,7 +52,7 @@ struct AppDebugView<CustomControls: View>: View {
 
         if let pushNotificationsProvider = AppDebugModeProvider.shared.pushNotificationsProvider {
             self.screens.append(Screen(
-                title: "Push notifications",
+                title: "Firebase push notifications",
                 image: Image(systemName: "bell.badge"),
                 destination: AnyView(PushNotificationsSettingsView(pushNotificationsProvider: pushNotificationsProvider))
             ))
@@ -75,6 +75,11 @@ struct AppDebugView<CustomControls: View>: View {
         }
 
         self.screens.append(contentsOf: [
+            Screen(
+                title: "Cloud push notification",
+                image: Image(systemName: "bell.badge"),
+                destination: AnyView(CloudPushNotificationsView())
+            ),
             Screen(
                 title: "App directory",
                 image: Image(systemName: "folder"),

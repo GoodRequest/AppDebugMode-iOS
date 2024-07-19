@@ -52,13 +52,6 @@ final class HomeViewController: BaseViewController<HomeViewModel> {
         return button
     }()
     
-    private let pushNotificationButton: BasicButton = {
-        let button = BasicButton()
-        button.setTitle("Send Bistro PUSH notification", for: .normal)
-        
-        return button
-    }()
-    
 }
 
 // MARK: - Lifecycle
@@ -91,10 +84,6 @@ extension HomeViewController {
         userDefaultsModeButton.publisher(for: .touchUpInside)
             .sink { viewModel.goToSettings()}
             .store(in: &cancellables)
-        
-        pushNotificationButton.publisher(for: .touchUpInside)
-            .sink { viewModel.send(from: self) }
-            .store(in: &cancellables)
     }
     
 }
@@ -114,7 +103,7 @@ private extension HomeViewController {
     
     func addSubviews() {
         [descriptionLabel, stackView].forEach { view.addSubview($0) }
-        [loginModeButton, fetchModeButton, userDefaultsModeButton, pushNotificationButton].forEach { stackView.addArrangedSubview($0) }
+        [loginModeButton, fetchModeButton, userDefaultsModeButton].forEach { stackView.addArrangedSubview($0) }
     }
     
     func setupConstraints() {
@@ -128,50 +117,5 @@ private extension HomeViewController {
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.Insets.edgeInset),
         ])
     }
-    
-}
-
-extension HomeViewController: URLSessionDelegate {
-    
-    func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        let fileManager = FileManager.default
-        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let p12URL = documentsURL.appendingPathComponent("bisAPNS.p12")
-        
-        guard fileManager.fileExists(atPath: p12URL.path) else {
-            print("Error: .p12 file not found in Documents directory.")
-            completionHandler(.cancelAuthenticationChallenge, nil)
-            return
-        }
-        
-        do {
-            let p12Data = try Data(contentsOf: p12URL)
-            
-            let importPasswordOption: NSDictionary = [kSecImportExportPassphrase as NSString: "123456789"]
-            var items: CFArray?
-            let securityError = SecPKCS12Import(p12Data as NSData, importPasswordOption, &items)
-            
-            guard securityError == errSecSuccess else {
-                print("Error importing .p12 file: \(securityError)")
-                completionHandler(.cancelAuthenticationChallenge, nil)
-                return
-            }
-            
-            guard let array = items as? [[String: Any]],
-                  let identity = array.first?[kSecImportItemIdentity as String] else {
-                print("Error extracting identity from .p12 file")
-                completionHandler(.cancelAuthenticationChallenge, nil)
-                return
-            }
-            
-            let credential = URLCredential(identity: identity as! SecIdentity, certificates: nil, persistence: .forSession)
-            completionHandler(.useCredential, credential)
-            
-        } catch {
-            print("Error loading .p12 file data: \(error.localizedDescription)")
-            completionHandler(.cancelAuthenticationChallenge, nil)
-        }
-    }
-
     
 }
