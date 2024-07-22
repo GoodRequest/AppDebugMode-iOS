@@ -13,6 +13,7 @@ struct CloudPushNotificationsView: View {
     // MARK: - Properties
     
     @ObservedObject private var viewModel = CloudPushNotificationsViewModel()
+    @State private var isImporting = false
 
     // MARK: - Body
     
@@ -23,24 +24,28 @@ struct CloudPushNotificationsView: View {
                     .font(.headline)
                     .foregroundColor(AppDebugColors.textSecondary)
 
-                TextField("", text: $viewModel.certificate)
-                    .introspect(.textField, on: .iOS(.v14...)) { textField in
-                        textField.attributedPlaceholder = NSAttributedString(
-                            string: "Certificate",
-                            attributes: [
-                                .foregroundColor: UIColor(AppDebugColors.textSecondary)
-                            ]
-                        )
+                Button {
+                    isImporting = true
+                } label: {
+                    if let name = viewModel.certificateName {
+                        Text(name)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8).stroke(AppDebugColors.textSecondary, lineWidth: 1)
+                            )
+                            .foregroundColor(AppDebugColors.textPrimary)
+                    } else {
+                        Text("Certificate")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8).stroke(AppDebugColors.textSecondary, lineWidth: 1)
+                            )
+                            .foregroundColor(AppDebugColors.textSecondary)
                     }
-                    .disableAutocorrection(true)
-                    .autocapitalization(.none)
-                    .keyboardType(.URL)
-                    .padding()
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8).stroke(AppDebugColors.textSecondary, lineWidth: 1)
-                    )
-                    .foregroundColor(AppDebugColors.textPrimary)
-                
+                }
+                                 
                 TextField("", text: $viewModel.certificatePassword)
                     .introspect(.textField, on: .iOS(.v14...)) { textField in
                         textField.attributedPlaceholder = NSAttributedString(
@@ -52,52 +57,51 @@ struct CloudPushNotificationsView: View {
                     }
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
-                    .keyboardType(.URL)
                     .padding()
                     .overlay(
                         RoundedRectangle(cornerRadius: 8).stroke(AppDebugColors.textSecondary, lineWidth: 1)
                     )
                     .foregroundColor(AppDebugColors.textPrimary)
 
-                Text("Push notification")
+                Text("Push notification type")
                     .font(.headline)
                     .foregroundColor(AppDebugColors.textSecondary)
-
-                TextField("", text: $viewModel.pushTitle)
-                    .introspect(.textField, on: .iOS(.v14...)) { textField in
-                        textField.attributedPlaceholder = NSAttributedString(
-                            string: "Push title",
-                            attributes: [
-                                .foregroundColor: UIColor(AppDebugColors.textSecondary)
-                            ]
-                        )
-                    }
-                    .disableAutocorrection(true)
-                    .autocapitalization(.none)
-                    .keyboardType(.numberPad)
-                    .padding()
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8).stroke(AppDebugColors.textSecondary, lineWidth: 1)
-                    )
-                    .foregroundColor(AppDebugColors.textPrimary)
                 
-                TextField("", text: $viewModel.pushBody)
-                    .introspect(.textField, on: .iOS(.v14...)) { textField in
-                        textField.attributedPlaceholder = NSAttributedString(
-                            string: "Push body",
-                            attributes: [
-                                .foregroundColor: UIColor(AppDebugColors.textSecondary)
-                            ]
-                        )
+                Menu(viewModel.notificationType.title) {
+                    Button(NotificationType.alert.title, action: { 
+                        viewModel.notificationType = .alert
+                        viewModel.customPayload = viewModel.notificationType.payload
+                    })
+                    Button(NotificationType.background.title, action: {
+                        viewModel.notificationType = .background
+                        viewModel.customPayload = viewModel.notificationType.payload
+                    })
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding()
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8).stroke(AppDebugColors.textSecondary, lineWidth: 1)
+                )
+                .foregroundColor(AppDebugColors.textPrimary)
+
+                if !viewModel.customPayload.isEmpty {
+                    Text("Payload")
+                        .font(.headline)
+                        .foregroundColor(AppDebugColors.textSecondary)
+                    
+                    ZStack {
+                        TextEditor(text: $viewModel.customPayload)
+                            .disableAutocorrection(true)
+                            .autocapitalization(.none)
+                            .padding(.horizontal)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8).stroke(AppDebugColors.textSecondary, lineWidth: 1)
+                            )
+                            .foregroundColor(AppDebugColors.textPrimary)
+                            .frame(minHeight: 100)
                     }
-                    .disableAutocorrection(true)
-                    .autocapitalization(.none)
-                    .keyboardType(.numberPad)
-                    .padding()
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8).stroke(AppDebugColors.textSecondary, lineWidth: 1)
-                    )
-                    .foregroundColor(AppDebugColors.textPrimary)
+                }
                 
                 Text("Optional parameters")
                     .font(.headline)
@@ -114,7 +118,6 @@ struct CloudPushNotificationsView: View {
                     }
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
-                    .keyboardType(.numberPad)
                     .padding()
                     .overlay(
                         RoundedRectangle(cornerRadius: 8).stroke(AppDebugColors.textSecondary, lineWidth: 1)
@@ -132,7 +135,6 @@ struct CloudPushNotificationsView: View {
                     }
                     .disableAutocorrection(true)
                     .autocapitalization(.none)
-                    .keyboardType(.numberPad)
                     .padding()
                     .overlay(
                         RoundedRectangle(cornerRadius: 8).stroke(AppDebugColors.textSecondary, lineWidth: 1)
@@ -140,10 +142,23 @@ struct CloudPushNotificationsView: View {
                     .foregroundColor(AppDebugColors.textPrimary)
             }
             .padding(16)
+            .padding(.bottom, 64)
+        }
+        .fileImporter(isPresented: $isImporting,
+                      allowedContentTypes: [.pkcs12]) {
+            let result = $0.flatMap { url in
+                viewModel.read(from: url)
+            }
+            switch result {
+            case let .success(data):
+                viewModel.certificate = data
+            default:
+                break
+            }
         }
         .overlay(
             ButtonFilled(text: "Send cloud notification") {
-                NotificationManager.shared.send()
+                viewModel.send()
             }
             .padding(),
             alignment: .bottom

@@ -134,6 +134,18 @@ AppDebugModeProvider.shared.setup(
 #endif
 ```
 
+## Cloud push notifications
+If you want send custom push notifications in debug mode, you need to set `deviceTokenString` into `AppDebugModeNotificationManager.shared.deviceToken` property.
+
+```swift
+// didRegisterForRemoteNotificationsWithDeviceToken
+
+#if DEBUG
+let deviceTokenString = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+AppDebugModeNotificationManager.shared.deviceToken = deviceTokenString
+#endif
+```
+
 ## Console logs redirection
 If you want to redirect logs call this snippet of code in AppDelegate or a different preferred spot. Keep in mind this must be turned on in the AppDebugMode settings and the app must be running in a DEBUG configuration
 ```swift
