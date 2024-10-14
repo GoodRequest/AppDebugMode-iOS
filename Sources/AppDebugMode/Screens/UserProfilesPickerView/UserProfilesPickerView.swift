@@ -6,14 +6,28 @@
 //
 
 import SwiftUI
+import Factory
 
 struct UserProfilesPickerView: View {
 
-    // MARK: - State
 
-    @ObservedObject private var viewModel = UserProfilesPickerViewModel()
+    // MARK: - Cached
+
+    @AppStorage("testingUsers", store: UserDefaults(suiteName: Constants.suiteName))
+    private(set) var userProfiles: [UserProfile] = []
+
+    @AppStorage("selectedUserUser", store: UserDefaults(suiteName: Constants.suiteName))
+    private(set) var selectedUserProfile: UserProfile?
+
+    // MARK: - Observed
+
+    @ObservedObject private var viewModel: UserProfilesPickerViewModel
 
     // MARK: - Body
+
+    init(viewModel: UserProfilesPickerViewModel) {
+        self.viewModel = viewModel
+    }
 
     var body: some View {
         content()
@@ -133,7 +147,7 @@ private extension UserProfilesPickerView {
     
     func userProfileItemView(userProfile: UserProfile) -> some View {
         Button {
-            viewModel.setSelectedUserProfile(userProfile: userProfile)
+            self.selectedUserProfile = userProfile
         } label: {
             HStack {
                 VStack(alignment: .leading) {
@@ -146,7 +160,7 @@ private extension UserProfilesPickerView {
 
                 Spacer()
 
-                if userProfile == viewModel.selectedUserProfile {
+                if userProfile == selectedUserProfile {
                     Image(systemName: "checkmark.circle")
                         .foregroundColor(SwiftUI.Color.green)
                 }
@@ -214,12 +228,8 @@ private extension UserProfilesPickerView {
 
 }
 
-// MARK: - Previews
+#Preview {
 
-struct TestingUserPickerView_Previews: PreviewProvider {
-
-    static var previews: some View {
-        UserProfilesPickerView()
-    }
+    UserProfilesPickerView(viewModel: .init())
 
 }

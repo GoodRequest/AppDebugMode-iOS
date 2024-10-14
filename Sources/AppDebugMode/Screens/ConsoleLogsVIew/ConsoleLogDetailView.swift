@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ConsoleLogDetailViewController: UIViewController {
+final class ConsoleLogDetailViewController: UIViewController {
     
     // MARK: - Views
     

@@ -7,7 +7,8 @@
 
 import UIKit
 
-class Coordinator<Step> {
+@MainActor
+class Coordinator<Step: Sendable> {
 
     var rootViewController: UIViewController?
 
@@ -19,7 +20,7 @@ class Coordinator<Step> {
         return rootViewController as? UINavigationController
     }
 
-    func start() -> UIViewController? {
+    func start() async -> UIViewController? {
         return rootViewController
     }
 
@@ -27,6 +28,6 @@ class Coordinator<Step> {
         self.rootViewController = rootViewController
     }
 
-    func navigate(to stepper: Step) {}
+    func navigate(to stepper: Step) async {}
 
 }

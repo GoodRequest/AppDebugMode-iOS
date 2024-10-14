@@ -1,81 +1,72 @@
 //
 //  ServersCollectionView.swift
-//  
 //
 //  Created by Matus Klasovity on 02/07/2023.
 //
 
 import SwiftUI
+import Factory
 
 struct ServersCollectionsView: View {
+
+    // MARK: - Factory
+
+    @Injected(\.debugServerSelectors) private var serverSelectors: [DebugSelectableServerProvider]
+
+    // MARK: - State
     
-    // MARK: - Properties
-    
-    @ObservedObject var viewModel: ServersCollectionsViewModel
-    
+    @State private var serverCollections: [ApiServerCollection] = []
+
     // MARK: - Body
-    
+
     var body: some View {
         Group {
-            if #available(iOS 15, *) {
-                serverSettingsList()
-                    .safeAreaInset(edge: .bottom) {
-                        saveServerSettingsFooter()
-                    }
-            } else {
-                ZStack(alignment: .bottom) {
-                    serverSettingsList()
-                    saveServerSettingsFooter()
-                }
+            serverSettingsList()
+        }
+        .navigationTitle("Server collections")
+        .task {
+            for await server in serverSelectors.publisher.values {
+                await serverCollections.append(server.serverCollection)
             }
-        }.navigationTitle("Server collections")
+        }
     }
-    
+
 }
 
 // MARK: - Components
 
 private extension ServersCollectionsView {
-    
-    // MARK: - List
-    
+
     func serverSettingsList() -> some View {
         List {
-            ForEach(viewModel.serversCollections, id: \.name) { serverCollection in
-                serverCollectionSection(serverCollection: serverCollection)
+            ForEach(serverSelectors, id: \.self) { serverSelector in
+                serverCollectionSection(serverSelector: serverSelector)
             }
         }
         .listStyle(.insetGrouped)
         .listContentInsets(UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0), for: .insetGrouped)
         .listBackgroundColor(AppDebugColors.backgroundPrimary, for: .insetGrouped)
+        .safeAreaInset(edge: .bottom) {
+            footnotes()
+        }
     }
-    
+
     // MARK: - Server Picker List Item View
-    
-    func serverCollectionSection(serverCollection: ApiServerCollection) -> some View {
+
+    func serverCollectionSection(serverSelector: DebugSelectableServerProvider) -> some View {
         Section {
             VStack(alignment: .leading, spacing: 16) {
-                title(text: serverCollection.name)
-                
-                if !serverCollection.note.isEmpty {
-                    note(text: serverCollection.note)
-                }
-                
-                ServerPickerView(viewModel: serverCollection)
+                ServerPickerView(serverSelector: serverSelector)
             }
             .listRowBackground(AppDebugColors.backgroundSecondary)
         }
     }
-    
-    // MARK: - Footer
-    
-    func saveServerSettingsFooter() -> some View {
-        VStack(spacing: 10) {
-            ButtonFilled(text: "Save server settings") {
-                viewModel.saveServerSettings()
-            }
 
-            Text("App will be terminated in the moment you save the changes due to propper change of picked server.")
+    // MARK: - Footer
+
+    func footnotes() -> some View {
+        VStack(spacing: 10) {
+            Text("App will be dynamically change the server if you create the debug server selector in the project and retain use the same object to resolved URL's in the request manager. Otherwise you need to restart the app to refresh the server.")
                 .multilineTextAlignment(.center)
                 .foregroundColor(AppDebugColors.textSecondary)
                 .font(.caption)
@@ -83,13 +74,6 @@ private extension ServersCollectionsView {
         }
         .padding(16)
         .background(Glass().edgesIgnoringSafeArea(.bottom))
-    }
-    
-    func title(text: String) -> some View{
-        Text(text)
-            .bold()
-            .font(.title2)
-            .foregroundColor(AppDebugColors.primary)
     }
     
     func note(text: String) -> some View {
@@ -100,13 +84,6 @@ private extension ServersCollectionsView {
 
 }
 
-// MARK: - Previews
-
-struct ServersCollectionsView_Previews: PreviewProvider {
-    
-    static var previews: some View {
-        ServersCollectionsView(viewModel: ServersCollectionsViewModel(serversCollections: []))
-    }
-    
+#Preview {
+    ServersCollectionsView()
 }
-

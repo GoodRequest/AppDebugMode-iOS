@@ -8,21 +8,24 @@
 import SwiftUI
 
 struct ButtonFilled: View {
-    
+
     enum ButtonStyle {
         
         case primary
         case secondary
         case danger
-        
+
+        private static let primaryForegroundColor = #colorLiteral(red: 0.08346965164, green: 0.08476512879, blue: 0.1187344268, alpha: 1)
+        private static let secondaryForegroundColor = #colorLiteral(red: 0.97188586, green: 0.975427568, blue: 0.9876087308, alpha: 1)
+
         var foregroundColor: Color {
             switch self {
             case .primary:
-                return Color(hex: "#111117")
-                
+                return Color(Self.primaryForegroundColor)
+
             case .secondary:
-                return Color(hex: "#F6F7FB")
-                
+                return Color(Self.secondaryForegroundColor)
+
             case .danger:
                 return .white
             }
