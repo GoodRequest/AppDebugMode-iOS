@@ -29,9 +29,13 @@ public actor StandardOutputProcessor: ObservableObject {
     @AppStorage("capturedOutput", store: UserDefaults(suiteName: Constants.suiteName))
     var capturedOutput: [Log] = []
 
+    @AppStorage("numberOfStoredLogs") var numberOfStoredLogs = 30
+
     // MARK: - Helper functions
 
     func redirectLogsToAppDebugMode () {
+        capturedOutput = Array(capturedOutput.prefix(upTo: numberOfStoredLogs))
+
         guard !didRedirectLogs else { return } // redirect only once
         didRedirectLogs = true
 

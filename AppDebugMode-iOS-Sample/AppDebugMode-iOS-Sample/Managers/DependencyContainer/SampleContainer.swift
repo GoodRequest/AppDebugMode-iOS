@@ -42,14 +42,15 @@ extension Container {
 
     #if DEBUG
     var configurableSessionProvider: Factory<ConfigurableSessionProvider> {
-        LoggingEventMonitor.maxVerboseLogSizeBytes = 1000000
+        LoggingEventMonitor.maxVerboseLogSizeBytes = 1000000 // For testing 400kb large payload
         let monitor = LoggingEventMonitor(logger: AppDebugModeLogger())
-
-        let defaultConfiguration = NetworkSessionConfiguration(
-            urlSessionConfiguration: .default,
+        
+        let defaultSession = Alamofire.Session(
+            configuration: .default,
             eventMonitors: [monitor]
         )
-        return Factory(self) { ConfigurableSessionProvider(defaultConfiguration: defaultConfiguration) }.singleton
+
+        return Factory(self) { ConfigurableSessionProvider(defaultSession: defaultSession) }.singleton
     }
     #endif
 

@@ -81,17 +81,9 @@ public extension PackageManager {
         serverProviders: [DebugSelectableServerProvider],
         configurableProxySessionProvider: ConfigurableSessionProvider?,
         firebaseMessaging: AnyObject? = nil,
-        customControls: (some View)? = nil,
-        showDebugSwift: Bool = true
+        customControls: (some View)? = nil
     ) async {
         NetworkLogger.enableProxy()
-
-        if showDebugSwift {
-            Task {@MainActor in
-//                DebugSwift.setup()
-//                DebugSwift.show()
-            }
-        }
 
         if !serverProviders.isEmpty {
             Container.shared.setupServerProviders(providers: serverProviders)

@@ -25,12 +25,12 @@ actor RequestManager: RequestManagerType {
 
     init(baseUrlProvider: BaseUrlProviding) {
 
-#if DEBUG
+        #if DEBUG
         session = NetworkSession(
-            baseUrl: baseUrlProvider,
-            configuration: Container.shared.configurableSessionProvider.resolve()
+            baseUrlProvider: baseUrlProvider,
+            sessionProvider: Container.shared.configurableSessionProvider.resolve()
         )
-#else
+        #else
         let monitor = LoggingEventMonitor(logger: OSLogLogger())
 
         session = NetworkSession(
@@ -46,7 +46,7 @@ actor RequestManager: RequestManagerType {
     }
 
     func fetchLargeObject() async throws -> LargeObjectResponse {
-        try await session.request(endpoint: Endpoint.large, baseUrl: "https://codepo8.github.io")
+        try await session.request(endpoint: Endpoint.large, baseUrlProvider: "https://codepo8.github.io")
     }
 
     func fetchCars(id: Int) async throws -> CarResponse {
