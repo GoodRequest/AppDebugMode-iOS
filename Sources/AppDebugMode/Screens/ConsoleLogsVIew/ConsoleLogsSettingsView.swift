@@ -16,6 +16,8 @@ struct ConsoleLogsSettingsView: View {
     @AppStorage("shouldRedirectLogsToAppDebugMode", store: UserDefaults(suiteName: Constants.suiteName))
     var shouldRedirectLogsToAppDebugMode = !DebuggerService.debuggerConnected()
 
+    @AppStorage("numberOfStoredLogs") var numberOfStoredLogs = 30
+
     // MARK: - Binding
 
     @Binding var showSettings: Bool
@@ -45,6 +47,15 @@ struct ConsoleLogsSettingsView: View {
                         Picker("Number of lines unwrapped", selection: $numberOfLinesUnwrapped) {
                             ForEach(0..<100) {
                                 Text("\($0) lines")
+                                    .foregroundColor(AppDebugColors.textPrimary)
+                            }
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .accentColor(AppDebugColors.primary)
+
+                        Picker("Number of stored logs", selection: $numberOfStoredLogs) {
+                            ForEach(1..<100) {
+                                Text("\($0) newest logs cached")
                                     .foregroundColor(AppDebugColors.textPrimary)
                             }
                         }

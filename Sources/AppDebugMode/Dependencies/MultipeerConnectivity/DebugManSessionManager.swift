@@ -402,9 +402,6 @@ extension DebugManSessionManager {
     func handleNewProxyConfiguration(_ proxyConfiguration: ProxyConfiguration) async throws(ProxyConfigurationError) {
         setProxyState(proxyState: .testing(configuration: proxyConfiguration))
 
-        #warning("Add saving first configuration")
-        #warning("Add requesting first configuration again")
-
         let port = proxyConfiguration.port
         var didAnyIpPass = false
 

@@ -1,6 +1,6 @@
 //
 //  ProxySettingsProvider.swift
-//
+//  Debugman
 //
 //  Created by Matus Klasovity on 28/05/2024.
 //
@@ -39,12 +39,8 @@ public final class ProxySettingsProvider: Sendable {
     }
 
     // MARK: - Public
-
-    public func urlSessionConfiguration() -> URLSessionConfiguration {
-        urlSessionConfiguration(proxyIpAddress: proxyIpAddress, proxyPort: proxyPortUInt16)
-    }
     
-    public func urlSessionConfiguration(proxyIpAddress: String, proxyPort: UInt16) -> URLSessionConfiguration {
+    nonisolated public func urlSessionConfiguration(proxyIpAddress: String, proxyPort: UInt16) -> URLSessionConfiguration {
         let urlSessionConfig = URLSessionConfiguration.default
         urlSessionConfig.connectionProxyDictionary = [
             "HTTPEnable": true,
@@ -69,13 +65,7 @@ public final class ProxySettingsProvider: Sendable {
 
         Task {
             let urlConfig = urlSessionConfiguration(proxyIpAddress: proxyIpAddress, proxyPort: proxyPortUInt16)
-            let newConfiguration = await NetworkSessionConfiguration(
-                urlSessionConfiguration: urlConfig,
-                interceptor: configurableProxySessionProvider.currentConfiguration.interceptor,
-                serverTrustManager: configurableProxySessionProvider.currentConfiguration.serverTrustManager,
-                eventMonitors: configurableProxySessionProvider.currentConfiguration.eventMonitors
-            )
-            await configurableProxySessionProvider.updateConfiguration(with: newConfiguration)
+            await configurableProxySessionProvider.updateConfiguration(with: urlConfig)
         }
     }
 
@@ -95,10 +85,13 @@ public final class ProxySettingsProvider: Sendable {
         do {
             let _ = try await testingSession.data(from: testingUrl)
             isProxyValidated = true
+            print("🧪 Testing Proxy: success")
             return .success
         } catch let error as NSError where error.code == 310 || error.code == -1200 { // certificate compromised
+            print("🧪 Testing Proxy: missing certificate")
             return .missingCertificate
         } catch _ {
+            print("🧪 Testing Proxy: connection failure")
             return .connectionFailed
         }
     }
