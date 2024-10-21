@@ -181,4 +181,11 @@ extension DebugManConnectionState {
         }
     }
 
+    var isConnecting: Bool {
+        switch self {
+        case .connecting: return true
+        default: return false
+        }
+    }
+
 }

@@ -14,6 +14,7 @@ enum JSONPacket: Codable, Equatable, Sendable, RawRepresentable {
     case requireCertificateTrust
     case pairingSuccessful
     case requestProxyConfiguration
+    case logMessage(String) // New case for exchanging logs
 
     init?(rawValue: String) {
         let decoder = JSONDecoder()
@@ -41,6 +42,7 @@ enum JSONPacket: Codable, Equatable, Sendable, RawRepresentable {
         case requireCertificateTrust
         case pairingSuccessful
         case requestProxyConfiguration
+        case logMessage // New key for log message
     }
 
     func encode(to encoder: Encoder) throws {
@@ -57,6 +59,8 @@ enum JSONPacket: Codable, Equatable, Sendable, RawRepresentable {
             try container.encode(true, forKey: .pairingSuccessful)
         case .requestProxyConfiguration:
             try container.encode(true, forKey: .requestProxyConfiguration)
+        case .logMessage(let message): // Encoding log message
+            try container.encode(message, forKey: .logMessage)
         }
     }
 
@@ -73,9 +77,13 @@ enum JSONPacket: Codable, Equatable, Sendable, RawRepresentable {
             self = .pairingSuccessful
         } else if (try? container.decode(Bool.self, forKey: .requestProxyConfiguration)) != nil {
             self = .requestProxyConfiguration
+        } else if let message = try? container.decode(String.self, forKey: .logMessage) { // Decoding log message
+            self = .logMessage(message)
         } else {
-            throw DecodingError.dataCorruptedError(forKey: .requestProxyConfiguration, in: container, debugDescription: "Invalid JSONPacket case")
+            throw DecodingError.dataCorruptedError(
+                forKey: .requestProxyConfiguration,
+                in: container, debugDescription: "Invalid JSONPacket case"
+            )
         }
     }
-    
 }

@@ -157,20 +157,12 @@ final class DebugManSessionManager: ObservableObject {
 extension DebugManSessionManager {
 
     func send(_ message: String) throws(PeerSessionError) {
-        guard let connectedPeer = remotePeer?.asPeerId() else {
-            throw .sendingLogsFailed
-        }
-
-        let data = Data(message.utf8)
+        let packet = JSONPacket.logMessage(message)
 
         print("💬 Sending message: \(message)")
 
         do {
-            try session.send(
-                data,
-                toPeers: [connectedPeer],
-                with: .reliable
-            )
+            try send(packet)
         } catch {
             print("🔥 Error sending data to peers: \(error)")
             errorStreamContinuation?.yield(error)
@@ -233,10 +225,11 @@ extension DebugManSessionManager {
     }
 
     func stopBrowsing() throws(PeerSessionError) {
-        guard debugManConnectionState == .browsing else {
+        guard debugManConnectionState == .browsing || debugManConnectionState.isWaitingForAccept || debugManConnectionState.isConnecting else {
             throw .stopBrowsingBlocked
         }
 
+        setState(.clean)
         browser.stopBrowsingForPeers()
     }
 
@@ -385,7 +378,7 @@ extension DebugManSessionManager {
         case .certificateRequest:
             errorStreamContinuation?.yield(ProxyConfigurationError.requestingCertificateFromAppDebugMode)
 
-        case .requireCertificateTrust, .requestProxyConfiguration:
+        case .requireCertificateTrust, .requestProxyConfiguration, .logMessage:
             break
 
         case .pairingSuccessful:
@@ -420,6 +413,7 @@ extension DebugManSessionManager {
                 didAnyIpPass = true
                 setProxyState(proxyState: .configured(configuration: proxyConfiguration))
                 proxyProvider.updateProxySettings(ipAddress: ipAddress, port: port)
+                try send(.pairingSuccessful)
             }
         }
 
@@ -438,6 +432,7 @@ extension DebugManSessionManager {
         case .success:
             try await proxyConfigurationSuccessful()
             setProxyState(proxyState: .configured(configuration: configuration))
+            try send(.pairingSuccessful)
 
         case .missingCertificate:
             setProxyState(proxyState: .waitingForUserToInstalCertificate)
