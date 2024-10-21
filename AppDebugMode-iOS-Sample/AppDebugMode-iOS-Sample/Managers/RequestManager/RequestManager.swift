@@ -32,17 +32,17 @@ actor RequestManager: RequestManagerType {
         )
         #else
         let monitor = LoggingEventMonitor(logger: OSLogLogger())
-
-        session = NetworkSession(
-            baseUrl: baseUrlProvider,
-            configuration: DefaultSessionProvider(configuration:
-                NetworkSessionConfiguration(
-                    urlSessionConfiguration: .default,
-                    eventMonitors: [monitor]
-                )
+        let sessionProvider = DefaultSessionProvider(configuration:
+            NetworkSessionConfiguration(
+                urlSessionConfiguration: .default,
+                eventMonitors: [monitor]
             )
         )
-#endif
+        session = NetworkSession(
+            baseUrl: baseUrlProvider,
+            sessionProvider: sessionProvider
+        )
+        #endif
     }
 
     func fetchLargeObject() async throws -> LargeObjectResponse {

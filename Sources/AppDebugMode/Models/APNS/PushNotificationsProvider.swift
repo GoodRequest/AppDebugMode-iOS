@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  PushNotificationsProvider.swift
+//  AppDebugMode-iOS
 //
 //  Created by Matus Klasovity on 23/08/2023.
 //
