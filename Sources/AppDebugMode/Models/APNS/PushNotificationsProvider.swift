@@ -1,5 +1,5 @@
 //
-//  PushNotificationsProvider.swift
+//  FirebaseMessagingProvider.swift
 //  AppDebugMode-iOS
 //
 //  Created by Matus Klasovity on 23/08/2023.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class PushNotificationsProvider {
+public final class FirebaseMessagingProvider {
 
     var token: String?
     let deleteToken: () async throws -> Void

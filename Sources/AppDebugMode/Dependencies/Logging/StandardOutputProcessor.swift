@@ -34,7 +34,7 @@ public actor StandardOutputProcessor: ObservableObject {
     // MARK: - Helper functions
 
     func redirectLogsToAppDebugMode () {
-        capturedOutput = Array(capturedOutput.prefix(upTo: numberOfStoredLogs))
+//        capturedOutput = Array(capturedOutput.prefix(upTo: numberOfStoredLogs))
 
         guard !didRedirectLogs else { return } // redirect only once
         didRedirectLogs = true

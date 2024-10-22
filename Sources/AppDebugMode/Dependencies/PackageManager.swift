@@ -97,7 +97,7 @@ public extension PackageManager {
         }
 
         if let firebaseMessaging {
-            Container.shared.setupAPNSProvider(firebaseMessaging: firebaseMessaging as! AppDebugFirebaseMessaging)
+//            Container.shared.setupAPNSProvider(firebaseMessaging: firebaseMessaging as! AppDebugFirebaseMessaging)
         }
 
         if shouldRedirectLogsToAppDebugMode {

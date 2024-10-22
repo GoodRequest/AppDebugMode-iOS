@@ -21,12 +21,12 @@ final class PushNotificationsSettingsViewModel: ObservableObject {
     // MARK: - Properties - Private
     
     private var cancellables = Set<AnyCancellable>()
-    private let pushNotificationsProvider: PushNotificationsProvider
+    private let firebaseMessagingProvider: FirebaseMessagingProvider
     
     // MARK: - init
     
-    init(pushNotificationsProvider: PushNotificationsProvider) {
-        self.pushNotificationsProvider = pushNotificationsProvider
+    init(pushNotificationsProvider: FirebaseMessagingProvider) {
+        self.firebaseMessagingProvider = pushNotificationsProvider
     }
     
 }
@@ -46,9 +46,9 @@ extension PushNotificationsSettingsViewModel {
         Task { 
             do {
                 if shouldRegenerate {
-                    try await pushNotificationsProvider.deleteToken()
+                    try await firebaseMessagingProvider.deleteToken()
                 }
-                token = try await pushNotificationsProvider.getToken()
+                token = try await firebaseMessagingProvider.getToken()
             } catch {
                 self.error = error
                 hasError = true

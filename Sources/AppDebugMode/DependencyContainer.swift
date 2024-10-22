@@ -23,15 +23,15 @@ public extension Container {
     }
 
 
-    var apnsProviding: Factory<PushNotificationsProvider?> {
+    var firebaseMessagingProviding: Factory<FirebaseMessagingProvider?> {
         Factory(self) { nil }
     }
 
-    func setupAPNSProvider(firebaseMessaging: AnyObject) {
-        if let provider = PushNotificationsProvider(firebaseMessaging: firebaseMessaging) {
-            Container.shared.apnsProviding.register { provider }
-        }
-    }
+//    func setupAPNSProvider(firebaseMessaging: AnyObject) {
+//        if let provider = FirebaseMessagingProvider(firebaseMessaging: firebaseMessaging) {
+//            Container.shared.apnsProviding.register { provider }
+//        }
+//    }
 
     var debugServerSelectors: Factory<[DebugSelectableServerProvider]> {
         Factory(self) { [] }.singleton

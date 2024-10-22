@@ -15,7 +15,7 @@ struct AppDebugView<CustomControls: View>: View {
 
     @Injected(\.packageManager) private var packageManager: PackageManager
     @Injected(\.profileProvider) private var profileProvider: UserProfilesProvider
-    @Injected(\.apnsProviding) private var apnsProvider: PushNotificationsProvider?
+    @Injected(\.firebaseMessagingProviding) private var firebaseMessagingProvider: FirebaseMessagingProvider?
 
     // MARK: - Environtment
 
@@ -64,11 +64,11 @@ struct AppDebugView<CustomControls: View>: View {
             destination: AnyView(UserProfilesPickerView(viewModel: .init()))
         ))
 
-        if let apnsProvider {
+        if let firebaseMessagingProvider {
             self.screens.append(Screen(
                 title: "Push notifications",
                 image: Image(systemName: "bell.badge"),
-                destination: AnyView(PushNotificationsSettingsView(pushNotificationsProvider: apnsProvider))
+                destination: AnyView(PushNotificationsSettingsView(pushNotificationsProvider: firebaseMessagingProvider))
             ))
         }
 

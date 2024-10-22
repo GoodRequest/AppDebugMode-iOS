@@ -66,7 +66,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 #if DEBUG
 final class CustomControlsModel: ObservableObject {
 
-    @Published var isOn: Bool = false
+    @Published var isOn = false
 
 }
 

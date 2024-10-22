@@ -11,7 +11,7 @@ struct PushNotificationsSettingsView: View {
     
     @ObservedObject var viewModel: PushNotificationsSettingsViewModel
     
-    init(pushNotificationsProvider: PushNotificationsProvider) {
+    init(pushNotificationsProvider: FirebaseMessagingProvider) {
         self.viewModel = PushNotificationsSettingsViewModel(pushNotificationsProvider: pushNotificationsProvider)
     }
     
