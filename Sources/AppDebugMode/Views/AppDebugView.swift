@@ -47,7 +47,8 @@ struct AppDebugView<CustomControls: View>: View {
     
     init(
         customControls: CustomControls,
-        customControlsViewIsVisible: Bool
+        customControlsViewIsVisible: Bool,
+        pulseLoggingEnabled: Bool
     ) {
         self.customControls = customControls
         self.customControlsViewIsVisible = customControlsViewIsVisible
@@ -72,11 +73,13 @@ struct AppDebugView<CustomControls: View>: View {
             ))
         }
 
-        self.screens.append(Screen(
-            title: "Pulse Logs",
-            image: Image(systemName: "wave.3.forward"),
-            destination: AnyView(PulseUI.ConsoleView().tint(AppDebugColors.primary))
-        ))
+        if pulseLoggingEnabled {
+            self.screens.append(Screen(
+                title: "Pulse Logs",
+                image: Image(systemName: "wave.3.forward"),
+                destination: AnyView(PulseUI.ConsoleView().tint(AppDebugColors.primary))
+            ))
+        }
 
         self.screens.append(contentsOf: [
             Screen(

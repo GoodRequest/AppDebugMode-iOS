@@ -48,7 +48,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             await PackageManager.shared.setup(
                 serverProviders: providers,
                 configurableProxySessionProvider: Container.shared.configurableSessionProvider.resolve(),
-                customControls: CustomControlsView(model: model)
+                customControls: CustomControlsView(model: model),
+                pulseLoggingEnabled: false
             )
         }
 
