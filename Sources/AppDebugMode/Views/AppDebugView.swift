@@ -15,7 +15,8 @@ struct AppDebugView<CustomControls: View>: View {
 
     @Injected(\.packageManager) private var packageManager: PackageManager
     @Injected(\.profileProvider) private var profileProvider: UserProfilesProvider
-    @Injected(\.apnsProviding) private var apnsProvider: PushNotificationsProvider?
+    #warning("Make FIREBASE messaging sendable")
+//    @Injected(\.apnsProviding) private var apnsProvider: PushNotificationsProvider?
 
     // MARK: - Environtment
 
@@ -64,13 +65,14 @@ struct AppDebugView<CustomControls: View>: View {
             destination: AnyView(UserProfilesPickerView(viewModel: .init()))
         ))
 
-        if let apnsProvider {
-            self.screens.append(Screen(
-                title: "Push notifications",
-                image: Image(systemName: "bell.badge"),
-                destination: AnyView(PushNotificationsSettingsView(pushNotificationsProvider: apnsProvider))
-            ))
-        }
+        #warning("Make FIREBASE messaging sendable")
+//        if let apnsProvider {
+//            self.screens.append(Screen(
+//                title: "Push notifications",
+//                image: Image(systemName: "bell.badge"),
+//                destination: AnyView(PushNotificationsSettingsView(pushNotificationsProvider: apnsProvider))
+//            ))
+//        }
 
         self.screens.append(Screen(
             title: "Pulse Logs",
