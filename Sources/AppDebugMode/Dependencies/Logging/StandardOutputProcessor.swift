@@ -33,8 +33,10 @@ public actor StandardOutputProcessor: ObservableObject {
 
     // MARK: - Helper functions
 
-    func redirectLogsToAppDebugMode () {
-        capturedOutput = Array(capturedOutput.prefix(upTo: numberOfStoredLogs))
+    func redirectLogsToAppDebugMode() {
+        if capturedOutput.count > numberOfStoredLogs {
+            capturedOutput = Array(capturedOutput.prefix(upTo: numberOfStoredLogs))
+        }
 
         guard !didRedirectLogs else { return } // redirect only once
         didRedirectLogs = true
