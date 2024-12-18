@@ -7,8 +7,8 @@
 
 import Foundation
 
-@objc protocol AppDebugFirebaseMessaging {
-    
+@objc protocol AppDebugFirebaseMessaging: Sendable {
+
     func deleteTokenWith(completion: @escaping ((Error?) -> Void))
     var FCMToken: String? { get }
     func tokenWith(completion: @escaping ((String?, Error?) -> Void))
