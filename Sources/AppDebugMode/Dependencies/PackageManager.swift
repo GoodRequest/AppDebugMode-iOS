@@ -102,7 +102,7 @@ public extension PackageManager {
         }
 
         if let firebaseMessaging {
-            Container.shared.setupAPNSProvider(firebaseMessaging: firebaseMessaging as! AppDebugFirebaseMessaging)
+            setupFirebaseMessaging(firebaseMessaging: firebaseMessaging)
         }
 
         if shouldRedirectLogsToAppDebugMode {
@@ -124,6 +124,19 @@ public extension PackageManager {
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.navigationBar.configureSolidAppearance()
         return navigationController
+    }
+
+}
+
+private extension PackageManager {
+
+    func setupFirebaseMessaging(firebaseMessaging: AnyObject) {
+        let type = type(of: firebaseMessaging)
+        class_addProtocol(type, AppDebugFirebaseMessaging.self)
+
+        if let appDebugFirebaseMesaging = firebaseMessaging as? AppDebugFirebaseMessaging {
+            Container.shared.setupAPNSProvider(firebaseMessaging: appDebugFirebaseMesaging)
+        }
     }
 
 }

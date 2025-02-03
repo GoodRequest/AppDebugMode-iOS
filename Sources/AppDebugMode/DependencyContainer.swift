@@ -8,7 +8,7 @@
 import Factory
 import GoodNetworking
 
-public extension Container {
+extension Container {
 
     var packageManager: Factory<PackageManager> {
         Factory(self) { PackageManager.shared }.singleton
@@ -27,9 +27,9 @@ public extension Container {
         Factory(self) { nil }
     }
 
-    func setupAPNSProvider(firebaseMessaging: AnyObject) {
-        if let provider = PushNotificationsProvider(firebaseMessaging: firebaseMessaging) {
-            Container.shared.apnsProviding.register { provider }
+    func setupAPNSProvider<T: AppDebugFirebaseMessaging>(firebaseMessaging: T) {
+        Container.shared.apnsProviding.register {
+            PushNotificationsProvider(firebaseMessaging: firebaseMessaging)
         }
     }
 

@@ -7,22 +7,16 @@
 
 import Foundation
 
-public final class PushNotificationsProvider {
+public final class PushNotificationsProvider: Sendable {
 
-    var token: String?
-    let deleteToken: () async throws -> Void
-    let getToken: () async throws -> String
+    let token: String?
+    let deleteToken: @Sendable () async throws -> Void
+    let getToken: @Sendable () async throws -> String
 
-    init?(firebaseMessaging: AnyObject) {
-        let type: AnyObject.Type = type(of: firebaseMessaging)
-        class_addProtocol(type, AppDebugFirebaseMessaging.self)
-
-        if let appDebugFirebaseMesaging = firebaseMessaging as? AppDebugFirebaseMessaging {
-            self.token = appDebugFirebaseMesaging.fmcToken
-            self.deleteToken = appDebugFirebaseMesaging.deleteToken
-            self.getToken = appDebugFirebaseMesaging.token
-        }
-        return nil
+    init<T: AppDebugFirebaseMessaging>(firebaseMessaging: T) {
+        self.token = firebaseMessaging.fmcToken
+        self.deleteToken = firebaseMessaging.deleteToken
+        self.getToken = firebaseMessaging.token
     }
 
 }
