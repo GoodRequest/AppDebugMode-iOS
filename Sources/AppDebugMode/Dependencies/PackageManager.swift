@@ -47,6 +47,7 @@ public actor PackageManager {
     internal var customControlsViewIsVisible: Bool {
         !(customControls is EmptyView)
     }
+    internal var pulseLoggingEnabled: Bool = true
 
     // MARK: - State
 
@@ -81,9 +82,13 @@ public extension PackageManager {
         serverProviders: [DebugSelectableServerProvider],
         configurableProxySessionProvider: ConfigurableSessionProvider?,
         firebaseMessaging: AnyObject? = nil,
-        customControls: (some View)? = nil
+        customControls: (some View)? = nil,
+        pulseLoggingEnabled: Bool = true
     ) async {
-        NetworkLogger.enableProxy()
+        self.pulseLoggingEnabled = pulseLoggingEnabled
+        if pulseLoggingEnabled {
+            NetworkLogger.enableProxy()
+        }
 
         if !serverProviders.isEmpty {
             Container.shared.setupServerProviders(providers: serverProviders)
@@ -111,7 +116,8 @@ public extension PackageManager {
     func start() async -> UIViewController {
         let viewController = await AppDebugView(
             customControls: AnyView(customControls),
-            customControlsViewIsVisible: customControlsViewIsVisible
+            customControlsViewIsVisible: customControlsViewIsVisible,
+            pulseLoggingEnabled: pulseLoggingEnabled
         )
         .eraseToUIViewController()
 
