@@ -15,14 +15,13 @@ public actor ConfigurableSessionProvider: NetworkSessionProviding {
     public var isSessionValid = false
 
     public func invalidateSession() async {
-        logger.log(level: .debug, message: "Invalidating session not supported", privacy: .auto)
+        logger.log(message: "Invalidating session not supported", level: .debug)
     }
 
     public func makeSession() async -> Alamofire.Session {
         logger.log(
-            level: .debug,
             message: "🛜 Resolved new URLSession with configuration: \(currentConfiguration)",
-            privacy: .auto
+            level: .debug
         )
         isSessionValid = true
 
@@ -60,17 +59,15 @@ public actor ConfigurableSessionProvider: NetworkSessionProviding {
         self.currentConfiguration = urlConfiguration
         self.isSessionValid = false
         logger.log(
-            level: .debug,
             message: "⚙️ Updated ConfigurableSessionProvider to \(String(describing: urlConfiguration.connectionProxyDictionary))",
-            privacy: .auto
+            level: .debug
         )
     }
 
     public func resolveSession() async -> Alamofire.Session {
         logger.log(
-            level: .debug,
             message: "🛜 Resolved old URLSession with configuration: \(currentConfiguration)",
-            privacy: .auto
+            level: .debug
         )
 
         return currentSession
