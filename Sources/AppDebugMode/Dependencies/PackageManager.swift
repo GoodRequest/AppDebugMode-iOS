@@ -43,6 +43,7 @@ public actor PackageManager {
 
     // MARK: - Internal - Variables
 
+    internal var isConfigured = false
     internal var customControls: any View = EmptyView()
     internal var customControlsViewIsVisible: Bool {
         !(customControls is EmptyView)
@@ -105,10 +106,13 @@ public extension PackageManager {
         }
 
         self.customControls = customControls
+        isConfigured = true
     }
 
     @MainActor
-    func start() async -> UIViewController {
+    func start() async -> UIViewController? {
+        guard await isConfigured else { return nil }
+
         let viewController = await AppDebugView(
             customControls: AnyView(customControls),
             customControlsViewIsVisible: customControlsViewIsVisible

@@ -15,7 +15,8 @@ extension UIViewController {
     open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
             Task { 
-                let viewController = await Container.shared.packageManager.resolve().start()
+                guard let viewController = await Container.shared.packageManager.resolve().start() else { return }
+
                 if presentedViewController == nil, view.window?.rootViewController?.presentedViewController == nil {
                     viewController.modalPresentationStyle = .fullScreen
                     present(viewController, animated: true)
