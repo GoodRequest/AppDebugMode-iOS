@@ -1,13 +1,31 @@
 {
-  "originHash" : "a63a34508ef36d36d0424924512a97dfd81aa1689a7dc0c6eed9c4d38859b835",
+  "originHash" : "1ba98c0556a90c877585ff2991c2ee72d925cb90b37e38e105470d2c6352d5f4",
   "pins" : [
     {
-      "identity" : "combineext",
+      "identity" : "alamofire",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/CombineCommunity/CombineExt.git",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
       "state" : {
-        "revision" : "d7b896fa9ca8b47fa7bcde6b43ef9b70bf8c1f56",
-        "version" : "1.8.1"
+        "revision" : "513364f870f6bfc468f9d2ff0a95caccc10044c5",
+        "version" : "5.10.2"
+      }
+    },
+    {
+      "identity" : "alamofireimage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/AlamofireImage.git",
+      "state" : {
+        "revision" : "1eaf3b6c6882bed10f6e7b119665599dd2329aa1",
+        "version" : "4.3.0"
+      }
+    },
+    {
+      "identity" : "chronometer",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/KittyMac/Chronometer.git",
+      "state" : {
+        "revision" : "d21b89e5cb5929b5175bdb3ad710a52cbf497eaa",
+        "version" : "0.1.12"
       }
     },
     {
@@ -24,26 +42,53 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/GoodRequest/GoodLogger.git",
       "state" : {
-        "revision" : "7e0a11ffa920889c8d289c1dca60d6b0c94b0ae9",
-        "version" : "1.0.0"
+        "revision" : "73e8433ca32b164c63093cc512786a7e8628144b",
+        "version" : "1.3.1"
       }
     },
     {
-      "identity" : "goodpersistence",
+      "identity" : "goodnetworking",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/GoodRequest/GoodPersistence.git",
+      "location" : "https://github.com/GoodRequest/GoodNetworking.git",
       "state" : {
-        "revision" : "43ea33ee9a4cd19094e8eeeb007c58f94c2f8e23",
-        "version" : "2.3.0"
+        "revision" : "b76b0019b0d5636f83d6a499e38672d398b342a5",
+        "version" : "3.3.1"
       }
     },
     {
-      "identity" : "keychainaccess",
+      "identity" : "hitch",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kishikawakatsumi/KeychainAccess.git",
+      "location" : "https://github.com/KittyMac/Hitch.git",
       "state" : {
-        "revision" : "84e546727d66f1adc5439debad16270d0fdd04e7",
-        "version" : "4.2.2"
+        "revision" : "d6c147a1d70992db39a141cb5bf9cf8fbb776250",
+        "version" : "0.4.148"
+      }
+    },
+    {
+      "identity" : "pulse",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/Pulse.git",
+      "state" : {
+        "revision" : "07cad099e1a3b09e561873d8e6e343d15c853f16",
+        "version" : "5.1.3"
+      }
+    },
+    {
+      "identity" : "sextant",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/KittyMac/Sextant.git",
+      "state" : {
+        "revision" : "b2141d4a693e2a768720534009cb621252be39a0",
+        "version" : "0.4.33"
+      }
+    },
+    {
+      "identity" : "spanker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/KittyMac/Spanker.git",
+      "state" : {
+        "revision" : "d4b439bf76a40fb45d86a24d13b9c26e7d630eee",
+        "version" : "0.2.49"
       }
     },
     {

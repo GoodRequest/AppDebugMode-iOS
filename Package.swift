@@ -15,9 +15,9 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/kean/Pulse.git", .upToNextMajor(from: "5.1.1")),
         .package(url: "https://github.com/siteline/swiftui-introspect.git", .upToNextMajor(from: "1.3.0")),
-        .package(url: "https://github.com/hmlongco/Factory.git", from: "2.0.0"),
+        .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.0.0")),
         .package(url: "https://github.com/GoodRequest/GoodNetworking.git", .upToNextMajor(from: "3.3.1")),
-        .package(url: "https://github.com/GoodRequest/GoodLogger.git", .upToNextMajor(from: "1.3.0"))
+        .package(url: "https://github.com/GoodRequest/GoodLogger.git", .upToNextMajor(from: "1.3.1"))
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
