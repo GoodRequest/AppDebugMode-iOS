@@ -16,7 +16,6 @@ let package = Package(
         .package(url: "https://github.com/kean/Pulse.git", .upToNextMajor(from: "5.1.1")),
         .package(url: "https://github.com/siteline/swiftui-introspect.git", .upToNextMajor(from: "1.3.0")),
         .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.0.0")),
-        .package(url: "https://github.com/GoodRequest/GoodNetworking.git", .upToNextMajor(from: "3.3.1")),
         .package(url: "https://github.com/GoodRequest/GoodLogger.git", .upToNextMajor(from: "1.3.1"))
     ],
     targets: [
@@ -30,7 +29,6 @@ let package = Package(
                 .product(name: "PulseProxy", package: "Pulse"),
                 .product(name: "SwiftUIIntrospect", package: "swiftui-introspect"),
                 .product(name: "Factory", package: "Factory"),
-                .product(name: "GoodNetworking", package: "GoodNetworking"),
                 .product(name: "GoodLogger", package: "GoodLogger")
             ],
             path: "Sources",
